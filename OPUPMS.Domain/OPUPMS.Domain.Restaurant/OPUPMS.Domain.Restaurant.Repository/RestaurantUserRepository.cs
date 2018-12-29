@@ -80,6 +80,7 @@ VALUES  ( @Name , -- Name - nvarchar(200)
                         if (userinfo.Permission <= 0)
                         {
                             var permissionList = EnumToList.ConvertEnumToList(typeof(Permission));
+                            var permissionSum = permissionList.Sum(p => p.Key);
                         }
                         if (needInit<=0)
                         {

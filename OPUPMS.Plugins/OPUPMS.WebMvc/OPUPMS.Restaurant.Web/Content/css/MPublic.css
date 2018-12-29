@@ -403,7 +403,7 @@ div.layui-input{line-height: 32px;}
 	/*右侧*/
 .order-form.Panel-form.right{margin-left: 470px;width: calc(100% - 470px);padding-top:20px;}
 .order-form .MealTable-lists li{width:24%;margin:0.5%;height: 80px;box-sizing: border-box;}
-.order-form .MealTable-lists li .MealTable-title{font-size: 12px;line-height: 34px; height: 34px;}
+.order-form .MealTable-lists li .MealTable-title{font-size: 14px;line-height: 34px; height: 34px;}
 .order-form  .MealTable-lists li .MealTable-head,.order-form  .MealTable-lists li .MealTable-footer{    line-height: 22px;}
 
 

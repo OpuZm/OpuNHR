@@ -847,24 +847,29 @@ function AddProject() {
 		//更新订单/统计金额
 		NewsOrder();
 		
-		//如果是手写菜 直接弹出
-        if (itemdata.IsCustomer > 0)EditName(this, '1')
 		
 		//弹出做法弹窗
 		ProjectLayer();
 		//按钮权限
 		ProjectPower();
-
+		
+		
+		//如果是手写菜 直接弹出
+        if (itemdata.IsCustomer > 0){
+        	EditName(this, '1')
+        	return false;
+        }
+        
 		if(itemdata.ProjectDetailList && itemdata.CyddMxType == 1) {
 			if(itemdata.ProjectDetailList[0].Price <= 0 && itemdata.IsChangePrice > 0) { //默认单位  价格为0，并且允许改价==弹出改价输入
-				var dom = $('#operation_lists li').eq(7).find('a');
+				var dom = $('#operation_lists li').eq(5).find('a');
 				NumberKeyboard('editprice', dom);
 			}
 		}
 
 		if(itemdata.CyddMxType == 2) { //套餐
 			if(itemdata.Price <= 0 && itemdata.IsChangePrice > 0) { //默认单位  价格为0，并且允许改价==弹出改价输入
-				var dom = $('#operation_lists li').eq(7).find('a');
+				var dom = $('#operation_lists li').eq(5).find('a');
 				NumberKeyboard('editprice', dom);
 			}
         }
@@ -2743,7 +2748,7 @@ function NumberKeyboard(Event, thisdom) {
  */
 function EditName(thisdom) {
 	if($(thisdom).hasClass('Disable'))return;
-	layer.closeAll('page');
+//	layer.closeAll('page');
 	var Projectdom = $('#ProjectLists_view tr.layui-this');
 	if(Projectdom.length < 1) {
 		layer.msg('请选择要操作的菜品');

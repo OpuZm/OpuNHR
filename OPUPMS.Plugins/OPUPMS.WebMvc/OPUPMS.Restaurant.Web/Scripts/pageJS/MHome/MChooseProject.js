@@ -789,13 +789,17 @@ function AddProject() {
         //更新订单/统计金额
         NewsOrder();
         
-         //如果是手写菜 直接弹出
-        if (itemdata.IsCustomer > 0) EditName(this, '1')
         
         //弹出做法弹窗
         ProjectLayer();
         //按钮权限
         ProjectPower();
+        
+        //如果是手写菜 直接弹出
+        if (itemdata.IsCustomer > 0){
+        	EditName(this, '1')
+        	return false;
+        }
 
         if (itemdata.ProjectDetailList && itemdata.CyddMxType == 1) {
             if (itemdata.ProjectDetailList[0].Price <= 0 && itemdata.IsChangePrice > 0) { //默认单位  价格为0，并且允许改价==弹出改价输入
@@ -2472,8 +2476,13 @@ function NumberKeyboard(Event, thisdom) {
 			$('#KeyboardInput').val(inidata.OrderAndTables.PersonNum);
 		}
     	
+    	
     	var inputdom = layero.find('#KeyboardInput').focus();
     	var subBtn = layero.find('.subBtn');
+    	
+    	layero.find('.clearBtn').on('click',function(){
+    		inputdom.val('');
+    	})
     	
     	//输入字符判断  是否是数字
     	inputdom.bind('input propertychange', function (e) {
@@ -2555,14 +2564,13 @@ function NumberKeyboard(Event, thisdom) {
 function EditName(thisdom) {
 	if($(thisdom).hasClass('Disable'))return false;
 	
-    layer.closeAll('page');
+//  layer.closeAll('page');
     var Projectdom = $('#ProjectLists_view tr.layui-this');
     if (Projectdom.length < 1) {
         layer.msg('请选择要操作的菜品');
         return false;
     }
 
-    
     var str = '<form action="" class="layui-form" id="KeyboardForm" style="padding:10px 50px 0 0">' +
 					'<div class="layui-form-item">' +
 					    '<label class="layui-form-label">菜品：</label>' +
