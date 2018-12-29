@@ -9,6 +9,7 @@ using Smooth.IoC.UnitOfWork;
 using SqlSugar;
 using System.Linq;
 using OPUPMS.Domain.Restaurant.Model;
+using OPUPMS.Domain.AuthorizeService;
 
 namespace OPUPMS.Domain.Restaurant.Repository
 {
@@ -78,7 +79,7 @@ VALUES  ( @Name , -- Name - nvarchar(200)
                         }).ObjToInt();
                         if (userinfo.Permission <= 0)
                         {
-                            //var permissionList=EnumToList.ConvertEnumToList()
+                            var permissionList = EnumToList.ConvertEnumToList(typeof(Permission));
                         }
                         if (needInit<=0)
                         {

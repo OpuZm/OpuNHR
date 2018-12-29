@@ -152,6 +152,10 @@
       <Project>{980612cf-5145-4b66-9632-ba465daed5c0}</Project>
       <Name>Starts2000</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\OPUPMS.Domain\OPUPMS.Domain.AuthorizeService\OPUPMS.Domain.AuthorizeService.csproj">
+      <Project>{3e63dc69-3f19-4f81-b2d0-d5294695d3c2}</Project>
+      <Name>OPUPMS.Domain.AuthorizeService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OPUPMS.Domain\OPUPMS.Domain.Base\OPUPMS.Domain.Base.csproj">
       <Project>{92cfcdbe-99df-460b-9375-9de7c431145c}</Project>
       <Name>OPUPMS.Domain.Base</Name>

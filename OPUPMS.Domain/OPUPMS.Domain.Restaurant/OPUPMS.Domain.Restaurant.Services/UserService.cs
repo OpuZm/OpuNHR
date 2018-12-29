@@ -37,19 +37,19 @@ namespace OPUPMS.Domain.Restaurant.Services
             if (user == null || user.UserId <= 0)
                 return user;
 
-            OperateLogInfo logInfo = new OperateLogInfo
-            {
-                OperateType = "Z_2",
-                OperateTime = DateTime.Now,
-                UserCode = user.UserCode,
-                Remark = "于" + DateTime.Now.ToString() +
-                    "登陆，电脑名称-" + Net.Host + "，登陆IP地址-" + Net.Ip
-            };
+            //OperateLogInfo logInfo = new OperateLogInfo
+            //{
+            //    OperateType = "Z_2",
+            //    OperateTime = DateTime.Now,
+            //    UserCode = user.UserCode,
+            //    Remark = "于" + DateTime.Now.ToString() +
+            //        "登陆，电脑名称-" + Net.Host + "，登陆IP地址-" + Net.Ip
+            //};
 
-            logInfo.OperateRemark = "登录";
-            logInfo.ActionName = "系统登录-" + user.UserName;
+            //logInfo.OperateRemark = "登录";
+            //logInfo.ActionName = "系统登录-" + user.UserName;
 
-            var logResult = await _userLogRepository.SaveLog("", logInfo);//写入操作日志记录
+            //var logResult = await _userLogRepository.SaveLog("", logInfo);//写入操作日志记录
 
             return user;
         }
