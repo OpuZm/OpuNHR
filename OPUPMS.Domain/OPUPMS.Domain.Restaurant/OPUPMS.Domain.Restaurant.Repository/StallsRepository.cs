@@ -25,7 +25,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     Name = req.Name,
                     Description = req.Description,
-                    Print_Id = req.Print_Id
+                    Print_Id = req.Print_Id,
+                    R_Company_Id = req.R_Company_Id
                 };
 
                 if (db.Insert(model) == null)
@@ -57,20 +58,31 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     }
 
                 }
+                //var data = db.Queryable<R_Stall>()
+                //    .JoinTable<Printer>((S, P) => P.Id == S.Print_Id && P.IsDelete == false, JoinType.Left)
+                //    .Select(@"S.*, P.Name AS PrinterName, 
+                //              MainProjectNum=(select count(0) from R_ProjectStall where R_Stall_Id=S.Id AND BillType = 2), 
+                //              DetailProjectNum=(select count(0) from R_ProjectStall where R_Stall_Id=S.Id AND BillType = 1)")
+                //    .Where(" S.IsDelete = 0 ").ToDataTable();
+
                 var data = db.Queryable<R_Stall>()
                     .JoinTable<Printer>((S, P) => P.Id == S.Print_Id && P.IsDelete == false, JoinType.Left)
                     .Select(@"S.*, P.Name AS PrinterName, 
                               MainProjectNum=(select count(0) from R_ProjectStall where R_Stall_Id=S.Id AND BillType = 2), 
                               DetailProjectNum=(select count(0) from R_ProjectStall where R_Stall_Id=S.Id AND BillType = 1)")
-                    .Where(" S.IsDelete = 0 ").ToDataTable();
-
-                if (data != null && data.Rows.Count > 0)
+                              .Where(" S.IsDelete = 0 ");
+                if (req.CompanyId > 0)
                 {
-                    DataView dtv = data.DefaultView;
+                    data.Where(" S.R_Company_Id=" + req.CompanyId);
+                }
+                var dataTable = data.ToDataTable();
+                if (data != null && dataTable.Rows.Count > 0)
+                {
+                    DataView dtv = dataTable.DefaultView;
                     dtv.Sort = order;
-                    data = dtv.ToTable();
-                    totalCount = data.Rows.Count;
-                    var rows = data.Rows.Cast<DataRow>();
+                    dataTable = dtv.ToTable();
+                    totalCount = dataTable.Rows.Count;
+                    var rows = dataTable.Rows.Cast<DataRow>();
                     var curRows = rows.Skip(req.offset).Take(req.limit).ToArray();
 
                     foreach (DataRow item in curRows)

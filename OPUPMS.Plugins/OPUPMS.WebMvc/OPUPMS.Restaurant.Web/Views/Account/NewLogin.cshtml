@@ -1,5 +1,6 @@
 ﻿@{
     Layout = null;
+    List<SCompanyDTO> companys = ViewBag.Companys as List<SCompanyDTO>;
 }
 <!DOCTYPE html>
 <html>
@@ -78,18 +79,29 @@
                         <input id="txtPassword" type="password" name="txtPassword" placeholder="登录密码" value="" onfocus="ShowKeyboard(this.name)" autocomplete="off">
                         <p class="form-error"></p>
                     </li>
+                    <li>
+                        <label>公司:</label>
+                        <select>
+                            @{ 
+                                foreach (var item in companys)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </li>
                     <div id="keyboard"></div>
                     @*<li class="yzm-group">
-                        <label>验证码:</label>
-                        <div class="yzm">
-                            <input id="txtCode" maxlength="4" type="text" size="8" placeholder="验证码">
-                            <div class="yzmimg">
-                                <img id="imgCode" class="authcode" src="~/Res/Account/GetAuthCode" width="80" height="25" />
-                                <a id="switchCode" href="#" onclick="changeCode();">换一张</a>
-                            </div>
-                        </div>
-                        <p class="form-error"></p>
-                    </li>*@
+            <label>验证码:</label>
+            <div class="yzm">
+                <input id="txtCode" maxlength="4" type="text" size="8" placeholder="验证码">
+                <div class="yzmimg">
+                    <img id="imgCode" class="authcode" src="~/Res/Account/GetAuthCode" width="80" height="25" />
+                    <a id="switchCode" href="#" onclick="changeCode();">换一张</a>
+                </div>
+            </div>
+            <p class="form-error"></p>
+        </li>*@
                     <li>
 
                         <button class="btn btn-default" lay-submit lay-filter="login" id="btnLogin" type="button">

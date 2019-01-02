@@ -67,6 +67,10 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     data = data.Where("CauseType=" + req.CauseType);
                 }
+                if (req.CompanyId > 0)
+                {
+                    data = data.Where("R_Company_Id=" + req.CompanyId);
+                }
                 totalCount = data.Count();
                 list = data.SelectToPageList<OrderDetailCauseListDTO>(
                     @"*,(CASE CauseType WHEN 1 THEN '赠送' WHEN 2 THEN '退菜' end) AS CauseTypeName",

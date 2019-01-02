@@ -23,17 +23,20 @@ namespace OPUPMS.Restaurant.Web.Controllers
         readonly IMarketRepository _marketRepository;
         readonly IExtendItemRepository _extendItemRepository;
         readonly IRestaurantRepository _restaurantRepository;
+        readonly ISCompanyRepository _scompanyRepository;
 
         public AccountController(IUserService userService,
             IMarketRepository marketRepository,
             IExtendItemRepository extendItemRepository,
-            IRestaurantRepository restaurantRepository
+            IRestaurantRepository restaurantRepository,
+            ISCompanyRepository scompanyRepository
             )
         {
             _userService = userService;
             _marketRepository = marketRepository;
             _extendItemRepository = extendItemRepository;
             _restaurantRepository = restaurantRepository;
+            _scompanyRepository = scompanyRepository;
         }
 
         public ActionResult Login()
@@ -43,6 +46,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult NewLogin()
         {
+            ViewBag.Companys = _scompanyRepository.GetGroupCompanys();
             return View();
         }
 

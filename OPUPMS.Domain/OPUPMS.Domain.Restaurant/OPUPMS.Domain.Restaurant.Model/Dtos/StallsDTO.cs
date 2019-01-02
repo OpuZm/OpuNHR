@@ -21,7 +21,9 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
     }
 
     public class StallsSearchDTO : BaseSearch
-    { }
+    {
+        public int CompanyId { get; set; }
+    }
 
     public class StallsListDTO
     {

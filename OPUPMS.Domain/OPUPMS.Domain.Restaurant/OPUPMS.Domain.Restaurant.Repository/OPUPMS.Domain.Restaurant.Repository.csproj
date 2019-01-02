@@ -98,6 +98,7 @@
     <Compile Include="Interfaces\ICustomConfigRepository.cs" />
     <Compile Include="Interfaces\IOrderDetailCauseRepository.cs" />
     <Compile Include="Interfaces\IRestaurantCategoryRepository.cs" />
+    <Compile Include="Interfaces\ISCompanyRepository.cs" />
     <Compile Include="IocManagerMoudles\RestaurantRepositoryInjectMoudle.cs" />
     <Compile Include="Interfaces\IAreaRepository.cs" />
     <Compile Include="Interfaces\IBoxRepository.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="RestaurantRepository.cs" />
     <Compile Include="RestaurantUserRepository.cs" />
     <Compile Include="PrinterRepository.cs" />
+    <Compile Include="SCompanyRepository.cs" />
     <Compile Include="StallsRepository.cs" />
     <Compile Include="StatisticsRepository.cs" />
     <Compile Include="TableRepository.cs" />

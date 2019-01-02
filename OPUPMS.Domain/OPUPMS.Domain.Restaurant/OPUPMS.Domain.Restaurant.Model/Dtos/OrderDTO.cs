@@ -1244,6 +1244,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
     public class OrderDetailCauseSearch : BaseSearch
     {
         public int CauseType { get; set; }
+        public int CompanyId { get; set; }
     }
 
     public class OrderDetailCauseListDTO : R_OrderDetailCause

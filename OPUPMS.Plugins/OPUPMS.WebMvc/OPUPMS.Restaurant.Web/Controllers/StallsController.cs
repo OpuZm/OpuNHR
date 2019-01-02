@@ -7,6 +7,7 @@ using OPUPMS.Domain.Restaurant.Model;
 using OPUPMS.Domain.Restaurant.Model.Dtos;
 using OPUPMS.Domain.Restaurant.Repository;
 using OPUPMS.Web.Framework.Core.Mvc;
+using OPUPMS.Infrastructure.Common.Operator;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -40,6 +41,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             if (req.ListType == 1)
                 req.offset = (req.offset - 1) * req.limit;
 
+            var operatorUser = OperatorProvider.Provider.GetCurrent();
+            req.CompanyId = Convert.ToInt32(operatorUser.CompanyId);
             var list = _stallsRepository.GetList(out int total, req);
             return Json(new { rows = list, total = total, code = 0, msg = "" }, JsonRequestBehavior.AllowGet);
         }
@@ -68,6 +71,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             if (ModelState.IsValid)
             {
+                var operatorUser = OperatorProvider.Provider.GetCurrent();
+                req.R_Company_Id = Convert.ToInt32(operatorUser.CompanyId);
                 try
                 {
                     if (req.Id > 0)

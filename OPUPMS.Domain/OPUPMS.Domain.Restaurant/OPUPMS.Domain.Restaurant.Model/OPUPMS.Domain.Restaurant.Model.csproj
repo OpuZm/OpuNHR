@@ -80,6 +80,7 @@
     <Compile Include="Dtos\ProjectDTO.cs" />
     <Compile Include="Dtos\RestaurantDTO.cs" />
     <Compile Include="Dtos\PrinterDTO.cs" />
+    <Compile Include="Dtos\SCompanyDTO.cs" />
     <Compile Include="Dtos\StallsDTO.cs" />
     <Compile Include="Dtos\StatisticsDTO.cs" />
     <Compile Include="Dtos\TableDTO.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Models\R_Table.cs" />
     <Compile Include="Models\R_WeixinPrint.cs" />
     <Compile Include="Models\R_WeixinPrintArea.cs" />
+    <Compile Include="Models\SCompany.cs" />
     <Compile Include="RestaurantConvertModelProfile.cs" />
     <Compile Include="Models\PublicEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
