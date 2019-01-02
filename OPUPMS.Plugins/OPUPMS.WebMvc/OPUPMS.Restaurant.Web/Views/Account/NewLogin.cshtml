@@ -71,12 +71,12 @@
                 <ul>
                     <li>
                         <label>用户名:</label>
-                        <input id="txtAccount" type="text" name="txtAccount" placeholder="用户名/手机号/邮箱" onfocus="ShowKeyboard(this.name)" value="" autocomplete="off">
+                        <input id="txtAccount" type="text" name="Account" placeholder="用户名/手机号/邮箱" onfocus="ShowKeyboard(this.name)" value="" autocomplete="off">
                         <p class="form-error"></p>
                     </li>
                     <li>
                         <label>登陆密码:</label>
-                        <input id="txtPassword" type="password" name="txtPassword" placeholder="登录密码" value="" onfocus="ShowKeyboard(this.name)" autocomplete="off">
+                        <input id="txtPassword" type="password" name="PassWord" placeholder="登录密码" value="" onfocus="ShowKeyboard(this.name)" autocomplete="off">
                         <p class="form-error"></p>
                     </li>
                     <li>
@@ -130,15 +130,13 @@
                 ShowKeyboard('txtAccount')
 
             form.on('submit(login)', function (data) {
-                var username = $("#txtAccount").val().trim();
-                var password = $("#txtPassword").val().trim();
+//              var username = $("#txtAccount").val().trim();
+//              var password = $("#txtPassword").val().trim();
 
-                
-                //嫌麻烦添加
-                if(username == '')username = 'admin'
-
+                console.log(data)
+					
                 //var code = $("#txtCode").val().trim();
-                if (username == "") {
+                if (data.field.Account == "") {
                     $("#txtAccount").focus();
                     layer.msg('请输入用户名/手机号/邮箱', { offset: '455px' });
                     return false;
@@ -150,10 +148,8 @@
                 //}
                 else {
                     $("#btnLogin").attr('disabled', 'disabled').html("loading...");
-                    var para = { Account: username, PassWord: password };
+                    var para = data.field;
                     var shoplist = '';
-                    
-                    
                     
                     $.ajax({
                         url: "/Res/Account/LoginIn",
