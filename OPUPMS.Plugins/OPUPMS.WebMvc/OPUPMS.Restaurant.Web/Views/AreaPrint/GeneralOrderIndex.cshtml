@@ -22,7 +22,7 @@
                     <label class="layui-form-label" style="width: 30px;">餐厅</label>
                     <div class="layui-input-inline">
                         <select class="form-control" id="Restaurant" name="Restaurant">
-                            <option value="0">全部</option>
+                            <!--<option value="0">全部</option>-->
                             @{
                                 if (Restaurants.Any())
                                 {
@@ -76,8 +76,7 @@
             laydate = layui.laydate;
 		
         var laydate = layui.laydate;
-		var para = {ListType: '1',PrintType:3};
-
+		var para = {ListType: '1',PrintType:3,Restaurant : $('#Restaurant').val() };
         var winw = $(window).width() - 50;
         table.render({
             elem: '#table' //指定原始表格元素选择器（推荐id选择器）

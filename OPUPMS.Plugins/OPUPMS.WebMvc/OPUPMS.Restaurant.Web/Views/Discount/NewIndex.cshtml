@@ -23,7 +23,7 @@
                     <label class="layui-form-label" style="width: 30px;">餐厅</label>
                     <div class="layui-input-inline">
                         <select class="form-control" id="Restaurant" name="Restaurant" lay-search>
-                            <option value="0">全部</option>
+                            <!--<option value="0">全部</option>-->
                             @{
                                 if (Restaurants.Any())
                                 {
@@ -94,7 +94,7 @@
             laydate = layui.laydate;
 		
         var laydate = layui.laydate;
-		var para = {ListType: '1'};
+		var para = {ListType: '1',Restaurant : $('#Restaurant').val() };
         //执行一个laydate实例
         laydate.render({
             elem: '#StartDate' //指定元素
