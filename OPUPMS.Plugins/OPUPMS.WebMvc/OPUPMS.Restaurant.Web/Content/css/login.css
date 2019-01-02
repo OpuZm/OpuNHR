@@ -31,11 +31,11 @@ input[placeholder], [placeholder], *[placeholder] { color:#555 ; }
 .login-banerimg{position: absolute;bottom:0;width: 80%;left: 10%;animation: loginbanerimg 0.5s;-moz-animation: loginbanerimg 0.5s;-webkit-animation: loginbanerimg 0.5s;-o-animation: loginbanerimg 0.5s;}
 .login-form{margin-right:20px;float: right;width:360px;position: relative; margin-top: 50px;animation: loginform 0.3s;-moz-animation: loginform 0.3s;-webkit-animation: loginform 0.3s;-o-animation: loginform 0.3s;}
 .login-form h4{font-size: 16px;line-height: 2;}
-.login-form ul{background-color: #fff;padding:40px 15px;position: absolute;right:0;width: 100%;border-radius: 5px;}
+.login-form ul{background-color: #fff;padding:20px 15px;position: absolute;right:0;width: 100%;border-radius: 5px;}
 .login-form ul li{position: relative;height: 40px;}
 
-.login-form ul li+li{margin-top: 40px;}
-.login-form ul li label{width: 80px;font-size: 16px;display: inline-block;text-align: right;}
+.login-form ul li+li{margin-top: 20px;}
+.login-form ul li label{width: 80px;font-size: 16px;display: inline-block;text-align: right;position:initial}
 .login-form ul li label:after{content: "";width: 100%;position: absolute;border-top: 2px solid #ddd;left: 0;bottom: 0;}
 .login-form ul li input{line-height: 32px;border:none;padding:0 5px;font-size: 18px;}
 .login-form ul li.error label{color:red;}
