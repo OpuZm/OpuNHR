@@ -6,209 +6,190 @@ using System.Threading.Tasks;
 
 namespace OPUPMS.Domain.Base.Models
 {
-    public class Czdm
+    public class SUsers
     {
         /// <summary>
         /// 操作代码 主键列
         /// </summary>        
-        public string Czdmdm00 { get; set; }
-
-        /// <summary>
-        /// 操作代码名称 不为null
-        /// </summary>
-        public string Czdmmc00 { get; set; }
-
-        /// <summary>
-        /// 部门
-        /// </summary>
-        public string Czdmbm00 { get; set; }
-
-        /// <summary>
-        /// 密码 二进制
-        /// </summary>
-        public byte[] Czdmmm00 { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int Czdmcddm { get; set; }
-
+        private int _id;
+        private string _usercode;
+        private string _username;
+        private string _userpwd;
+        private string _cardno;
+        private DateTime _birthdate;
+        private string _gender;
+        private int _status;
+        private string _email;
+        private string _phone;
+        private int? _creator;
+        private DateTime _createdtime;
+        private int _logincount;
+        private bool _isdeleted;
+        private DateTime _updatetime;
+        private string _remark;
+        private int? _usertype;
+        private int? _groupid;
+        private bool _istechnicalassistance;
+        private int? _restaurantauthority;
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmyh00 { get; set; }
-
-        /// <summary>
-        /// 组别
-        /// </summary>
-        public string Czdmzb00 { get; set; }
-
-        /// <summary>
-        /// IP地址
-        /// </summary>
-        public string Czdmip00 { get; set; }
-
+        public int Id
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmnyh0 { get; set; }
-
+        public string UserCode
+        {
+            set { _usercode = value; }
+            get { return _usercode; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmnzb0 { get; set; }
-
+        public string UserName
+        {
+            set { _username = value; }
+            get { return _username; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public DateTime? Czdmmmrq { get; set; }
-
+        public string UserPwd
+        {
+            set { _userpwd = value; }
+            get { return _userpwd; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public short Czdmmmts { get; set; }
-
+        public string CardNo
+        {
+            set { _cardno = value; }
+            get { return _cardno; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public short Czdmbdcs { get; set; }
-
+        public DateTime BirthDate
+        {
+            set { _birthdate = value; }
+            get { return _birthdate; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public short Czdmcgcs { get; set; }
-
+        public string Gender
+        {
+            set { _gender = value; }
+            get { return _gender; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public short Czdmffcs { get; set; }
-
-        /// <summary>
-        /// 属性
-        /// </summary>
-        public int Czdmattr { get; set; }
-
-        /// <summary>
-        /// 权限00
-        /// </summary>
-        public int Czdmqx00 { get; set; }
-
-        /// <summary>
-        /// 权限01
-        /// </summary>
-        public int Czdmqx01 { get; set; }
-
-        /// <summary>
-        /// 生日
-        /// </summary>
-        public DateTime? Czdmcsrq { get; set; }
-
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmaddr { get; set; }
-
+        public string Email
+        {
+            set { _email = value; }
+            get { return _email; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmtype { get; set; }
-
-        /// <summary>
-        /// 权限组别 不为null
-        /// </summary>
-        public string Czdmqxzb { get; set; }
-
-        /// <summary>
-        /// 其它密码
-        /// </summary>
-        public string Czdmpwd2 { get; set; }
-
-        /// <summary>
-        /// 属性设置2
-        /// </summary>
-        public int? Czdmatr2 { get; set; }
-
+        public string Phone
+        {
+            set { _phone = value; }
+            get { return _phone; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmfzxh { get; set; }
-
-        /// <summary>
-        /// 属性设置1
-        /// </summary>
-        public int? Czdmatr1 { get; set; }
-
-        /// <summary>
-        /// 登录卡号
-        /// </summary>
-        public string Czdmcard { get; set; }
-
-        /// <summary>
-        /// 赠送余额
-        /// </summary>
-        public decimal? Czdmzsye { get; set; }
-
-        /// <summary>
-        /// 赠送类型
-        /// </summary>
-        public string Czdmzslx { get; set; }
-
+        public int? Creator
+        {
+            set { _creator = value; }
+            get { return _creator; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmlslx { get; set; }
-
-        /// <summary>
-        /// 折扣类型
-        /// </summary>
-        public decimal? Czdmzkl0 { get; set; }
-
-        /// <summary>
-        /// 餐厅属性
-        /// </summary>
-        public int? Czdmposx { get; set; }
-
+        public DateTime CreatedTime
+        {
+            set { _createdtime = value; }
+            get { return _createdtime; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public int? Czdmsx02 { get; set; }
-
+        public int LoginCount
+        {
+            set { _logincount = value; }
+            get { return _logincount; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmbbqx { get; set; }
-
-        /// <summary>
-        /// 权限03
-        /// </summary>
-        public string Czdmqx03 { get; set; }
-
+        public bool IsDeleted
+        {
+            set { _isdeleted = value; }
+            get { return _isdeleted; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public int? Czdmsx03 { get; set; }
-
+        public DateTime UpdateTime
+        {
+            set { _updatetime = value; }
+            get { return _updatetime; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public int? Czdmsx04 { get; set; }
-
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmxfq0 { get; set; }
-
+        public int? UserType
+        {
+            set { _usertype = value; }
+            get { return _usertype; }
+        }
         /// <summary>
         /// 
         /// </summary>
-        public string Czdmslqx { get; set; }
-
+        public int? GroupId
+        {
+            set { _groupid = value; }
+            get { return _groupid; }
+        }
         /// <summary>
-        /// 取消金额
+        /// 
         /// </summary>
-        public decimal? Czdmqxje { get; set; }
-        public int Id { get; set; }
-        public int Czdmcyqx { get; set; }
-        public decimal Czdmmlje { get; set; }
+        public bool IsTechnicalAssistance
+        {
+            set { _istechnicalassistance = value; }
+            get { return _istechnicalassistance; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? RestaurantAuthority
+        {
+            set { _restaurantauthority = value; }
+            get { return _restaurantauthority; }
+        }
     }
 }

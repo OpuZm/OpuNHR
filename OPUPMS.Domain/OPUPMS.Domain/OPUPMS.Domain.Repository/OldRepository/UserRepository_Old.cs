@@ -20,11 +20,11 @@ namespace OPUPMS.Domain.Repository.OldRepository
 
         }
 
-        protected static readonly string GetByUserNameSql = @"SELECT * FROM czdm WHERE czdmmc00 = @Czdmmc00";
-        protected static readonly string GetByUserIdSql = @"SELECT * FROM czdm WHERE Id = @Id";
-        protected static readonly string GetByUserIdListSql = @"SELECT * FROM czdm WHERE Id IN (@IdList)";
-        protected static readonly string GetByUsersSql = @"SELECT * FROM czdm where czdmqxzb<>@czdmqxzb";
-        protected static readonly string UpdateUserSql = @"update czdm set czdmmm00=@Password where Id=@Id";
+        protected static readonly string GetByUserNameSql = @"SELECT * FROM SUsers WHERE UserName = @Czdmmc00";
+        protected static readonly string GetByUserIdSql = @"SELECT * FROM SUsers WHERE Id = @Id";
+        protected static readonly string GetByUserIdListSql = @"SELECT * FROM SUsers WHERE Id IN (@IdList)";
+        protected static readonly string GetByUsersSql = @"SELECT * FROM SUsers where UserType & @UserType>0";
+        protected static readonly string UpdateUserSql = @"update SUsers set UserPwd=@Password where Id=@Id";
 
         public virtual UserInfo GetByUserName(string token, string userName,int companyId)
         {
@@ -94,11 +94,11 @@ namespace OPUPMS.Domain.Repository.OldRepository
             return model;
         }
 
-        List<UserInfo> IUserRepository_Old.GetByUsersSql(string czdmqxzb)
+        List<UserInfo> IUserRepository_Old.GetByUsersSql(int userType)
         {
             using (var session = Factory.Create<ISession>())
             {
-                var result = session.Query<CzdmModel>(GetByUsersSql, new { czdmqxzb = czdmqxzb });
+                var result = session.Query<CzdmModel>(GetByUsersSql, new { UserType = userType });
 
                 var infoList = AutoMapper.Mapper.Map<IEnumerable<CzdmModel>, List<UserInfo>>(result);
                 return infoList;

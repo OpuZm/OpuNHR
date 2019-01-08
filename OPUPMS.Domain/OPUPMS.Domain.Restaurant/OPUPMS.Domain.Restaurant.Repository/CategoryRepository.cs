@@ -221,7 +221,12 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     .JoinTable<R_Category>((s1, s2) => s1.PId == s2.Id && s2.IsDelete == false && s1.R_Company_Id==companyId)
                     .Select("s1.*,s2.Name as Pname")
                     .Where(" s1.IsDelete = 0  ");
-                    //.OrderBy(order).ToDataTable();
+                //.OrderBy(order).ToDataTable();
+
+                if (req.CompanyId > 0)
+                {
+                    data = data.Where("s1.R_Company_Id ="+req.CompanyId);
+                }
                 if (req.Pid > 0)
                 {
                     data = data.Where("s1.Pid=" + req.Pid);

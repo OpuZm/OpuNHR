@@ -161,9 +161,9 @@ namespace OPUPMS.Domain.Restaurant.Repository
                                 CyddMxId = s3.Id
                             })
                         .ToList();
-                    string sql = @"select s1.*,s2.czdmmc00 AS CreateUserName,case s1.CyddMxCzType when 1 then '赠送' 
+                    string sql = @"select s1.*,s2.UserName AS CreateUserName,case s1.CyddMxCzType when 1 then '赠送' 
                         when 2 then '退菜' when 3 then '转入' when 4 then '转出' else '' end as CyddMxCzTypeName from R_OrderDetailRecord s1 
-                        left join czdm s2 on s1.CreateUser = s2.Id where s1.IsCalculation = 1 and s1.R_OrderDetail_Id = ";
+                        left join SUsers s2 on s1.CreateUser = s2.Id where s1.IsCalculation = 1 and s1.R_OrderDetail_Id = ";
                     foreach (var item in list)
                     {
                         if (item.CyddMxType == CyddMxType.餐饮项目)
@@ -2249,10 +2249,10 @@ req.PersonNum / orderTableCount : req.PersonNum;    //台号人均
         {
             using (var db = new SqlSugarClient(Connection))
             {
-                string sql = "select a.R_Table_Id,c.Name as TableName,f.Name as Restaurant, b.Id AS OrderId, b.OrderNo,a.PersonNum,b.R_Restaurant_Id, d.czdmmc00 AS UserName,e.Name as OrderSourceType,b.CreateDate,a.IsLock,b.CyddStatus,a.IsControl,b.R_Market_Id as MarketId from R_OrderTable  a " +
+                string sql = "select a.R_Table_Id,c.Name as TableName,f.Name as Restaurant, b.Id AS OrderId, b.OrderNo,a.PersonNum,b.R_Restaurant_Id, d.UserName AS UserName,e.Name as OrderSourceType,b.CreateDate,a.IsLock,b.CyddStatus,a.IsControl,b.R_Market_Id as MarketId from R_OrderTable  a " +
                     " left join R_Order b on a.R_Order_Id = b.Id " +
                     " left join R_Table c on c.Id = a.R_Table_Id " +
-                    " left join czdm d on d.Id=b.CreateUser " +
+                    " left join SUsers d on d.Id=b.CreateUser " +
                     " left join ExtendItems e on e.Id = b.CyddOrderSource " +
                     " left join R_Restaurant f on f.Id = b.R_Restaurant_Id " +
                     " where a.Id = " + orderTableId;
@@ -3358,15 +3358,15 @@ req.PersonNum / orderTableCount : req.PersonNum;    //台号人均
                     .JoinTable<R_OrderMainPay>((s1, s2) => s1.Id == s2.R_Order_Id)
                     .JoinTable<R_OrderMainPay, R_Market>((s1, s2, s3) => s2.R_Market_Id == s3.Id)
                     .JoinTable<R_OrderMainPay, R_Invoice>((s1, s2, s4) => s2.Id == s4.R_OrderMainPay_Id,JoinType.Inner)
-                    .JoinTable<R_Invoice,Czdm>((s1,s4,s5)=>s4.CreateUser==s5.Id)
+                    .JoinTable<R_Invoice,SUsers>((s1,s4,s5)=>s4.CreateUser==s5.Id)
                     .Where<R_Invoice>((s1, s4) => s1.Id == orderId && s4.IsDelete == false)
-                    .Select<R_OrderMainPay, R_Market, R_Invoice, Czdm,InvoiceListDTO>
+                    .Select<R_OrderMainPay, R_Market, R_Invoice, SUsers, InvoiceListDTO>
                     ((s1, s2, s3, s4, s5) => new InvoiceListDTO()
                     {
                         Id = s4.Id,
                         BillDate = s4.BillDate,
                         CreateDate = s4.CreateDate,
-                        CreateUserName=s5.Czdmmc00,
+                        CreateUserName=s5.UserName,
                         Number=s4.Number,
                         OrderMainPayMarket=s3.Name,
                         OrderMainPayDate=s2.BillDate,

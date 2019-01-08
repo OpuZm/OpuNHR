@@ -14,6 +14,7 @@ using OPUPMS.Infrastructure.Common.Security;
 using OPUPMS.Restaurant.Web.Models;
 using OPUPMS.Web.Framework.Core.Mvc;
 using OPUPMS.Domain.Base.Repositories;
+using OPUPMS.Domain.Base.Models;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -133,7 +134,23 @@ namespace OPUPMS.Restaurant.Web.Controllers
                             #region 账务日期
                             var businessDate = _extendItemRepository.GetModelList(Convert.ToInt32(mUser.CompanyId), 10003).FirstOrDefault();
                             if (businessDate == null)
-                                throw new Exception("餐饮账务日期尚未初始化，请联系管理员");
+                            {
+                                string initDate = DateTime.Now.ToString("yyyy-MM-dd");
+                                businessDate = new Domain.Base.Dtos.ExtendItemDto();
+                                businessDate.ItemValue = initDate;
+                                //throw new Exception("餐饮账务日期尚未初始化，请联系管理员");
+                                ExtendItemModel itemModel = new ExtendItemModel()
+                                {
+                                    Code="1",
+                                    TypeId=10003,
+                                    ItemValue=initDate,
+                                    CompanyId=Convert.ToInt32(mUser.CompanyId),
+                                    Sort=0,
+                                    Name="餐饮账务日期"
+                                };
+                                _extendItemRepository.AddModel(itemModel);
+                            }
+                                
 
                             DateTime accDate = DateTime.Today;
 

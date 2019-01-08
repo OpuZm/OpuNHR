@@ -23,6 +23,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
     public class CategorySearchDTO : BaseSearch
     {
         public int Pid { get; set; }
+        public int CompanyId { get; set; }
     }
 
     public class CategoryListDTO

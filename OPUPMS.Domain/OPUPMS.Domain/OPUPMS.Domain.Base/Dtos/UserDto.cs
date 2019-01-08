@@ -12,6 +12,10 @@ namespace OPUPMS.Domain.Base.Dtos
     /// </summary>
     public class UserDto
     {
+        public UserDto()
+        {
+            ManagerRestaurantList = new List<int>();
+        }
         public int UserId { get; set; }
         public string UserCode { get; set; }
 
@@ -30,5 +34,6 @@ namespace OPUPMS.Domain.Base.Dtos
         public string ManagerRestaurant { get; set; }
         public decimal MinDiscountValue { get; set; }
         public decimal MaxClearValue { get; set; }
+        public List<int> ManagerRestaurantList { get; set; }
     }
 }

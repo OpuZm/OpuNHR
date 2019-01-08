@@ -30,6 +30,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             if (req.ListType == 1)
                 req.offset = (req.offset - 1) * req.limit;
 
+            var currentUser = OperatorProvider.Provider.GetCurrent();
+            req.CompanyId = currentUser.CompanyId.ToInt();
             var list = _categoryRepository.GetList(out int total, req);
             return NewtonSoftJson(new
             {

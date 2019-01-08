@@ -114,12 +114,12 @@ namespace OPUPMS.Domain.Restaurant.Repository
             }
         }
 
-        public List<PayMethodListDTO> GetParents()
+        public List<PayMethodListDTO> GetParents(int companyId)
         {
             using (var db = new SqlSugarClient(Connection))
             {
                 var data = db.Sqlable().From<R_PayMethod>("s1")
-                    .Where("s1.Pid=0 and s1.IsDelete=0")
+                    .Where($"s1.Pid=0 and s1.IsDelete=0 and (s1.R_Company_Id=0 or s1.R_Company_Id={companyId})")
                     .SelectToList<PayMethodListDTO>("s1.*");
                 return data;
             }

@@ -20,8 +20,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
             {
                 List<OrderRecordDetailDTO> list = new List<OrderRecordDetailDTO>();
                 string sql = "SELECT * FROM(" +
-                    "    SELECT RE.*, U.czdmmc00 AS UserName, ISNULL(T.Id, 0) AS TableId, T.Name AS TableName FROM dbo.R_OrderRecord RE" +
-                    "    LEFT JOIN dbo.czdm U ON U.Id = RE.CreateUser" +
+                    "    SELECT RE.*, U.UserName AS UserName, ISNULL(T.Id, 0) AS TableId, T.Name AS TableName FROM dbo.R_OrderRecord RE" +
+                    "    LEFT JOIN dbo.SUsers U ON U.Id = RE.CreateUser" +
                     "    LEFT JOIN dbo.R_OrderTable OT ON OT.Id = RE.R_OrderTable_Id AND RE.R_OrderTable_Id > 0" +
                     "    LEFT JOIN dbo.R_Table T ON T.Id = OT.R_Table_Id AND OT.R_Table_Id > 0" +
                     "  	 ) Record " +

@@ -281,7 +281,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             //var sellerResult = _oldUserRepository.GetAll<Smooth.IoC.UnitOfWork.ISession>();
             //var sellerList = AutoMapperExtend<CzdmModel, UserInfo>.ConvertToList(sellerResult, new List<UserInfo>());
             var sellerList = _orderRepository.GetDepartList();
-            var sales = _oldUserRepository.GetByUsersSql("ZZ");
+            var sales = _oldUserRepository.GetByUsersSql(4);
             List<TableListDTO> conditionList = null;
             if (orderInfo != null)
             {

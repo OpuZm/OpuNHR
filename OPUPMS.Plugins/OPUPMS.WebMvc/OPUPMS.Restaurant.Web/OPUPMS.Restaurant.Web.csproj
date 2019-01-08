@@ -1170,6 +1170,7 @@
     <Compile Include="Controllers\StallsController.cs" />
     <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\TableController.cs" />
+    <Compile Include="Controllers\UserRestaurantController.cs" />
     <Compile Include="Controllers\WeiXinController.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="MyHub.cs" />
@@ -1387,6 +1388,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Api\" />
+    <Folder Include="Views\UserRestaurant\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\OPUPMS.Domain\OPUPMS.Domain.Restaurant\OPUPMS.Domain.Restaurant.Model\OPUPMS.Domain.Restaurant.Model.csproj">

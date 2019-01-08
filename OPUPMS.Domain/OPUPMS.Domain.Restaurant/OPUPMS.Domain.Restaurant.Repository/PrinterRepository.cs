@@ -38,7 +38,13 @@ namespace OPUPMS.Domain.Restaurant.Repository
             {
                 //string order = "Id desc";
                 List<PrinterDTO> list = new List<PrinterDTO>();
-                var models = db.Queryable<Printer>().Where(p => p.IsDelete == false).ToList();
+                //var models = db.Queryable<Printer>().Where(p => p.IsDelete == false).ToList();
+                var data = db.Queryable<Printer>().Where(p => p.IsDelete == false);
+                if (req.CompanyId > 0)
+                {
+                    data = data.Where(p => p.R_Company_Id == req.CompanyId);
+                }
+                var models = data.ToList();
                 list = ConvertToInfoList(models);
                 total = list.Count;
 

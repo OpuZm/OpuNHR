@@ -8,7 +8,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
         bool Create(PayMethodCreateDTO req);
         List<PayMethodListDTO> GetList(out int total, PayMethodSearchDTO req);
         bool Update(PayMethodCreateDTO req);
-        List<PayMethodListDTO> GetParents();
+        List<PayMethodListDTO> GetParents(int companyId);
         PayMethodCreateDTO GetModel(int id);
         bool Delete(int id);
         List<PayMethodListDTO> GetList();

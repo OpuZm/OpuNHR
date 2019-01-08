@@ -58,5 +58,6 @@ namespace OPUPMS.Domain.Restaurant.Model
         public bool IsDelete { get; set; }
         public PrintStatus RealStatus { get; set; }
         public string RealStatusRemark { get; set; }
+        public int R_Company_Id { get; set; }
     }
 }

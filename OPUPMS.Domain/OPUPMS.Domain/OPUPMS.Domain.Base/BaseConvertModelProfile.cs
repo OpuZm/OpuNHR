@@ -49,7 +49,7 @@ namespace OPUPMS.Domain.Base
 
             #region 类型代码对象映射
             CreateMap<LxdmModel, TypeCodeInfo>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.lxdmid00))
                     .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Lxdmdm00))
                     .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Lxdmdz00))
                     .ForMember(dest => dest.AgreementRemark, opt => opt.MapFrom(src => src.Lxdmxybz))

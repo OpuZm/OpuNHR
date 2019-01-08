@@ -210,9 +210,9 @@ namespace OPUPMS.Domain.Base.Models
         }
     }
 
-    public class UserRestaurant
-    {
-        public int UserId { get; set; }
-        public int RestaurantId { get; set; }
-    }
+    //public class UserRestaurant
+    //{
+    //    public int UserId { get; set; }
+    //    public int RestaurantId { get; set; }
+    //}
 }

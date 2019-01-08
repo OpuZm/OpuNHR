@@ -463,5 +463,7 @@ namespace OPUPMS.Domain.Base.Models
             get;
             set;
         }
+
+        public int lxdmid00 { get; set; }
     }
 }

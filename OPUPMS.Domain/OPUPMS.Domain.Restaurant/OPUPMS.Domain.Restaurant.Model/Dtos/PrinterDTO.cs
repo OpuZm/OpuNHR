@@ -27,10 +27,14 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public string Code { get; set; }
 
         public bool IsDelete { get; set; }
+
+        public int R_Company_Id { get; set; }
     }
 
     public class PrinterSearchDTO : BaseSearch
-    { }
+    {
+        public int CompanyId { get; set; }
+    }
 
     public class PrinterProject:PrinterDTO
     {

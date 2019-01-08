@@ -28,7 +28,7 @@ namespace OPUPMS.Domain.Base.Repositories.OldRepositories
         /// <param name="userIds"></param>
         /// <returns></returns>
         List<UserInfo> GetByUserIds(List<int> userIds);
-        List<UserInfo> GetByUsersSql(string czdmqxzb);
+        List<UserInfo> GetByUsersSql(int userType);
         bool UpdatePassWord(int id, string passWord);
     }
 }

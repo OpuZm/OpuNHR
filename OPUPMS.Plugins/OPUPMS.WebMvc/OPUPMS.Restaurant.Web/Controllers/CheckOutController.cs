@@ -83,7 +83,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 var currentUser = OperatorProvider.Provider.GetCurrent();
                 checkoutReqDTO.OrderTableStatus = OrderTableStatus.未结;
                 CheckOutOrderDTO checkoutOrder = GetCheckOutOrder(checkoutReqDTO);
-                var user = _userService.GetUserInfo(new VerifyUserDTO() { UserId = currentUser.UserId });
+                var user = _userService.GetUserInfo(new VerifyUserDTO() { UserId = currentUser.UserId,CompanyId= (currentUser.CompanyId).ToInt() });
                 //var payTypeList =  EnumToList.ConvertEnumToList(typeof(CyddPayType));
                 var payTypeList = _payMethodRepository.GetList();
 

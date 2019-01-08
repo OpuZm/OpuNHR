@@ -91,10 +91,10 @@ namespace OPUPMS.Domain.Restaurant.Repository
             using (var db = new SqlSugarClient(Connection))
             {
                 var list = db.SqlQuery<OrderPayRecordDTO>($@" SELECT P.*, P.R_Market_Id AS MarketId, P.R_OrderMainPay_Id AS OrderMainPayId,
-                        ISNULL(C.czdmmc00, '') AS CreateUserName,
+                        ISNULL(C.UserName, '') AS CreateUserName,
                         RP.Name as PayTypeName
                         FROM R_OrderPayRecord P 
-                        LEFT JOIN dbo.czdm C ON C.Id = P.CreateUser 
+                        LEFT JOIN dbo.SUsers C ON C.Id = P.CreateUser 
                         left join R_PayMethod RP on P.CyddPayType = RP.Id
                         WHERE P.R_Order_Id = @orderId", new { orderId = orderId });
                 foreach (var item in list)
@@ -128,9 +128,9 @@ namespace OPUPMS.Domain.Restaurant.Repository
             {
                 var list = db.SqlQuery<OrderMainPayDTO>($@"SELECT P.*, ISNULL(P.R_Discount_Id, 0) AS DiscountId, 
                             ISNULL(P.R_Market_Id, 0) AS MarketId, ISNULL(M.Name, '') AS MarketName, 
-                            ISNULL(C.czdmmc00, '') AS CreateUserName 
+                            ISNULL(C.UserName, '') AS CreateUserName 
                         FROM dbo.R_OrderMainPay P 
-                        LEFT JOIN dbo.czdm C ON C.Id = P.CreateUser 
+                        LEFT JOIN dbo.SUsers C ON C.Id = P.CreateUser 
                         LEFT JOIN dbo.R_Market M ON M.Id = P.R_Market_Id
                         WHERE P.R_Order_Id = @orderId", new { orderId = orderId });
                 var orderTableList = db.Queryable<R_OrderTable>().Where(p => p.R_Order_Id == orderId).ToList();

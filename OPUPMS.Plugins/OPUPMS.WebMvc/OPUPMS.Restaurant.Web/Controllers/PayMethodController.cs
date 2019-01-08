@@ -25,13 +25,15 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Parents= _payMethodRepository.GetParents();
+            var operatorUser = OperatorProvider.Provider.GetCurrent();
+            ViewBag.Parents= _payMethodRepository.GetParents(Convert.ToInt32(operatorUser.CompanyId));
             return View();
         }
 
         public ActionResult Edit(int id=0)
         {
-            ViewBag.Parents = _payMethodRepository.GetParents();
+            var operatorUser = OperatorProvider.Provider.GetCurrent();
+            ViewBag.Parents = _payMethodRepository.GetParents(Convert.ToInt32(operatorUser.CompanyId));
             ViewBag.Model = _payMethodRepository.GetModel(id);
             return View();
         }
@@ -85,7 +87,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult GetParents()
         {
-            var res= _payMethodRepository.GetParents();
+            var operatorUser = OperatorProvider.Provider.GetCurrent();
+            var res= _payMethodRepository.GetParents(Convert.ToInt32(operatorUser.CompanyId));
             return Json(res, JsonRequestBehavior.AllowGet);
         }
 

@@ -20,9 +20,9 @@ namespace OPUPMS.Domain.Repository.OldRepository
         {
 
         }
-        protected static readonly string GetDefaultSql = @"SELECT Id, lxdmmc00 FROM Lxdm WHERE lxdmgzbz IN('Y','X')";
-        protected static readonly string GetByStatusSql = @"SELECT Id, lxdmmc00 FROM Lxdm WHERE lxdmgzbz = @Status";
-        protected static readonly string GetByIdSql = @"SELECT * FROM Lxdm WHERE Id = @Id";
+        protected static readonly string GetDefaultSql = @"SELECT lxdmid00, lxdmmc00 FROM Lxdm WHERE lxdmgzbz IN('Y','X')";
+        protected static readonly string GetByStatusSql = @"SELECT lxdmid00, lxdmmc00 FROM Lxdm WHERE lxdmgzbz = @Status";
+        protected static readonly string GetByIdSql = @"SELECT * FROM Lxdm WHERE lxdmid00 = @Id";
         
         #region 自动映射转换
 

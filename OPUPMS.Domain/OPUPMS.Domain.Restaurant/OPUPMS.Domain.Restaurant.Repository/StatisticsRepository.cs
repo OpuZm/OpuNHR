@@ -183,7 +183,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     .JoinTable<R_Order>((s1, s2) => s1.R_Order_Id == s2.Id)
                     .JoinTable<R_Order, R_Restaurant>((s1, s2, s3) => s2.R_Restaurant_Id == s3.Id)
                     .JoinTable<R_Market>((s1, s4) => s1.R_Market_Id == s4.Id)
-                    .JoinTable<Czdm>((s1, s5) => s1.CreateUser == s5.Id)
+                    .JoinTable<SUsers>((s1, s5) => s1.CreateUser == s5.Id)
                     .Where<R_Order>((s1, s2) => s2.R_Restaurant_Id == req.RestaurantId && s2.IsDelete==false
                     && (req.StartDate.Value == null || s1.BillDate == req.StartDate.Value)
                     && (s1.CyddJzType==CyddJzType.定金 || s1.CyddJzType==CyddJzType.消费 || s1.CyddJzType==CyddJzType.转结 || s1.CyddJzType==CyddJzType.找零))

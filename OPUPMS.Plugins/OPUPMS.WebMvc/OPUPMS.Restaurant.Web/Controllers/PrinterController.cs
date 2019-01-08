@@ -5,6 +5,7 @@ using OPUPMS.Domain.AuthorizeService;
 using OPUPMS.Domain.Restaurant.Model.Dtos;
 using OPUPMS.Domain.Restaurant.Repository;
 using OPUPMS.Web.Framework.Core.Mvc;
+using OPUPMS.Infrastructure.Common.Operator;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -28,6 +29,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             if (req.ListType == 1)
                 req.offset = (req.offset - 1) * req.limit;
 
+            var currentUser = OperatorProvider.Provider.GetCurrent();
+            req.CompanyId = Convert.ToInt32(currentUser.CompanyId);
             var list = _printerRepository.GetList(req, out int total);
             return Json(new { rows = list, total = total, code = 0, msg = "" }, JsonRequestBehavior.AllowGet);
         }
@@ -54,6 +57,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             if (ModelState.IsValid)
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
                 try
                 {
                     if (req.Id > 0)
@@ -62,6 +66,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     }
                     else
                     {
+                        req.R_Company_Id = Convert.ToInt32(currentUser.CompanyId);
                         res.Data = _printerRepository.Create(req);
                     }
                 }

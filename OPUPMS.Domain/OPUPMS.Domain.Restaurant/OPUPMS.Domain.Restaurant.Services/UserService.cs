@@ -56,7 +56,7 @@ namespace OPUPMS.Domain.Restaurant.Services
 
         public List<UserDto> GetSales()
         {
-            var res = _userRepository.GetByUsersSql("ZZ").Select(p=> new UserDto()
+            var res = _userRepository.GetByUsersSql(4).Select(p=> new UserDto()
             {
                 UserId=p.UserId,
                 UserName=p.UserName,
@@ -154,5 +154,7 @@ namespace OPUPMS.Domain.Restaurant.Services
             }
             return result;
         }
+
+        
     }
 }

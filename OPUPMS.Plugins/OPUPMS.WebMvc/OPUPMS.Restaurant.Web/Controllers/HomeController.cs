@@ -885,7 +885,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     RestaurantId = operatorUser.DepartmentId.ToInt(),
                     CompanyId = operatorUser.CompanyId.ToInt(),
                 });
-            var sales = _oldUserRepository.GetByUsersSql("ZZ");
+            var sales = _oldUserRepository.GetByUsersSql(4);
             ViewBag.SellerList = sellerList;
             ViewBag.TableList = emptyTableList;
             ViewBag.CustomerList = customerList;

@@ -10,6 +10,7 @@ using SqlSugar;
 using System.Linq;
 using OPUPMS.Domain.Restaurant.Model;
 using OPUPMS.Domain.AuthorizeService;
+using OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles;
 
 namespace OPUPMS.Domain.Restaurant.Repository
 {
@@ -21,6 +22,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
 
         private readonly static string ByNameORCodeSql = @"SELECT * FROM SUsers WHERE (UserCode = @UserCode OR UserName = @UserName)";
         private readonly static string GetUserRestaurants = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s1.R_Company_Id=@R_Company_Id and s2.UserId=@UserId";
+        private readonly static string GetUserAllRestaurants = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s2.UserId=@UserId";
         private readonly static string IsHaveRestaurant = @"SELECT count(0) FROM dbo.R_Restaurant where R_Company_Id=@CompanyId";
         private readonly static string GetAllRestaurant = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s1.R_Company_Id=@R_Company_Id";
         private readonly static string InsertRestaurantInit = @"INSERT INTO dbo.R_Restaurant
@@ -85,11 +87,11 @@ VALUES  ( @Name , -- Name - nvarchar(200)
                         }
                         if (needInit<=0)
                         {
-                            var restaurantId = session.Execute(InsertRestaurantInit, new R_Restaurant()
+                            var restaurantId = (session.ExecuteScalar(InsertRestaurantInit, new R_Restaurant()
                             {
                                 Name="初始化餐厅",
                                 R_Company_Id=companyId
-                            });
+                            })).ObjToInt();
                             var marketId = session.Execute(InsertMarket, new R_Market()
                             {
                                 Name="早市",
@@ -135,14 +137,25 @@ VALUES  ( @Name , -- Name - nvarchar(200)
 
         public override UserInfo GetByUserId(int userId)
         {
-            return base.GetByUserId(userId);
+            var userinfo = base.GetByUserId(userId);
+            if (userinfo!=null)
+            {
+                using (var session = Factory.Create<ISession>(""))
+                {
+                    var userRestaurants = session.Query<UserRestaurant>(GetUserAllRestaurants, new
+                    {
+                        UserId = userinfo.UserId
+                    });
+                    userinfo.ManagerRestaurant = string.Join(",", userRestaurants.Select(p => p.RestaurantId));
+                }
+            }
+            return userinfo;
+            //return base.GetByUserId(userId);
         }
 
         public override List<UserInfo> GetByUserIds(List<int> userIds)
         {
             return base.GetByUserIds(userIds);
         }
-
-
     }
 }

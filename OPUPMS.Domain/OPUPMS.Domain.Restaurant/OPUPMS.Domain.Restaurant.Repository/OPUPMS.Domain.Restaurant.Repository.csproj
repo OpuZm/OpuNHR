@@ -90,11 +90,13 @@
     <Compile Include="BoxRepository.cs" />
     <Compile Include="CategoryRepository.cs" />
     <Compile Include="CheckOutRepository.cs" />
+    <Compile Include="CompanyUserRepository.cs" />
     <Compile Include="CustomConfigRepository.cs" />
     <Compile Include="CyxmRepository.cs" />
     <Compile Include="DiscountRepository.cs" />
     <Compile Include="ExtendRepository.cs" />
     <Compile Include="Interfaces\IAutoAdditionRepository.cs" />
+    <Compile Include="Interfaces\ICompanyUserRepository.cs" />
     <Compile Include="Interfaces\ICustomConfigRepository.cs" />
     <Compile Include="Interfaces\IOrderDetailCauseRepository.cs" />
     <Compile Include="Interfaces\IRestaurantCategoryRepository.cs" />

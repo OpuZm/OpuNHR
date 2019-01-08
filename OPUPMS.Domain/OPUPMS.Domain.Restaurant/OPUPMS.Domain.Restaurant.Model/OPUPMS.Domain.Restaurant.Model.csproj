@@ -67,6 +67,7 @@
     <Compile Include="Dtos\BoxDTO.cs" />
     <Compile Include="Dtos\CategoryDTO.cs" />
     <Compile Include="Dtos\CheckOutDTO.cs" />
+    <Compile Include="Dtos\CompanyUserDTO.cs" />
     <Compile Include="Dtos\CustomConfigDTO.cs" />
     <Compile Include="Dtos\DiscountDTO.cs" />
     <Compile Include="Dtos\ExtendDTO.cs" />
