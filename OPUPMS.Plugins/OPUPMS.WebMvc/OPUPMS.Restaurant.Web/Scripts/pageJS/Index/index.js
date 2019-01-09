@@ -132,6 +132,12 @@ var classdata = [{
                 "Url": "/Res/Restaurant/NewIndex"
             },
             {
+                "Id": "Page_Sys11",
+                "Name": "用户管理",
+                "Icon": "&#xe64e;",
+                "Url": "/Res/UserRestaurant/Index"
+            },
+            {
                 "Id": "Page_Sys12",
                 "Name": "区域管理",
                 "Icon": "&#xe64e;",
