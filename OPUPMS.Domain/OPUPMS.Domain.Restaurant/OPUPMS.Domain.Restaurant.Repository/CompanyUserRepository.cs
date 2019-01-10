@@ -65,7 +65,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 }
                 totalCount = data.Count();
                 list = data.SelectToPageList<UserDto>(
-                    @"s1.*",
+                    @"s1.*,s1.Id as UserId",
                     order, (req.offset / req.limit) + 1, req.limit, null);
                 total = totalCount;
 

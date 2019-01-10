@@ -42,6 +42,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult GetCompanyUsers(CompanyUserSearchDTO req)
         {
+            if (req.ListType == 1)
+                req.offset = (req.offset - 1) * req.limit;
+
             var currentUser = OperatorProvider.Provider.GetCurrent();
             req.CompanyId = currentUser.CompanyId.ToInt();
             var list = companyUserRepository.GetCompanyUsers(out int total, req);

@@ -20,12 +20,5 @@ namespace OPUPMS.Domain.Base.Dtos
         public decimal Balance { get; set; }
         public string Telephone { get; set; }
         public string ChineseName { get; set; }
-        //Id = item.Id,
-        //                        MemberCardNo = item.MemberCardNo,
-        //                        MemberIdentityNo = item.IdTypeNo,
-        //                        MemberPwbByte = item.Password,
-        //                        CardBalance = item.Balance,
-        //                        MemberPhoneNo = item.Telephone,
-        //                        MemberName = item.ChineseName
     }
 }

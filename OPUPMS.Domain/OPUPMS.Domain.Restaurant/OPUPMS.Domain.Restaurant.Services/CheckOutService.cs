@@ -762,11 +762,19 @@ namespace OPUPMS.Domain.Restaurant.Services
                         {
                             if (item.CyddPayType == (int)CyddPayType.会员卡)
                             {
+                                try
+                                {
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("会员卡入账调取收账：" + ex.Message);
+                                }
+
                                 if (!EnabelGroupFlag)
                                 {//若已启用集团会员库，里面则不再执行，本地库会员消费记录已在插入集团库时一并插入到本地库
                                     try
                                     {
-                                        //var memberInfo = ApplyChangeMemberToDb(item.SourceId, item.Pwd, req.OperateUserCode,item.PayAmount, string.Format("{0}-{1} {2}", resObj.Name, marketObj.Name, memberRemark + item.Remark), false, db,accDate);
                                         var memberInfo = ApplyChangeMemberToDb(item.SourceId, item.Pwd, req.OperateUserCode, item.PayAmount, memberRemark, false, db, accDate,orderModel.R_Restaurant_Id);
                                         members.Add(memberInfo);
                                         string remark = string.Format("会员信息-卡号{0}- 姓名：{1}", memberInfo.MemberCardNo, memberInfo.MemberName);
@@ -878,24 +886,24 @@ namespace OPUPMS.Domain.Restaurant.Services
                     #endregion
 
                     #region
-                    if (members.Any())
-                    {
-                        foreach (var member in members)
-                        {
-                            if (!string.IsNullOrEmpty(member.MemberPhoneNo))
-                            {
-                                decimal totalMoney = req.ListOrderPayRecordDTO.Where(p => p.SourceId == member.Id).Sum(p => p.PayAmount);
-                                string totalYe = (member.CardBalance + totalMoney).ToString();
-                                string insertSql = string.Format(
-        "INSERT sms1(sms0lx00,sms0dh00,sms0nr00,sms0bz00,sms0czsj) " +
-        "VALUES('1', '" + member.MemberPhoneNo + "', '" + member.MemberName + ",您的会员卡(" + member.MemberCardNo + ")本次消费" + totalMoney + "元!欢迎消费目前您的余额为" + totalYe + "元', 'S', '" + DateTime.Now + "') ",
-        member.MemberName, member.MemberCardNo, member.MemberGender,
-        member.MemberGPID, member.MemberGUID, member.MemberPhoneNo, member.MemberIdentityNo);
-                                db.CommandType = System.Data.CommandType.Text;
-                                db.ExecuteCommand(insertSql);
-                            }
-                        }
-                    }
+        //            if (members.Any())
+        //            {
+        //                foreach (var member in members)
+        //                {
+        //                    if (!string.IsNullOrEmpty(member.MemberPhoneNo))
+        //                    {
+        //                        decimal totalMoney = req.ListOrderPayRecordDTO.Where(p => p.SourceId == member.Id).Sum(p => p.PayAmount);
+        //                        string totalYe = (member.CardBalance + totalMoney).ToString();
+        //                        string insertSql = string.Format(
+        //"INSERT sms1(sms0lx00,sms0dh00,sms0nr00,sms0bz00,sms0czsj) " +
+        //"VALUES('1', '" + member.MemberPhoneNo + "', '" + member.MemberName + ",您的会员卡(" + member.MemberCardNo + ")本次消费" + totalMoney + "元!欢迎消费目前您的余额为" + totalYe + "元', 'S', '" + DateTime.Now + "') ",
+        //member.MemberName, member.MemberCardNo, member.MemberGender,
+        //member.MemberGPID, member.MemberGUID, member.MemberPhoneNo, member.MemberIdentityNo);
+        //                        db.CommandType = System.Data.CommandType.Text;
+        //                        db.ExecuteCommand(insertSql);
+        //                    }
+        //                }
+        //            }
                     #endregion
                     db.CommitTran();
 
@@ -909,8 +917,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                 catch (Exception e)
                 {
                     db.RollbackTran();
-                    SaveMemberConsumeInfo(req.ListOrderPayRecordDTO, req.OperateUserCode, false,accDate,"", checkOutOrderDTO.R_Restaurant_Id);
-                    
+                    //SaveMemberConsumeInfo(req.ListOrderPayRecordDTO, req.OperateUserCode, false,accDate,"", checkOutOrderDTO.R_Restaurant_Id);
                     throw e;
                 }
                 return resultDto;
