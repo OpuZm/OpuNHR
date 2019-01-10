@@ -17,7 +17,19 @@ namespace OPUPMS.Domain.Restaurant.Repository
     {
         public UserDto GetCompanyUseById(int userId)
         {
-            throw new NotImplementedException();
+            using (var db=new SqlSugarClient(Connection))
+            {
+                var data = db.Sqlable()
+                    .From("SUsers", "s1")
+                    .Where($"s1.Id={userId}")
+                    .SelectToList<UserDto>("s1.*").First();
+                if (data != null)
+                {
+                    var list = db.Queryable<UserRestaurant>().Where(p => p.UserId == userId).ToList();
+                    data.ManagerRestaurantList = list.Select(p => p.RestaurantId).ToList();
+                }
+                return data;
+            }
         }
 
         public List<UserDto> GetCompanyUsers(out int total, CompanyUserSearchDTO req)
@@ -77,24 +89,26 @@ namespace OPUPMS.Domain.Restaurant.Repository
             }
         }
 
-        public bool UpdateUserManagerRestaurant(int userId, List<int> restaurantIds)
+        public bool UpdateUserManagerRestaurant(UserDto user, List<int> restaurantIds)
         {
             using (var db=new SqlSugarClient(Connection))
             {
                 try
                 {
                     db.BeginTran();
-                    db.Delete<UserRestaurant>(p => p.UserId == userId);
+                    db.Delete<UserRestaurant>(p => p.UserId == user.UserId);
                     List<UserRestaurant> list = new List<UserRestaurant>();
                     restaurantIds.ForEach(p =>
                     {
                         list.Add(new UserRestaurant()
                         {
-                            UserId = userId,
+                            UserId = user.UserId,
                             RestaurantId = p
                         });
                     });
                     db.InsertRange(list);
+
+                    db.Update<SUsers>(new { RestaurantAuthority = user.RestaurantAuthority }, p => p.Id == user.UserId);
                     db.CommitTran();
                     return true;
                 }
@@ -109,7 +123,18 @@ namespace OPUPMS.Domain.Restaurant.Repository
 
         public bool UpdateUserRestaurantPermission(UserDto user)
         {
-            throw new NotImplementedException();
+            using (var db=new SqlSugarClient(Connection))
+            {
+                try
+                {
+                    db.Update<SUsers>(new { RestaurantAuthority = user.RestaurantAuthority }, p => p.Id == user.UserId);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
         }
     }
 }

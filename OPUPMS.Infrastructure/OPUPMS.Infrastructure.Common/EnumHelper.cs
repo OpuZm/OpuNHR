@@ -34,7 +34,7 @@ namespace OPUPMS.Infrastructure.Common
         /// </summary>
         /// <typeparam name="T">枚举类型</typeparam>
         /// <returns></returns>
-        public static Dictionary<string, EnumInfoContent> GetEnumDic<T>()
+        public static Dictionary<string, EnumInfoContent> GetEnumDic<T>(Type ype)
         {
 
             Dictionary<string, EnumInfoContent> resultList = new Dictionary<string, EnumInfoContent>();

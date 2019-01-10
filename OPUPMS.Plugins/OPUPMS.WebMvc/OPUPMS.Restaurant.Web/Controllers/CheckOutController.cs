@@ -14,6 +14,7 @@ using System.Linq;
 using OPUPMS.Domain.Base.Models;
 using OPUPMS.Domain.Base.ConvertModels;
 using OPUPMS.Domain.Base.Repositories.OldRepositories;
+using OPUPMS.Infrastructure.Common.Security;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -798,5 +799,24 @@ namespace OPUPMS.Restaurant.Web.Controllers
             return Json(res);
         }
         #endregion
+
+        [HttpPost]
+        public ActionResult VaildPassWord(string req)
+        {
+            Response res = new Response() { Data=false,Successed=false};
+            try
+            {
+                if (!string.IsNullOrEmpty(req))
+                {
+                    res.Data = DESEncrypt.GetMD5(req);
+                    res.Successed = true;
+                }
+            }
+            catch (Exception e)
+            {
+                res.Message = e.Message;
+            }
+            return Json(res);
+        }
     }
 }

@@ -98,6 +98,15 @@ namespace OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles
 
         public string Connection { get; } = _connectionString;
 
+        public static string ApiConnection
+        {
+            get
+            {
+                return ConfigurationManager
+            .ConnectionStrings["OPUPMSApi"].ConnectionString;
+            }
+        }
+
         /// <summary>
         /// 集团库连接
         /// </summary>

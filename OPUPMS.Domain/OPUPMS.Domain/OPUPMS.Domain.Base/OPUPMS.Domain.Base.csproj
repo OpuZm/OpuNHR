@@ -67,6 +67,7 @@
     <Compile Include="CommonEnums.cs" />
     <Compile Include="ConvertModels\TypeCodeInfo.cs" />
     <Compile Include="ConvertModels\UserInfo.cs" />
+    <Compile Include="Dtos\ApiResultDTO.cs" />
     <Compile Include="Dtos\ExtendItemDto.cs" />
     <Compile Include="Dtos\LoginInputDto.cs" />
     <Compile Include="Dtos\MenuInfo.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Dtos\UserDto.cs" />
     <Compile Include="Models\CharsetCode.cs" />
     <Compile Include="Models\OldModels\Czdm.cs" />
+    <Compile Include="Models\UserRestaurant.cs" />
     <Compile Include="Models\VersionModel.cs" />
     <Compile Include="Models\UserRoleModel.cs" />
     <Compile Include="Models\SystemLogModel.cs" />

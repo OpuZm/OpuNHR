@@ -13,6 +13,10 @@ using OPUPMS.Domain.Restaurant.Services.Interfaces;
 using OPUPMS.Infrastructure.Common;
 using OPUPMS.Infrastructure.Common.Security;
 using SqlSugar;
+using System.Net;
+using System.Net.Http;
+using OPUPMS.Infrastructure.Common.Web;
+using OPUPMS.Domain.Base.Dtos;
 
 namespace OPUPMS.Domain.Restaurant.Services
 {
@@ -1401,6 +1405,9 @@ namespace OPUPMS.Domain.Restaurant.Services
 
         public List<string> VerifyOutsideInfo(VerifySourceInfoDTO verifySource, SqlSugarClient db)
         {
+            List<string> resList = new List<string>();
+
+
             bool isOutside = false;
             if (db == null)
             {
@@ -1413,7 +1420,7 @@ namespace OPUPMS.Domain.Restaurant.Services
             {
                 if (verifySource.SourceId <= 0)
                     throw new Exception("请选择有效的挂账客户！");
-                string lxdmSql = string.Format("SELECT lxdmdm00 AS Code, lxdmgzxe AS LimitAmount, lxdmye00 AS RemainAmount FROM dbo.lxdm WHERE Id = {0}", verifySource.SourceId);
+                string lxdmSql = string.Format("SELECT lxdmdm00 AS Code, lxdmxe00 AS LimitAmount, lxdmye00 AS RemainAmount FROM dbo.lxdm WHERE lxdmid00 = {0}", verifySource.SourceId);
                 
                 var info = db.SqlQuery<SearchLxdmInfo>(lxdmSql);
 
@@ -1427,14 +1434,6 @@ namespace OPUPMS.Domain.Restaurant.Services
                         throw new Exception(string.Format("此客户（{0}）可挂账限额大于当前输入金额,无法挂账", verifySource.SourceName));
                     }
                 }
-
-                //decimal remainAmount = info[0].RemainAmount - info[0].LimitAmount;
-                //if(info[0].RemainAmount < 0 || remainAmount <= 0)
-                //    throw new Exception(string.Format("此客户（{0}）可挂账余额为0 无法操作挂账, 请重新确认挂账客户！", verifySource.SourceName));
-                
-                //if(remainAmount < verifySource.OperateValue)
-                //    throw new Exception(string.Format("此客户（{0}）可挂账余额小于当前输入金额无法挂账, 请重新确认！", verifySource.SourceName));
-                
 
                 infoList.Add(info[0].Code.Trim());
             }
@@ -1741,29 +1740,62 @@ namespace OPUPMS.Domain.Restaurant.Services
 
         public List<MemberInfoDTO> SearchMemberBy(string text)
         {
-            string connString = Connection;
-            if (EnabelGroupFlag)
-                connString = ConnentionGroup;
-            using (var db = new SqlSugarClient(connString))
-            {
-                try
+            try
+            {             
+                List<MemberInfoDTO> res = null;
+                if (!string.IsNullOrEmpty(text))
                 {
-                    //搜索会员信息
-                    string customerSql = string.Format(@"
-                    SELECT TOP 10 krlsxh00 AS Id, krlsvpkh AS MemberCardNo, krlszjhm AS MemberIdentityNo, krlsmm00 AS MemberPwbByte, krlsye00 as CardBalance,
-                           krlsdh00 AS MemberPhoneNo,LTRIM(RTRIM(krlszwxm)) AS MemberName
-                    FROM krls WHERE (krlskrlx <> 'A' AND krlskrlx <> 'B') AND (krlsvpkh = '{0}' OR CAST(krlskhid AS varchar)='{0}' OR krlsdh00 = '{0}' OR krlszjhm = '{0}' OR krlszwxm LIKE '%{0}%') "
-                    , text);
-
-                    var customers = db.SqlQuery<MemberInfoDTO>(customerSql);
-
-                    return customers;
+                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/member?chineseName={text}");
+                    var j = Json.ToJson(strJson);
+                    var jsonObject = Json.ToObject<MemberResultDTO>(strJson);
+                    if (jsonObject != null)
+                    {
+                        res = new List<MemberInfoDTO>();
+                        foreach (var item in jsonObject.ListDto)
+                        {
+                            res.Add(new MemberInfoDTO
+                            {
+                                Id = item.Id,
+                                MemberCardNo = item.MemberCardNo,
+                                MemberIdentityNo = item.IdTypeNo,
+                                MemberPwd = item.Password,
+                                CardBalance = item.Balance,
+                                MemberPhoneNo = item.Telephone,
+                                MemberName = item.ChineseName
+                            });
+                        }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                return res;
             }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            //string connString = Connection;
+            //if (EnabelGroupFlag)
+            //    connString = ConnentionGroup;
+            //using (var db = new SqlSugarClient(connString))
+            //{
+            //    try
+            //    {
+            //        //搜索会员信息
+            //        string customerSql = string.Format(@"
+            //        SELECT TOP 10 krlsxh00 AS Id, krlsvpkh AS MemberCardNo, krlszjhm AS MemberIdentityNo, krlsmm00 AS MemberPwbByte, krlsye00 as CardBalance,
+            //               krlsdh00 AS MemberPhoneNo,LTRIM(RTRIM(krlszwxm)) AS MemberName
+            //        FROM krls WHERE (krlskrlx <> 'A' AND krlskrlx <> 'B') AND (krlsvpkh = '{0}' OR CAST(krlskhid AS varchar)='{0}' OR krlsdh00 = '{0}' OR krlszjhm = '{0}' OR krlszwxm LIKE '%{0}%') "
+            //        , text);
+
+            //        var customers = db.SqlQuery<MemberInfoDTO>(customerSql);
+
+            //        return customers;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw ex;
+            //    }
+            //}
         }
 
         public List<SearchKrzlInfo> SearchRoomBy(string text)

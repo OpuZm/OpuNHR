@@ -551,11 +551,11 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         /// 会员名称
         /// </summary>
         public string MemberName { get; set; }
-        public byte[] MemberPwbByte { get; set; }
+        public string MemberPwd { get; set; }
         /// <summary>
         /// 会员密码
         /// </summary>
-        public string MemberPwd { get { return MemberPwbByte.IsEmpty() ? string.Empty : MemberPwbByte.ToHexString(); } }
+        //public string MemberPwd { get { return MemberPwbByte.IsEmpty() ? string.Empty : MemberPwbByte.ToHexString(); } }
         /// <summary>
         /// 会员GPID
         /// </summary>

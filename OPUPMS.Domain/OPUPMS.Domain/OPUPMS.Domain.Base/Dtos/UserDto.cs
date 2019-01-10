@@ -35,5 +35,6 @@ namespace OPUPMS.Domain.Base.Dtos
         public decimal MinDiscountValue { get; set; }
         public decimal MaxClearValue { get; set; }
         public List<int> ManagerRestaurantList { get; set; }
+        public int RestaurantAuthority { get; set; }
     }
 }

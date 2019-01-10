@@ -16,6 +16,7 @@ using OPUPMS.Web.Framework.Core.Mvc;
 using OPUPMS.Domain.Base.Repositories;
 using OPUPMS.Domain.Base.Models;
 using OPUPMS.Domain.AuthorizeService;
+using OPUPMS.Domain.Base.Dtos;
 
 
 namespace OPUPMS.Restaurant.Web.Controllers
@@ -55,14 +56,14 @@ namespace OPUPMS.Restaurant.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateUserManagerRestaurant(int userId, List<int> restaurantIds)
+        public ActionResult UpdateUserManagerRestaurant(UserDto user, List<int> restaurantIds)
         {
             var res = new Response() { Data = null, Successed = false };
             if (ModelState.IsValid)
             {
                 try
                 {
-                    res.Data = companyUserRepository.UpdateUserManagerRestaurant(userId, restaurantIds);
+                    res.Data = companyUserRepository.UpdateUserManagerRestaurant(user, restaurantIds);
                     res.Successed = true;
                 }
                 catch (Exception e)
@@ -78,6 +79,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             return Json(res);
         }
 
-
+        public ActionResult GetCompanyUseById(int id)
+        {
+            var userInfo = companyUserRepository.GetCompanyUseById(id);
+            var enumList = EnumHelper.GetEnumDic<Permission>(typeof(Permission));
+            return NewtonSoftJson(new { user = userInfo,permissions=enumList }, JsonRequestBehavior.AllowGet);
+        }
     }
 }
