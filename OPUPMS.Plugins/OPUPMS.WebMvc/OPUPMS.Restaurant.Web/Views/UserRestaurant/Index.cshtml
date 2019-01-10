@@ -118,13 +118,10 @@
             //监听工具条
             table.on('tool(table)', function (obj) {
                 var data = obj.data;
-                var id = data.Id;
+                var id = data.UserId;
                 if (obj.event === 'edit') {
                     isEdIT = true;
-                    layerBox('/Res/Restaurant/NewEdit', id, '餐厅编辑', 380);
-                } else if (obj.event === 'contact') {
-                    isEdIT = true;
-                    layerBox('/Res/RestaurantCategory/Edit', id, '餐厅餐饮类别关联', 500);
+                    layerBox('/Res/UserRestaurant/Edit', id, '设置', 380);
                 }
             });
 
