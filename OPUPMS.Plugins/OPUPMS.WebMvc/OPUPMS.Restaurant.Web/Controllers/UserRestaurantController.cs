@@ -89,9 +89,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult GetCompanyUseById(int id)
         {
+            var currentUser = OperatorProvider.Provider.GetCurrent();
             var userInfo = companyUserRepository.GetCompanyUseById(id);
             var enumList = EnumHelper.GetEnumDic<Permission>(typeof(Permission));
-            return NewtonSoftJson(new { user = userInfo,permissions=enumList }, JsonRequestBehavior.AllowGet);
+            var restaurantList = restaurantRepository.GetList(currentUser.CompanyId.ToInt());
+            return NewtonSoftJson(new { user = userInfo,permissions=enumList,restaurantList=restaurantList }, JsonRequestBehavior.AllowGet);
         }
     }
 }
