@@ -1380,6 +1380,7 @@
     <Content Include="Views\AreaPrint\ChangeTableIndex.cshtml" />
     <Content Include="Views\AreaPrint\GeneralOrderIndex.cshtml" />
     <Content Include="Views\UserRestaurant\Index.cshtml" />
+    <Content Include="Views\UserRestaurant\Edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

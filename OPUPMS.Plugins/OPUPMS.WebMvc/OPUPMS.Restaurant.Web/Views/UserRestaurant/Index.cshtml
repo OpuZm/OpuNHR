@@ -33,15 +33,6 @@
     <a class="layui-btn layui-btn-sm" lay-event="edit"><i class="iconfont">&#xe633;</i>设置</a>
 </script>
 
-<!--是否打折-->
-<script type="text/html" id="RestaurantPower">
-	{{# if(d.colIndex || d.colIndex == 0 ){ }}
-		{{# d.colIndex++ }}
-    {{# }else{ }}
-    	{{# d.colIndex = 0 }}
-    {{# };}}
-</script>
-
 @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
 @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
@@ -76,7 +67,7 @@
                 var colsWidth = (winW - 160) / len;
                 colsWidth = colsWidth > 80 ? colsWidth : 80;
                 for (var i = 0; i < data.length; i++) {
-                    cols.push({ field: data[i].Id, title: data[i].Name, width: colsWidth ,align:"center",templet:'#RestaurantPower'})
+                    cols.push({ field: data[i].Id, title: data[i].Name, width: colsWidth ,align:"center"})
                 }
                 
                 cols.push({ field: 'ID', title: '操作', width: 80, toolbar: '#bartable',fixed: 'right' })

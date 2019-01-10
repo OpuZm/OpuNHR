@@ -76,6 +76,7 @@
     <Compile Include="Dtos\BaseDto.cs" />
     <Compile Include="Dtos\UserDto.cs" />
     <Compile Include="Models\CharsetCode.cs" />
+    <Compile Include="Models\ExtendTypeItemModel.cs" />
     <Compile Include="Models\OldModels\Czdm.cs" />
     <Compile Include="Models\UserRestaurant.cs" />
     <Compile Include="Models\VersionModel.cs" />

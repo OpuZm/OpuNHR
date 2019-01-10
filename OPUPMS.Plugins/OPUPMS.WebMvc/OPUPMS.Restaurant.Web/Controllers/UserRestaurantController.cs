@@ -40,6 +40,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             return View();
         }
 
+        public ActionResult Edit()
+        {
+            return View();
+        }
+
         public ActionResult GetCompanyUsers(CompanyUserSearchDTO req)
         {
             var currentUser = OperatorProvider.Provider.GetCurrent();
