@@ -1379,6 +1379,7 @@
     <Content Include="Views\CustomConfig\OrderChoseProjectConfig.cshtml" />
     <Content Include="Views\AreaPrint\ChangeTableIndex.cshtml" />
     <Content Include="Views\AreaPrint\GeneralOrderIndex.cshtml" />
+    <Content Include="Views\UserRestaurant\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1388,7 +1389,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Api\" />
-    <Folder Include="Views\UserRestaurant\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\OPUPMS.Domain\OPUPMS.Domain.Restaurant\OPUPMS.Domain.Restaurant.Model\OPUPMS.Domain.Restaurant.Model.csproj">

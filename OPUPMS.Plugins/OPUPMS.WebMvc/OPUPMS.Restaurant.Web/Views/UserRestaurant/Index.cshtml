@@ -1,0 +1,171 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "餐厅管理";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>餐厅管理</title>
+    @StylesEx.Render(FrameworkInfo.Name, "LayUIStyle2x")
+    @StylesEx.Render(Plugin.Instance.Name, "PublicStyle")
+</head>
+<body>
+
+    <header class="container-head" style="padding-top: 15px;">
+        <div class="layui-form">
+            @*<button type="button" class="layui-btn add layui-btn-normal" onclick="layerBox('/Res/Restaurant/NewEdit','','添加餐厅',380);"><span class="layui-icon" style="font-size: 24px; color: #fff;">&#xe654;</span>添加</button>*@
+        </div>
+    </header>
+
+    <div class="container" style="padding-right: 20px;">
+        <table id="table" lay-filter="table"></table>
+    </div>
+    <footer class="footer-copyright">
+        <img src="@Url.Content(Plugin.Instance.GetContentPath("Images/logo-footer.png"))" alt="">
+    </footer>
+</body>
+</html>
+<script type="text/html" id="bartable">
+    <a class="layui-btn layui-btn-sm" lay-event="edit"><i class="iconfont">&#xe633;</i>设置</a>
+</script>
+
+<!--是否打折-->
+<script type="text/html" id="RestaurantPower">
+	{{# if(d.colIndex || d.colIndex == 0 ){ }}
+		{{# d.colIndex++ }}
+    {{# }else{ }}
+    	{{# d.colIndex = 0 }}
+    {{# };}}
+</script>
+
+@ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
+@ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
+@ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
+@ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
+
+@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
+<script type="text/javascript">
+	var isEdIT = false;
+	var para = {ListType: '1'};
+    layui.use(['element', 'table', 'layer'], function () {
+        var element = layui.element,
+            layer = layui.layer;
+            table = layui.table;
+        var winw = $(window).width() - 50;
+
+        $.ajax({
+            type: "get",
+            url: "/Res/UserRestaurant/GetCompanyRestaurants",
+            dataType: "json",
+            //contentType: "application/json; charset=utf-8",
+            async: false,
+            beforeSend: function (XMLHttpRequest) {
+                layindex = layer.open({ type: 3 });
+            },
+            success: function (data, textStatus) {
+                console.log(data)
+                var cols = [
+                	{field: "UserName", title: "用户名", width: 80}
+                ]
+
+                var len = data.length;
+                var colsWidth = (winW - 160) / len;
+                colsWidth = colsWidth > 80 ? colsWidth : 80;
+                for (var i = 0; i < data.length; i++) {
+                    cols.push({ field: data[i].Id, title: data[i].Name, width: colsWidth ,align:"center",templet:'#RestaurantPower'})
+                }
+                
+                cols.push({ field: 'ID', title: '操作', width: 80, toolbar: '#bartable',fixed: 'right' })
+                tableRender(cols);
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+                layer.close(layindex);
+            }
+        });
+        
+        
+		
+
+        function tableRender(cols) {
+            table.render({
+                elem: '#table' //指定原始表格元素选择器（推荐id选择器）
+                , url: "/Res/UserRestaurant/GetCompanyUsers"
+                , where: para
+                , height: 'full-139' //容器高度
+                , request: {
+                    pageName: 'offset' //页码的参数名称，默认：page
+                }
+                , response: {
+                    countName: 'total' //数据总数的字段名称，默认：count
+                    , dataName: 'rows' //数据列表的字段名称，默认：data
+                }
+                , cols: [cols]
+                , even: true
+                , page: {
+                    hash: 'fenye'
+                }
+                , skin: 'line'
+                , limits: [5, 10, 15, 20]
+                , limit: 10 //每页默认显示的数量
+                , done: function (data) {
+                	var $tr = $('#table').next().find('.layui-table-main tr');
+                	$tr.each(function(i){
+                		var td = $(this).find('td').not(':first-child,:last-child');
+                		td.each(function(){
+                			var field = $(this).attr('data-field');
+                			$(this).children().append('<i class="layui-icon" style="color:#5FB878">&#xe618;</i>')
+                		})
+                	})
+                    isEdIT = false;
+                }
+            });
+
+            //监听工具条
+            table.on('tool(table)', function (obj) {
+                var data = obj.data;
+                var id = data.Id;
+                if (obj.event === 'edit') {
+                    isEdIT = true;
+                    layerBox('/Res/Restaurant/NewEdit', id, '餐厅编辑', 380);
+                } else if (obj.event === 'contact') {
+                    isEdIT = true;
+                    layerBox('/Res/RestaurantCategory/Edit', id, '餐厅餐饮类别关联', 500);
+                }
+            });
+
+            //监听排序点击
+            table.on('sort(table)', function (obj) {
+                table.reload('table', {
+                    initSort: obj
+                    , where: { //请求参数
+                        ListType: '1'
+                        , sort: obj.field //排序字段
+                        , order: obj.type //排序方式
+                    }
+                });
+            });
+        }
+        
+
+
+        
+        //select条件筛选
+//      $('#SearchSubmit').click(function () {
+//          para.Restaurant =  $('#Restaurant').val();
+//          var curr = isEdIT ? location.hash.replace('#!fenye=', '') : 1;
+//			location.hash = '#!fenye=' + curr;
+//          table.reload('table', {
+//              where: para
+//              ,page: {
+//					hash: 'fenye',
+//				    curr: curr //重新从第 1 页开始
+//				}
+//          });
+//      });
+    });
+
+</script>
