@@ -22,7 +22,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 var data = db.Sqlable()
                     .From("SUsers", "s1")
                     .Where($"s1.Id={userId}")
-                    .SelectToList<UserDto>("s1.*").First();
+                    .SelectToList<UserDto>("s1.*,Discount as MinDiscountValue").First();
                 if (data != null)
                 {
                     var list = db.Queryable<UserRestaurant>().Where(p => p.UserId == userId).ToList();
@@ -61,7 +61,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 }
                 if (!string.IsNullOrEmpty(req.UserName))
                 {
-                    data = data.Where($"s1.UserName like %{req.UserName}%");
+                    data = data.Where($"s1.UserName like '%{req.UserName}%'");
                 }
                 totalCount = data.Count();
                 list = data.SelectToPageList<UserDto>(
@@ -108,7 +108,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     });
                     db.InsertRange(list);
 
-                    db.Update<SUsers>(new { RestaurantAuthority = user.RestaurantAuthority }, p => p.Id == user.UserId);
+                    db.Update<SUsers>(new { RestaurantAuthority = user.RestaurantAuthority, Discount = user.MinDiscountValue, MaxClearValue=user.MaxClearValue }, p => p.Id == user.UserId);
                     db.CommitTran();
                     return true;
                 }
