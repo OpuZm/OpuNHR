@@ -70,7 +70,11 @@
                 <div class="layui-row" id="restaurantList">
                 	<blockquote class="label-title">餐厅</blockquote>
                 	{{#  layui.each(d.restaurantList, function(index, item){ }}
-                		<a href="javascript:;" class="layui-btn layui-btn-primary" data-id="{{item.Id}}">
+                		<a href="javascript:;" class="layui-btn 
+                			{{# if(d.user.ManagerRestaurantList.indexOf(item.Id)< 0) { }}
+                			layui-btn-primary
+                			{{# } }}
+                			" data-id="{{item.Id}}">
                 			{{item.Name}}
                 			<i class="layui-icon layui-icon-ok"></i>
                 		</a>
@@ -79,7 +83,11 @@
                 <div class="layui-row" id="permissions">
                 	<blockquote class="label-title">权限</blockquote>
                 	{{#  layui.each(d.permissions, function(index, item){ }}
-                		<a href="javascript:;" class="layui-btn layui-btn-primary" data-id="{{item.Value}}">
+                		<a href="javascript:;" class="layui-btn 
+                			{{# if((d.user.RestaurantAuthority & item.Value) == 0){ }}
+                			layui-btn-primary
+                			{{# } }}
+                			" data-id="{{item.Value}}">
                 			{{item.Key}}
                 			<i class="layui-icon layui-icon-ok"></i>
                 		</a>
@@ -177,8 +185,9 @@
 	        }
 	        
 	        var permissionsBtn = $('#permissions').find('a:not(.layui-btn-primary)')
+	        req.user.RestaurantAuthority = 0;
 	        for(var i=0;i<permissionsBtn.length;i++){
-	        	req.user.RestaurantAuthority += parseInt(permissionsBtn.attr('data-id'))
+	        	req.user.RestaurantAuthority += parseInt(permissionsBtn.eq(i).attr('data-id'))
 	        }
 	        
 	      	
@@ -195,7 +204,21 @@
 		            layindex = layer.open({ type: 3 });
 		        },
 		        success: function (data, textStatus) {
-		        	console.log(data)
+		        	if (data["Data"] == true) {
+                        parent.layer.msg('提交完成')
+                        var curr = parent.isEdIT ? parent.location.hash.replace('#!fenye=', '') : 1;
+			            parent.location.hash = '#!fenye=' + curr;
+			            parent.table.reload('table', {
+			                where: parent.para
+			                ,page: {
+							    curr: curr //重新从第 1 页开始
+							}
+			            });
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        //parent.Refresh();
+                    } else {
+                        layer.alert(data["Message"]);
+                    }
 		        },
 		        complete: function (XMLHttpRequest, textStatus) {
 		            layer.close(layindex);
