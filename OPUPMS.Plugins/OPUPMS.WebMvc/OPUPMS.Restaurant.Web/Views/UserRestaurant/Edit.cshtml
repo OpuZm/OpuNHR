@@ -178,9 +178,10 @@
 	        
 	        var permissionsBtn = $('#permissions').find('a:not(.layui-btn-primary)')
 	        for(var i=0;i<permissionsBtn.length;i++){
-	        	req.user.Permission += parseInt(permissionsBtn.attr('data-id'))
+	        	req.user.RestaurantAuthority += parseInt(permissionsBtn.attr('data-id'))
 	        }
 	        
+	      	
 	        
 	        req.user.UserId = Id
 	        $.ajax({

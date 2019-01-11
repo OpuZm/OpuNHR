@@ -66,6 +66,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
         [HttpPost]
         public ActionResult UpdateUserManagerRestaurant(UserDto user, List<int> restaurantIds)
         {
+            restaurantIds = restaurantIds == null ? new List<int>() : restaurantIds;
             var res = new Response() { Data = null, Successed = false };
             if (ModelState.IsValid)
             {
