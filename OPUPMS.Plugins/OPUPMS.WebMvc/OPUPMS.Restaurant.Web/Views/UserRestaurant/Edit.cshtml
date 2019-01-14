@@ -83,6 +83,7 @@
                 <div class="layui-row" id="permissions">
                 	<blockquote class="label-title">权限</blockquote>
                 	{{#  layui.each(d.permissions, function(index, item){ }}
+                		{{# if(item.Value > 0){ }}
                 		<a href="javascript:;" class="layui-btn 
                 			{{# if((d.user.RestaurantAuthority & item.Value) == 0){ }}
                 			layui-btn-primary
@@ -91,6 +92,7 @@
                 			{{item.Key}}
                 			<i class="layui-icon layui-icon-ok"></i>
                 		</a>
+                		{{# } }}
                 	{{# }); }}
             	</div>
                 <div class="layer-btns-bottom">
