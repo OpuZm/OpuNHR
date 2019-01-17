@@ -22,7 +22,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 var data = db.Sqlable()
                     .From("SUsers", "s1")
                     .Where($"s1.Id={userId}")
-                    .SelectToList<UserDto>("s1.*").First();
+                    .SelectToList<UserDto>("s1.*,Id as UserId").First();
                 if (data != null)
                 {
                     var list = db.Queryable<UserRestaurant>().Where(p => p.UserId == userId).ToList();

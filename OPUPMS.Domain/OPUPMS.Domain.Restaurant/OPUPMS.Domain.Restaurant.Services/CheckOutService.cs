@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Http;
 using OPUPMS.Infrastructure.Common.Web;
 using OPUPMS.Domain.Base.Dtos;
+using System.Text;
 
 namespace OPUPMS.Domain.Restaurant.Services
 {
@@ -722,6 +723,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                     List<R_OrderPayRecord> newPayRecords = new List<R_OrderPayRecord>();
 
                     List<R_OrderPayRecord> updatePayRecords = new List<R_OrderPayRecord>();
+                    string apiStr = string.Empty;
                     foreach (var item in req.ListOrderPayRecordDTO)
                     {
                         R_OrderPayRecord payRecordModel = null;
@@ -768,7 +770,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                 }
                                 catch (Exception ex)
                                 {
-                                    throw new Exception("会员卡入账调取收账：" + ex.Message);
+                                    throw new Exception("会员卡入账调取错误：" + ex.Message);
                                 }
 
                                 if (!EnabelGroupFlag)
@@ -805,30 +807,49 @@ namespace OPUPMS.Domain.Restaurant.Services
                                 if (req.IsReCheckout)
                                     remark = " --> " + remark;
                                 payRecordModel.Remark = remark;
+                                
                                 try
                                 {
-                                    var paras = SqlSugarTool.GetParameters(new
+                                    ProtocolEntry protocolEntry = new ProtocolEntry()
                                     {
-                                        xh = req.OrderId, //餐饮单序号
-                                        dh = orderModel.R_Restaurant_Id + "." + req.OrderId, //餐厅代码+'.'+餐饮单单号
-                                        lx = code, //协议单位代码(lxdmdm00)
-                                        je = item.PayAmount,//金额
-                                        cz = req.OperateUserCode, //操作员代码
-                                        ctmc = resObj.Name, //餐厅名称
-                                        fsmc = marketObj.Name, //分市名称
-                                        th = req.OrderId,
-                                        rs = orderModel.PersonNum,
-                                        bz = payRecordModel.Remark,
-                                        mz = "",
-                                        atr = 0
-                                    });
-                                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                                    db.ExecuteCommand("p_po_toys_newCY", paras);
-                                    db.CommandType = System.Data.CommandType.Text;//还原回默认
+                                        ProtocolId = item.SourceId,
+                                        BillNum = orderModel.Id.ToString(),
+                                        Amount = item.PayAmount,
+                                        Remark = payRecordModel.Remark,
+                                        SpendPonit = resObj.Name,
+                                        BillDate = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
+                                        EnterBillSign = ""
+                                    };
+                                    var jsonStr = Json.ToJson(protocolEntry);
+                                    apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?",jsonStr,Encoding.UTF8,true, "application/x-www-form-urlencoded",null,5000);
+                                    var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                    if (string.Compare(jsonObject.Result,"success",true)<=0)
+                                    {
+                                        throw new Exception();
+                                    }
+
+                                    //var paras = SqlSugarTool.GetParameters(new
+                                    //{
+                                    //    xh = req.OrderId, //餐饮单序号
+                                    //    dh = orderModel.R_Restaurant_Id + "." + req.OrderId, //餐厅代码+'.'+餐饮单单号
+                                    //    lx = code, //协议单位代码(lxdmdm00)
+                                    //    je = item.PayAmount,//金额
+                                    //    cz = req.OperateUserCode, //操作员代码
+                                    //    ctmc = resObj.Name, //餐厅名称
+                                    //    fsmc = marketObj.Name, //分市名称
+                                    //    th = req.OrderId,
+                                    //    rs = orderModel.PersonNum,
+                                    //    bz = payRecordModel.Remark,
+                                    //    mz = "",
+                                    //    atr = 0
+                                    //});
+                                    //db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                                    //db.ExecuteCommand("p_po_toys_newCY", paras);
+                                    //db.CommandType = System.Data.CommandType.Text;//还原回默认
                                 }
                                 catch (Exception ex)
                                 {
-                                    throw new Exception("挂账操作失败：" + ex.Message);
+                                    throw new Exception("请求挂账处理失败，请联系管理员：" + ex.Message);
                                 }
                             }
                             else if (item.CyddPayType == (int)CyddPayType.转客房)
