@@ -18,6 +18,13 @@
     <header class="container-head" style="padding-top: 15px;">
         <div class="layui-form">
             @*<button type="button" class="layui-btn add layui-btn-normal" onclick="layerBox('/Res/Restaurant/NewEdit','','添加餐厅',380);"><span class="layui-icon" style="font-size: 24px; color: #fff;">&#xe654;</span>添加</button>*@
+            <div class="layui-form-item" style="float: right; padding-top: 5px;">
+                <label class="layui-form-label" style="width: 50px;">名称：</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="UserName"  name="UserName" lay-verify="email" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn layui-btn-primary" style="float: left;" id="SearchSubmit">查询</button>
+            </div>
         </div>
     </header>
 
@@ -106,9 +113,12 @@
                 	var $tr = $('#table').next().find('.layui-table-main tr');
                 	$tr.each(function(i){
                 		var td = $(this).find('td').not(':first-child,:last-child');
+                		var row = data.rows[i]
                 		td.each(function(){
                 			var field = $(this).attr('data-field');
-                			$(this).children().append('<i class="layui-icon" style="color:#5FB878">&#xe618;</i>')
+                			if(row.ManagerRestaurantList.indexOf(field) > -1){
+                				$(this).children().append('<i class="layui-icon" style="color:#5FB878">&#xe618;</i>')
+                			}
                 		})
                 	})
                     isEdIT = false;
@@ -118,13 +128,10 @@
             //监听工具条
             table.on('tool(table)', function (obj) {
                 var data = obj.data;
-                var id = data.Id;
+                var id = data.UserId;
                 if (obj.event === 'edit') {
                     isEdIT = true;
-                    layerBox('/Res/Restaurant/NewEdit', id, '餐厅编辑', 380);
-                } else if (obj.event === 'contact') {
-                    isEdIT = true;
-                    layerBox('/Res/RestaurantCategory/Edit', id, '餐厅餐饮类别关联', 500);
+                    layerBox('/Res/UserRestaurant/Edit', id, '设置');
                 }
             });
 
@@ -145,18 +152,18 @@
 
         
         //select条件筛选
-//      $('#SearchSubmit').click(function () {
-//          para.Restaurant =  $('#Restaurant').val();
-//          var curr = isEdIT ? location.hash.replace('#!fenye=', '') : 1;
-//			location.hash = '#!fenye=' + curr;
-//          table.reload('table', {
-//              where: para
-//              ,page: {
-//					hash: 'fenye',
-//				    curr: curr //重新从第 1 页开始
-//				}
-//          });
-//      });
+        $('#SearchSubmit').click(function () {
+            para.UserName =  $('#UserName').val();
+            var curr = isEdIT ? location.hash.replace('#!fenye=', '') : 1;
+			location.hash = '#!fenye=' + curr;
+            table.reload('table', {
+                where: para
+                ,page: {
+					hash: 'fenye',
+				    curr: curr //重新从第 1 页开始
+				}
+            });
+        });
     });
 
 </script>
