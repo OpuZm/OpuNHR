@@ -421,8 +421,9 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                         inidata.SourceName = $(layero).find('#CustomerId option:selected').text();
                         //挂账请求验证
                         var req = { id: inidata.SourceId, name: inidata.SourceName, money: inputval, payType: 4 };
-
-                        GetValidate(req);
+                        Payment();
+                        layer.closeAll();
+                        //GetValidate(req);
                         layer.close(index);
                     }
                 })
@@ -511,9 +512,8 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
 				            , cols: [[ //标题栏
 				                { field: 'CustomerId', title: '客户ID',align:'center'}
 				                , { field: 'CustomerName', title: '姓名',align:'center'}
-				                , { field: 'LimitAmount', title: '余额',align:'center'}
-				                , { field: 'LastAmount', title: '限额',align:'center'}
-                                , { field: 'PreAmount', title: '预授权金额', align: 'center' }
+                                , { field: 'TeamName', title: '团名',align:'center'}
+                                , { field: 'RoomNo', title: '房间号',align:'center'}
 				            ]]
 				            , even: true
 				            , page: false
@@ -530,9 +530,11 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                                 	layer.confirm('是否确认选择的是该房间？', {icon: 3, title:'提示'}, function(index){
                                 		var req = { id: 0, name: serachInput.val(), money: inputval, payType: 5 };
                                         inidata.SourceId = Data[iNum].CustomerId;
+                                        inidata.SourceCode = Data[iNum].CustomerId;
                                         inidata.SourceName = Data[iNum].RoomNo + '-' + Data[iNum].CustomerName;
-                                        GetValidate(req);
-										layer.close(index);
+                                        Payment();
+                                        layer.closeAll();
+                                        //GetValidate(req);
 									});
                                 });
 				            }
@@ -688,13 +690,19 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                                                 	layer.msg('请输入密码');
                                                 	return false;
                                                 }
+                                                if (Data[iNum].MemberPwd != val) {
+                                                    layer.msg('密码错误')
+                                                }
+
                                                 pwdInput.blur();
                                                 //提交数据
-                                                var req = { id: Data[iNum].Id, name: val, money: inputval, payType: 3 ,Pwd:val};
+                                                var req = { id: Data[iNum].Id, name: val, money: inputval, payType: 3, Pwd: val };
+                                                
                                                 inidata.Pwd = val;//密码
                                                 inidata.SourceId = Data[iNum].Id;
                                                 inidata.SourceName = Data[iNum].MemberCardNo + '-' + Data[iNum].MemberName;
-                                                GetValidate(req);
+                                                Payment();
+                                                layer.closeAll();
                                             }
                                             , btn2: function (index, layero) {
                                             }
@@ -707,8 +715,8 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                                     		inidata.Pwd = '';//密码
 	                                        inidata.SourceId = Data[iNum].Id;
                                             inidata.SourceName = Data[iNum].MemberCardNo +'-'+ Data[iNum].MemberName;
-	                                        GetValidate(req);
-											layer.close(index);
+                                            Payment();
+                                            layer.closeAll();
 										});
                                     }
                                 });
@@ -1869,6 +1877,7 @@ function Payment() {
         , PayTypeName: payTypeName
         , JzTypeName: '消费'
         , SourceId: inidata.SourceId
+        , SourceCode: inidata.SourceCode
         , CreateUserName: inidata.OperateUserName
         , CreateDate: getTime()
     };
