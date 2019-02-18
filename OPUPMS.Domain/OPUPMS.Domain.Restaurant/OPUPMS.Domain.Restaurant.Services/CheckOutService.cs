@@ -1786,7 +1786,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                 MemberPwd = item.Password,
                                 CardBalance = item.Balance,
                                 MemberPhoneNo = item.Telephone,
-                                MemberName = item.ChineseName
+                                MemberName = item.ChineseName,
                             });
                         }
                     }
@@ -1827,17 +1827,17 @@ namespace OPUPMS.Domain.Restaurant.Services
         {
             try
             {
-                List<SearchKrzlInfo> result = null;
+                List<SearchKrzlInfo> result = new List<SearchKrzlInfo>();
 
                 if (!string.IsNullOrEmpty(text))
                 {
-                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/member?query.commonInfo={text}&query.companyId={companyId}");
+                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/mainjunctionid?dto.search={text}&dto.companyId={companyId}");
                     var jsonObject = Json.ToObject<dynamic>(strJson);
                     if (jsonObject.MasterList != null)
                     {
                         foreach (var item in jsonObject.MasterList)
                         {
-                            result.Add(new SearchKrzlInfo() { CustomerId = item.GuestNo, RoomNo=item.RoomNum,CustomerName=item.Name,TeamName = item.TeamName });
+                            result.Add(new SearchKrzlInfo() { CustomerId = item.GuestNo, RoomNo=item.RoomNum,CustomerName=item.Name,TeamName = item.TeamName,Phone=item.Phone });
                         }
                     }
                 }

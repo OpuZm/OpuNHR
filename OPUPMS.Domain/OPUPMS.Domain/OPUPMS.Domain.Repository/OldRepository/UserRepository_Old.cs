@@ -26,6 +26,22 @@ namespace OPUPMS.Domain.Repository.OldRepository
         protected static readonly string GetByUsersSql = @"SELECT * FROM SUsers where UserType & @UserType>0";
         protected static readonly string UpdateUserSql = @"update SUsers set UserPwd=@Password where Id=@Id";
         protected static readonly string GetCompanyUsersSql = @"SELECT s1.* FROM dbo.SUsers s1 LEFT JOIN dbo.SOrganizationUsers s2 ON s1.Id=s2.UserId WHERE s2.CompanyId=@CompanyId";
+        protected static readonly string GetCompanySaleUsersSql = @"select SUsers.* from SUsers 
+Left join SuserRoles on SUsers.Id=SUserRoles.S_UserId  
+left join SRoles on  SUserRoles.S_RoleId=SRoles.Id
+LEFT JOIN dbo.SOrganizationUsers ON dbo.SUsers.Id=dbo.SOrganizationUsers.UserId
+WHERE dbo.SRoles.Code='E9923FBC-71F9-459B-B952-1615F2951A9A' AND dbo.SOrganizationUsers.CompanyId=@CompanyId";
+
+        public List<UserInfo> GetCompanySales(int companyId)
+        {
+            using (var session = Factory.Create<ISession>())
+            {
+                var result = session.Query<CzdmModel>(GetCompanySaleUsersSql, new { CompanyId = companyId });
+
+                var infoList = AutoMapper.Mapper.Map<IEnumerable<CzdmModel>, List<UserInfo>>(result);
+                return infoList;
+            }
+        }
 
         public List<UserInfo> GetCompanyUsers(int companyId)
         {

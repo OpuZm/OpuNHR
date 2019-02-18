@@ -32,5 +32,6 @@ namespace OPUPMS.Domain.Base.Repositories.OldRepositories
         bool UpdatePassWord(int id, string passWord);
         UserInfo GetByUserIdCompany(int userId, int companyId);
         List<UserInfo> GetCompanyUsers(int companyId);
+        List<UserInfo> GetCompanySales(int companyId);
     }
 }

@@ -36,7 +36,7 @@
             <li class="layui-this" lay-id="tab1">菜品大类</li>
             <li lay-id="tab2">菜品分类</li>
             <li lay-id="tab3">菜品详情</li>
-            <li lay-id="tab4">套餐</li>
+            @*<li lay-id="tab4">套餐</li>*@
         </ul>
         <div class="layui-tab-content" style="height: 600px;">
             <div class="layui-tab-item layui-show">
@@ -48,9 +48,9 @@
             <div class="layui-tab-item">
                 <div id="info" style="width: 800px;height:600px;"></div>
             </div>
-            <div class="layui-tab-item">
+            @*<div class="layui-tab-item">
                 <div id="package" style="width: 800px;height:600px;"></div>
-            </div>
+            </div>*@
         </div>
     </div>
     <footer class="footer-copyright">
@@ -83,7 +83,7 @@
     var chartsMain = echarts.init(document.getElementById('main'));
     var chartsCategory = echarts.init(document.getElementById('category'));
     var chartsInfo = echarts.init(document.getElementById('info'));
-    var chartsPakcage = echarts.init(document.getElementById('package'));
+    //var chartsPakcage = echarts.init(document.getElementById('package'));
 
     var optionMain = {
         title: {
@@ -178,28 +178,28 @@
                 });
             }
         });
-        req = { StartDate: beginDate, EndDate: endDate, Type: 4 };
-        $.getJSON("/Res/Statistics/GetProduced", req, function (data) {
-            if (data.Data != null) {
-                var legendData = [];
-                var seriesData = [];
-                $(data.Data).each(function (i, o) {
-                    legendData.push(o.Name + ":" + o.Num);
-                    seriesData.push({ name: o.Name + ":" + o.Num, value: o.Num });
-                });
-                chartsPakcage.setOption({
-                    legend: {
-                        data: legendData
-                    },
-                    series: {
-                        data: seriesData
-                    },
-                    title: {
-                        text: '套餐统计'
-                    }
-                });
-            }
-        });
+        //req = { StartDate: beginDate, EndDate: endDate, Type: 4 };
+        //$.getJSON("/Res/Statistics/GetProduced", req, function (data) {
+        //    if (data.Data != null) {
+        //        var legendData = [];
+        //        var seriesData = [];
+        //        $(data.Data).each(function (i, o) {
+        //            legendData.push(o.Name + ":" + o.Num);
+        //            seriesData.push({ name: o.Name + ":" + o.Num, value: o.Num });
+        //        });
+        //        chartsPakcage.setOption({
+        //            legend: {
+        //                data: legendData
+        //            },
+        //            series: {
+        //                data: seriesData
+        //            },
+        //            title: {
+        //                text: '套餐统计'
+        //            }
+        //        });
+        //    }
+        //});
     }
 
     function initCategory(parentCategory) {
