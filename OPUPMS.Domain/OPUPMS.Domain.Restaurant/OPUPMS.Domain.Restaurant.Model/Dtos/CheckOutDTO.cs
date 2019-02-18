@@ -592,6 +592,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public string CustomerName { get; set; }
         public string RoomNo { get; set; }  //房号
         public string TeamName { get; set; }
+        public string Phone { get; set; }
     }
 
     public class CheckOutResultDTO

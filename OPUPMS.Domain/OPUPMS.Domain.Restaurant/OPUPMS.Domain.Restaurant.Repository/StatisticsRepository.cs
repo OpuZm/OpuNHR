@@ -187,8 +187,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     .Where<R_Order>((s1, s2) => s2.R_Restaurant_Id == req.RestaurantId && s2.IsDelete==false
                     && (req.StartDate.Value == null || s1.BillDate == req.StartDate.Value)
                     && (s1.CyddJzType==CyddJzType.定金 || s1.CyddJzType==CyddJzType.消费 || s1.CyddJzType==CyddJzType.转结 || s1.CyddJzType==CyddJzType.找零))
-                    .Select<TurnDutyStatisticsDTO>("s4.Id as MarketId,s5.Id as UserId,s5.Czdmmc00 as UserName,s1.CyddJzType,sum(s1.PayAmount) as TotalAmount")
-                    .GroupBy("s4.Id,s4.Name,s5.Id,s5.Czdmmc00,s1.CyddJzType").ToList();
+                    .Select<TurnDutyStatisticsDTO>("s4.Id as MarketId,s5.Id as UserId,s5.UserName as UserName,s1.CyddJzType,sum(s1.PayAmount) as TotalAmount")
+                    .GroupBy("s4.Id,s4.Name,s5.Id,s5.UserName,s1.CyddJzType").ToList();
                     TurnDutyStatisticsGroupDto model = null;
                     foreach (var item in marketList)
                     {
