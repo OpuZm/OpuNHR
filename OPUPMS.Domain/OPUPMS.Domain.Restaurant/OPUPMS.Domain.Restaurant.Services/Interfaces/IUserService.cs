@@ -2,6 +2,7 @@
 using OPUPMS.Domain.Base.Dtos;
 using OPUPMS.Domain.Restaurant.Model.Dtos;
 using System.Collections.Generic;
+using OPUPMS.Domain.Base.ConvertModels;
 
 namespace OPUPMS.Domain.Restaurant.Services.Interfaces
 {

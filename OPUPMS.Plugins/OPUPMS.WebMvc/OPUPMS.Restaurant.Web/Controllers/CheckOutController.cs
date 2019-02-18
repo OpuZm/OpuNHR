@@ -412,8 +412,10 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             try
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
                 verifyUserDTO.UserPwd = verifyUserDTO.UserPwd ?? "";
-                verifyUserDTO.RestaurantId = OperatorProvider.Provider.GetCurrent().DepartmentId.ToInt();
+                verifyUserDTO.RestaurantId = currentUser.DepartmentId.ToInt();
+                verifyUserDTO.CompanyId = currentUser.CompanyId.ToInt();
                 var user = _userService.GetUserInfo(verifyUserDTO);
 
                 res.Data = user;
@@ -503,13 +505,17 @@ namespace OPUPMS.Restaurant.Web.Controllers
         {
             var currentUser = OperatorProvider.Provider.GetCurrent();
             
-            var userResult = _oldUserRepository.GetAll<Smooth.IoC.UnitOfWork.ISession>();
-            var userList = AutoMapperExtend<CzdmModel, UserInfo>.ConvertToList(userResult, new List<UserInfo>());
+            //var userResult = _oldUserRepository.GetAll<Smooth.IoC.UnitOfWork.ISession>();
+            //var userList = AutoMapperExtend<CzdmModel, UserInfo>.ConvertToList(userResult, new List<UserInfo>());
+            var userList = _oldUserRepository.GetCompanyUsers(currentUser.CompanyId.ToInt());
 
             var order = _orderRepository.GetOrderDTO(orderId.ToInt());
             ViewBag.CustomerId = (order == null || order.Id <= 0) ? 0 : order.CustomerId;
 
-            var customerList = _oldCustRepository.GetListByStatus("Y");
+            #region 获取协议客户列表
+            //var customerList = _oldCustRepository.GetListByStatus("Y"); 
+            var customerList = _checkOutService.GetCustomerList(new Domain.Base.Dtos.CustomerSearchDTO() { CompanyId=currentUser.CompanyId.ToInt()});
+            #endregion
             ViewBag.CustomerList = customerList;
             ViewBag.UserList = userList;
 
@@ -528,9 +534,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             try
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                var companyId = currentUser.CompanyId.ToInt();
                 if (text.IsEmpty() || text.Trim().IsEmpty())
                     throw new Exception("请输入信息查询");
-                var memberList = _checkOutService.SearchMemberBy(text);
+                var memberList = _checkOutService.SearchMemberBy(text,companyId);
                 if (memberList == null || memberList.Count == 0)
                     throw new Exception("未查询到相关的客户信息！");
                 res.Data = memberList;
@@ -702,9 +710,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             try
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                int companyId = currentUser.CompanyId.ToInt();
                 if (text.IsEmpty() || text.Trim().IsEmpty())
                     throw new Exception("请输入房号查询");
-                var memberList = _checkOutService.SearchRoomBy(text);
+                var memberList = _checkOutService.SearchRoomBy(text,companyId);
                 if (memberList == null || memberList.Count == 0)
                     throw new Exception("未查询到相关的客户信息！");
                 res.Data = memberList;

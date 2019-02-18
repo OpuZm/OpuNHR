@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SqlSugar;
 using OPUPMS.Domain.Restaurant.Model;
 using OPUPMS.Domain.Base.Dtos;
+using OPUPMS.Domain.Base.ConvertModels;
 
 namespace OPUPMS.Domain.Restaurant.Services.Interfaces
 {
@@ -65,8 +66,8 @@ namespace OPUPMS.Domain.Restaurant.Services.Interfaces
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        List<MemberInfoDTO> SearchMemberBy(string text);
-        List<SearchKrzlInfo> SearchRoomBy(string text);
+        List<MemberInfoDTO> SearchMemberBy(string text,int companyId=0);
+        List<SearchKrzlInfo> SearchRoomBy(string text,int companyId);
         /// <summary>
         /// 反结账单
         /// </summary>
@@ -77,5 +78,6 @@ namespace OPUPMS.Domain.Restaurant.Services.Interfaces
 
         CheckOutOrderDTO GetWeixinPayDTO(CheckOutOrderDTO model);
         List<ProjectCheckOutStaticsDTO> GetCheckOutStatics(List<CheckOutOrderTableDTO> req);
+        List<TypeCodeInfo> GetCustomerList(CustomerSearchDTO req);
     }
 }

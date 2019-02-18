@@ -155,7 +155,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 {
                     MarketId = currentUser.LoginMarketId,
                     RestaurantId = currentUser.DepartmentId.ToInt(),
-                    OrderId=orderId
+                    OrderId=orderId,
+                    CompanyId = currentUser.CompanyId.ToInt()
                 });
 
             return Json(list);

@@ -156,6 +156,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
         {
             using (var db = new SqlSugarClient(Connection))
             {
+                var companyId = OperatorProvider.Provider.GetCurrent().CompanyId.ToInt();
                 List<ProjectDetailListDTO> list = new List<ProjectDetailListDTO>();
                 var data = db.Sqlable()
                     .From<R_ProjectDetail>("s1")
@@ -167,6 +168,10 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 if (category > 0)
                 {
                     data = data.Where("s3.Id=" + category);
+                }
+                if (companyId > 0)
+                {
+                    data = data.Where("s2.R_Company_Id=" + companyId);
                 }
 
                 list = data.SelectToList<ProjectDetailListDTO>(@"s1.*,s2.Name as ProjectName,
@@ -211,8 +216,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     //    .ToList();
                     var packages = db.Queryable<R_Package>()
                         .JoinTable<R_ProjectImage>((s1,s2)=>s1.Id==s2.Source_Id)
-                        .Where<R_ProjectImage>((s1,s2)=> s1.IsOnSale == true && s1.IsDelete == false && 
-                        (s2.CyxmTpSourceType==2 && s2.IsCover==true))
+                        .Where<R_ProjectImage>((s1,s2)=> s1.R_Company_Id == companyId && s1.IsOnSale == true && s1.IsDelete == false && (s2.CyxmTpSourceType==2 && s2.IsCover==true))
                         .Select<R_ProjectImage, ProjectDetailListDTO>((s1,s2) => new ProjectDetailListDTO()
                         {
                             Id = s1.Id,
@@ -238,6 +242,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
         {
             using (var db = new SqlSugarClient(Connection))
             {
+                var companyId = OperatorProvider.Provider.GetCurrent().CompanyId.ToInt();
                 List<ProjectAndDetailListDTO> list = new List<ProjectAndDetailListDTO>();
                 //var data = db.Queryable<R_Project>().OrderBy(p => p.Sorted);
                 var data = db.Queryable<R_Project>()
@@ -250,6 +255,10 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     //data = data.Where(p => p.R_Category_Id == category);
                     data = data.Where("s1.R_Category_Id=" + category);
+                }
+                if (companyId > 0)
+                {
+                    data = data.Where("s1.R_Company_Id=" + companyId);
                 }
 
                 List<R_Project> projectList = data.ToList();
@@ -337,7 +346,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     var packageImages = db.Queryable<R_ProjectImage>()
                         .Where(p => p.CyxmTpSourceType == 2 && p.IsCover == true).ToList();
-                    var packages = db.Queryable<R_Package>().Where(p => p.IsDelete == false)
+                    var packages = db.Queryable<R_Package>().Where(p => p.R_Company_Id==companyId && p.IsDelete == false)
                         .Select(p => new ProjectAndDetailListDTO()
                         {
                             Id = p.Id,

@@ -44,11 +44,12 @@ namespace OPUPMS.Domain.Restaurant.Repository
 
         public List<CategoryListDTO> GetChildList(bool includeDelete = false)
         {
+            var companyId = OperatorProvider.Provider.GetCurrent().CompanyId.ToInt();
             using (var db = new SqlSugarClient(Connection))
             {
                 List<CategoryListDTO> res = new List<CategoryListDTO>();
                 var data = db.Queryable<R_Category>()
-                    .Where(p=>p.PId > 0);
+                    .Where(p => p.PId > 0 && p.R_Company_Id == companyId);
                 if (!includeDelete)
                 {
                     data = data.Where(p => p.IsDelete == false);

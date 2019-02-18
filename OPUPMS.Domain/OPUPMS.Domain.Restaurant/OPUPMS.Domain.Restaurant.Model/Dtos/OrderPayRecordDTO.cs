@@ -89,6 +89,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public int PId { get; set; }
         public int PrintNum { get; set; }
         public int R_Restaurant_Id { get; set; }
+        public string SourceCode { get; set; }
     }
 
     /// <summary>

@@ -25,6 +25,18 @@ namespace OPUPMS.Domain.Repository.OldRepository
         protected static readonly string GetByUserIdListSql = @"SELECT * FROM SUsers WHERE Id IN (@IdList)";
         protected static readonly string GetByUsersSql = @"SELECT * FROM SUsers where UserType & @UserType>0";
         protected static readonly string UpdateUserSql = @"update SUsers set UserPwd=@Password where Id=@Id";
+        protected static readonly string GetCompanyUsersSql = @"SELECT s1.* FROM dbo.SUsers s1 LEFT JOIN dbo.SOrganizationUsers s2 ON s1.Id=s2.UserId WHERE s2.CompanyId=@CompanyId";
+
+        public List<UserInfo> GetCompanyUsers(int companyId)
+        {
+            using (var session = Factory.Create<ISession>())
+            {
+                var result = session.Query<CzdmModel>(GetCompanyUsersSql, new { CompanyId = companyId });
+
+                var infoList = AutoMapper.Mapper.Map<IEnumerable<CzdmModel>, List<UserInfo>>(result);
+                return infoList;
+            }
+        }
 
         public virtual UserInfo GetByUserName(string token, string userName,int companyId)
         {
@@ -49,6 +61,16 @@ namespace OPUPMS.Domain.Repository.OldRepository
         }
 
         public virtual UserInfo GetByUserId(int userId)
+        {
+            using (var session = Factory.Create<ISession>())
+            {
+                var result = session.QueryFirstOrDefault<CzdmModel>(GetByUserIdSql, new { Id = userId });
+
+                return ConvertToInfo(result);
+            }
+        }
+
+        public virtual UserInfo GetByUserIdCompany(int userId,int companyId)
         {
             using (var session = Factory.Create<ISession>())
             {

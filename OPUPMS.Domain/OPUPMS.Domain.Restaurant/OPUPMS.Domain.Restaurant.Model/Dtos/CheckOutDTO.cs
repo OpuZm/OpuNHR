@@ -591,6 +591,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public decimal? PreAmount { get; set; } //预售权
         public string CustomerName { get; set; }
         public string RoomNo { get; set; }  //房号
+        public string TeamName { get; set; }
     }
 
     public class CheckOutResultDTO

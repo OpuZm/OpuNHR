@@ -1737,6 +1737,17 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     }
                     if (notContinue <= 0)
                     {
+                        var orderTables = db.Queryable<R_Table>()
+                            .JoinTable<R_OrderTable>((s1, s2) => s1.Id == s2.R_Table_Id)
+                            .Where<R_OrderTable>((s1, s2) => orderTableIds.Contains(s2.Id))
+                            .Select<R_OrderTable, OrderTableDTO>((s1, s2) => new OrderTableDTO
+                            {
+                                Id = s2.Id,
+                                Name = s1.Name,
+                                RestaurantArea = s1.R_Area_Id,
+                                TableId = s2.R_Table_Id
+                            }).ToList();      //台号列表
+
                         bool round = true;//遍历一遍菜品就行了
                         List<R_OrderDetailRecord> records = new List<R_OrderDetailRecord>();
                         List<Cpdy> cydyInsert = new List<Cpdy>();
@@ -2053,6 +2064,55 @@ namespace OPUPMS.Domain.Restaurant.Repository
                                     });
                                 });
                             }
+
+                            #region
+                            var areaId = orderTables.Where(p => p.TableId == item0.TableId).Select(p => p.RestaurantArea).FirstOrDefault();
+                            var prints = db.Queryable<Printer>()
+                                .JoinTable<R_WeixinPrint>((s1, s2) => s1.Id == s2.Print_Id)
+                                .JoinTable<R_WeixinPrint, R_WeixinPrintArea>((s1, s2, s3) => s2.Id == s3.R_WeixinPrint_Id)
+                                .Where<R_WeixinPrint, R_WeixinPrintArea>((s1, s2, s3) => s1.IsDelete == false &&
+                                s2.PrintType == PrintType.总单区域出单 && areaId == s3.R_Area_Id).Select("s1.*").ToList();
+                            var printerListArea = prints.Distinct().ToList();
+
+                            if (printerListArea.Any())
+                            {
+                                foreach (var print in printerListArea)
+                                {
+                                    cydyInsert.Add(new Cpdy
+                                    {
+                                        cymxxh00 = item0.Id,
+                                        cyzdxh00 = order.Id,
+                                        cymxdm00 = "0",
+                                        cymxmc00 = "区域总单",
+                                        cymxdw00 = userInfo.UserName,
+                                        cymxsl00 = string.Empty,
+                                        cymxdybz = false,
+                                        cymxyj00 = print.IpAddress,
+                                        cymxclbz = "0",
+                                        cymxczrq = DateTime.Now,
+                                        cymxzdbz = "1",
+                                        //cymxyq00 = detail.CyddMxName,
+                                        //cymxzf00 = detail.CyddMxName,
+                                        //cymxpc00 = detail.CyddMxName,
+                                        cymxczy0 = userInfo.UserName,
+                                        cymxfwq0 = print.PcName,
+                                        cymxczdm = userInfo.UserCode,
+                                        cymxje00 = req.Sum(p => p.Price * p.Num).ToString(),
+                                        cymxth00 = orderTables.FirstOrDefault(p => p.Id == item0.Id).Name,
+                                        cymxrs00 = order.PersonNum.ToString(),
+                                        cymxct00 = resturant.Name,
+                                        cymxzdid = cpdyThGuid,
+                                        cymxbt00 = "区域总单",
+                                        cymxzwrq = DateTime.Now.ToString("yyyy-MM-dd"),
+                                        cpdysdxh = cpdyThGuid,
+                                        cymxdk00 = print.Name,
+                                        cymxgdbz = false,
+                                        cpdyfsl0 = market.Name
+                                    });
+                                }
+                            }
+                            #endregion
+
                             #endregion
                             db.InsertRange<Cpdy>(cydyInsert);   //批量添加菜品打印信息
                             round = false;

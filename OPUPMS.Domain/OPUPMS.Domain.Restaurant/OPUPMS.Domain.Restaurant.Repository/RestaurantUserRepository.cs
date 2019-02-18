@@ -24,7 +24,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
         private readonly static string GetUserRestaurants = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s1.R_Company_Id=@R_Company_Id and s2.UserId=@UserId";
         private readonly static string GetUserAllRestaurants = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s2.UserId=@UserId";
         private readonly static string IsHaveRestaurant = @"SELECT count(0) FROM dbo.R_Restaurant where R_Company_Id=@CompanyId";
-        private readonly static string GetAllRestaurant = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 LEFT JOIN dbo.UserRestaurant s2 ON s1.Id=s2.RestaurantId where s1.R_Company_Id=@R_Company_Id";
+        private readonly static string GetAllRestaurant = @"SELECT s1.Id as RestaurantId FROM dbo.R_Restaurant s1 where s1.R_Company_Id=@R_Company_Id";
         private readonly static string InsertRestaurantInit = @"INSERT INTO dbo.R_Restaurant
         ( Name ,
           SeatNum ,
@@ -151,6 +151,35 @@ VALUES  ( @Name , -- Name - nvarchar(200)
             }
             return userinfo;
             //return base.GetByUserId(userId);
+        }
+
+        public override UserInfo GetByUserIdCompany(int userId, int companyId)
+        {
+            var userinfo = base.GetByUserId(userId);
+            if (userinfo != null)
+            {
+                IEnumerable<UserRestaurant> userRestaurants = null;
+                using (var session = Factory.Create<ISession>(""))
+                {
+                    if (userinfo.IsTechnicalAssistance)
+                    {
+                        userRestaurants = session.Query<UserRestaurant>(GetAllRestaurant, new
+                        {
+                            R_Company_Id = companyId
+                        });
+                    }
+                    else
+                    {
+                        userRestaurants = session.Query<UserRestaurant>(GetUserRestaurants, new
+                        {
+                            UserId = userinfo.UserId,
+                            R_Company_Id = companyId
+                        });
+                    }
+                    userinfo.ManagerRestaurant = string.Join(",", userRestaurants.Select(p => p.RestaurantId));
+                }
+            }
+            return userinfo;
         }
 
         public override List<UserInfo> GetByUserIds(List<int> userIds)

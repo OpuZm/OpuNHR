@@ -8,8 +8,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
+using System.Text;
 
 namespace OPUPMS.Infrastructure.Common.Web
 {
@@ -64,6 +67,26 @@ namespace OPUPMS.Infrastructure.Common.Web
         public static JObject ToJObject(this string Json)
         {
             return Json == null ? JObject.Parse("{}") : JObject.Parse(Json.Replace("&nbsp;", ""));
+        }
+
+        public static string ObjToGetStr(this object T)
+        {
+            StringBuilder res = new StringBuilder();
+            Type type = T.GetType();
+            System.Reflection.PropertyInfo[] ps = type.GetProperties();
+            foreach (PropertyInfo i in ps)
+            {
+                object obj = i.GetValue(T, null);
+                if (res.IsEmpty())
+                {
+                    res.Append($"{i.Name}={obj}");
+                }
+                else
+                {
+                    res.Append($"&{i.Name}={obj}");
+                }
+            }
+            return res.ToString();
         }
     }
 }

@@ -72,7 +72,7 @@ namespace OPUPMS.Domain.Restaurant.Services
             UserInfo verifyUser = null;
 
             if (verifyUserDTO.UserId > 0)
-                verifyUser = _userRepository.GetByUserId(verifyUserDTO.UserId);
+                verifyUser = _userRepository.GetByUserIdCompany(verifyUserDTO.UserId, verifyUserDTO.CompanyId);
             else
                 verifyUser= _userRepository.GetByUserName("", verifyUserDTO.UserName,verifyUserDTO.CompanyId);
 
@@ -82,7 +82,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                 return user;
             }
 
-            if (verifyUserDTO.UserPwd != null && DESEncrypt.GetMD5(verifyUserDTO.UserPwd) != verifyUser.UserPwd)
+            if (!string.IsNullOrEmpty(verifyUserDTO.UserPwd) && DESEncrypt.GetMD5(verifyUserDTO.UserPwd) != verifyUser.UserPwd)
             {
                 user.State = LoginState.InvalidPassword;
                 return user;
@@ -128,7 +128,7 @@ namespace OPUPMS.Domain.Restaurant.Services
             user.GroupCode = verifyUserDTO.CompanyId.ToString();//餐饮登录暂存公司Id
             user.Permission = verifyUser.Permission;
             user.ManagerRestaurant = list.Join(";"); //verifyUser.ManagerRestaurant;
-            user.MinDiscountValue = verifyUser.Discount / 100; //折扣值需要除以100变成折扣率
+            user.MinDiscountValue = verifyUser.Discount; //折扣值需要除以100变成折扣率
             user.MaxClearValue = verifyUser.MaxClearValue;
 
             return user;
@@ -154,7 +154,5 @@ namespace OPUPMS.Domain.Restaurant.Services
             }
             return result;
         }
-
-        
     }
 }

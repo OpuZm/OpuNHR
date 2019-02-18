@@ -13,6 +13,17 @@ namespace OPUPMS.Domain.Base.Dtos
         public string Result { get; set; }
         public string Info { get; set; }
     }
+
+    public class CustomerSearchDTO
+    {
+        public int CompanyId { get; set; }
+    }
+
+    public class CustomerListResultDTO
+    {
+
+    }
+
     public class MemberResultDTO
     {
         public int TotalCount { get; set; }
@@ -36,8 +47,18 @@ namespace OPUPMS.Domain.Base.Dtos
         public decimal Amount { get; set; }
         public string Remark { get; set; }
         public string BillDate { get; set; }
-        public string Reason { get; set; }
         public string SpendPonit { get; set; }
-        public string EnterBillSign { get; set; }
+        public int CompanyId { get; set; }
+    }
+
+    public class MemberEntry
+    {
+        public int CompanyId { get; set; }
+        public int MemberId { get; set; }
+        public decimal PayAmount { get; set; }
+        public int UserId { get; set; }
+        public string CateringSpendPoint { get; set; }
+        public string BusinessDate { get; set; }
+        public string Remark { get; set; }
     }
 }

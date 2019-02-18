@@ -208,6 +208,9 @@ namespace OPUPMS.Domain.Base.Models
             set { _restaurantauthority = value; }
             get { return _restaurantauthority; }
         }
+
+        public decimal Discount { get; set; }
+        public decimal MaxClearValue { get; set; }
     }
 
     //public class UserRestaurant

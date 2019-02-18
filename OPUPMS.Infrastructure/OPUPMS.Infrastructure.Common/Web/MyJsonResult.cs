@@ -47,7 +47,7 @@ namespace OPUPMS.Infrastructure.Common.Web
 
             if (this.Data != null)
             {
-                JavaScriptSerializer jss = new JavaScriptSerializer();
+                JavaScriptSerializer jss = new JavaScriptSerializer() { MaxJsonLength=int.MaxValue};
                 string jsonString = jss.Serialize(Data);
                 string p = @"\\/Date\((\d+)\)\\/";
                 MatchEvaluator matchEvaluator = new MatchEvaluator(this.ConvertJsonDateToDateString);

@@ -523,7 +523,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                 authUsers = _oldUserRepository.GetByUserIds(req.AuthUserList.Select(x => x.AuthUserId).ToList());
             var tablesName = checkOutOrderDTO.OrderTableList.Select(p => p.Name).ToArray().Join(",");
             string memberRemark = string.Format("消费点:{0}-{1},订单号:{2},台号:{3}", checkOutOrderDTO.RestaurantName, checkOutOrderDTO.MarketName, checkOutOrderDTO.OrderNo, tablesName);
-            List<MemberInfoDTO> members= SaveMemberConsumeInfo(req.ListOrderPayRecordDTO, req.OperateUserCode, true, accDate,memberRemark, checkOutOrderDTO.R_Restaurant_Id);
+            //List<MemberInfoDTO> members= SaveMemberConsumeInfo(req.ListOrderPayRecordDTO, req.OperateUserCode, true, accDate,memberRemark, checkOutOrderDTO.R_Restaurant_Id);
 
 
             using (var db = new SqlSugarClient(Connection))
@@ -766,7 +766,23 @@ namespace OPUPMS.Domain.Restaurant.Services
                             {
                                 try
                                 {
-
+                                    MemberEntry memberEntry = new MemberEntry()
+                                    {
+                                        MemberId = item.SourceId,
+                                        UserId = req.OperateUser,
+                                        PayAmount = item.PayAmount,
+                                        Remark = payRecordModel.Remark,
+                                        CateringSpendPoint = resObj.Id.ToString(),
+                                        CompanyId = req.CompanyId,
+                                        BusinessDate = accDate.ToString("yyyy-MM-dd"),
+                                    };
+                                    var jsonStr = Json.ToJson(memberEntry);
+                                    apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                    var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                    if (string.Compare(jsonObject.Result, "success", true) <= 0)
+                                    {
+                                        throw new Exception($"请求入账到酒店会员接口失败,信息:{jsonObject.Info}");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -777,12 +793,13 @@ namespace OPUPMS.Domain.Restaurant.Services
                                 {//若已启用集团会员库，里面则不再执行，本地库会员消费记录已在插入集团库时一并插入到本地库
                                     try
                                     {
-                                        var memberInfo = ApplyChangeMemberToDb(item.SourceId, item.Pwd, req.OperateUserCode, item.PayAmount, memberRemark, false, db, accDate,orderModel.R_Restaurant_Id);
-                                        members.Add(memberInfo);
-                                        string remark = string.Format("会员信息-卡号{0}- 姓名：{1}", memberInfo.MemberCardNo, memberInfo.MemberName);
                                         payRecordModel.SourceId = item.SourceId;
-                                        payRecordModel.SourceName = string.Format("{0}-{1}",memberInfo.MemberCardNo,memberInfo.MemberName);
-                                        payRecordModel.Remark = remark;
+                                        //var memberInfo = ApplyChangeMemberToDb(item.SourceId, item.Pwd, req.OperateUserCode, item.PayAmount, memberRemark, false, db, accDate,orderModel.R_Restaurant_Id);
+                                        //members.Add(memberInfo);
+                                        //string remark = string.Format("会员信息-卡号{0}- 姓名：{1}", memberInfo.MemberCardNo, memberInfo.MemberName);
+
+                                        //payRecordModel.SourceName = string.Format("{0}-{1}",memberInfo.MemberCardNo,memberInfo.MemberName);
+                                        //payRecordModel.Remark = remark;
                                     }
                                     catch (Exception ex)
                                     {
@@ -807,49 +824,25 @@ namespace OPUPMS.Domain.Restaurant.Services
                                 if (req.IsReCheckout)
                                     remark = " --> " + remark;
                                 payRecordModel.Remark = remark;
-                                
-                                try
-                                {
-                                    ProtocolEntry protocolEntry = new ProtocolEntry()
-                                    {
-                                        ProtocolId = item.SourceId,
-                                        BillNum = orderModel.Id.ToString(),
-                                        Amount = item.PayAmount,
-                                        Remark = payRecordModel.Remark,
-                                        SpendPonit = resObj.Name,
-                                        BillDate = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"),
-                                        EnterBillSign = ""
-                                    };
-                                    var jsonStr = Json.ToJson(protocolEntry);
-                                    apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?",jsonStr,Encoding.UTF8,true, "application/x-www-form-urlencoded",null,5000);
-                                    var jsonObject = Json.ToObject<ApiResult>(apiStr);
-                                    if (string.Compare(jsonObject.Result,"success",true)<=0)
-                                    {
-                                        throw new Exception();
-                                    }
 
-                                    //var paras = SqlSugarTool.GetParameters(new
-                                    //{
-                                    //    xh = req.OrderId, //餐饮单序号
-                                    //    dh = orderModel.R_Restaurant_Id + "." + req.OrderId, //餐厅代码+'.'+餐饮单单号
-                                    //    lx = code, //协议单位代码(lxdmdm00)
-                                    //    je = item.PayAmount,//金额
-                                    //    cz = req.OperateUserCode, //操作员代码
-                                    //    ctmc = resObj.Name, //餐厅名称
-                                    //    fsmc = marketObj.Name, //分市名称
-                                    //    th = req.OrderId,
-                                    //    rs = orderModel.PersonNum,
-                                    //    bz = payRecordModel.Remark,
-                                    //    mz = "",
-                                    //    atr = 0
-                                    //});
-                                    //db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                                    //db.ExecuteCommand("p_po_toys_newCY", paras);
-                                    //db.CommandType = System.Data.CommandType.Text;//还原回默认
-                                }
-                                catch (Exception ex)
+                                ProtocolEntry protocolEntry = new ProtocolEntry()
                                 {
-                                    throw new Exception("请求挂账处理失败，请联系管理员：" + ex.Message);
+                                    ProtocolId = item.SourceId,
+                                    BillNum = orderModel.OrderNo,
+                                    Amount = item.PayAmount,
+                                    Remark = payRecordModel.Remark,
+                                    SpendPonit = resObj.Id.ToString(),
+                                    CompanyId = req.CompanyId,
+                                    BillDate = accDate.ToString("yyyy-MM-dd"),
+                                    //EnterBillSign = "",
+                                    //Code = string.IsNullOrEmpty(item.SourceCode) ? "D000002" : item.SourceCode
+                                };
+                                var jsonStr = Json.ToJson(protocolEntry);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                if (!jsonObject.Result.Equals("success",StringComparison.OrdinalIgnoreCase))
+                                {
+                                    throw new Exception($"请求入账到酒店应收账接口失败,信息:{jsonObject.Info}");
                                 }
                             }
                             else if (item.CyddPayType == (int)CyddPayType.转客房)
@@ -1455,13 +1448,13 @@ namespace OPUPMS.Domain.Restaurant.Services
                 if (info == null || info.Count == 0)
                     throw new Exception(string.Format("无法找到此客户（{0}）,请重新确认挂账客户！", verifySource.SourceName));
 
-                if (info[0].LimitAmount != 0)    //挂账限额不等于0则需判断
-                {
-                    if ((info[0].RemainAmount + verifySource.OperateValue) > info[0].LimitAmount)
-                    {
-                        throw new Exception(string.Format("此客户（{0}）可挂账限额大于当前输入金额,无法挂账", verifySource.SourceName));
-                    }
-                }
+                //if (info[0].LimitAmount != 0)    //挂账限额不等于0则需判断
+                //{
+                //    if ((info[0].RemainAmount + verifySource.OperateValue) > info[0].LimitAmount)
+                //    {
+                //        throw new Exception(string.Format("此客户（{0}）可挂账限额大于当前输入金额,无法挂账", verifySource.SourceName));
+                //    }
+                //}
 
                 infoList.Add(info[0].Code.Trim());
             }
@@ -1738,23 +1731,26 @@ namespace OPUPMS.Domain.Restaurant.Services
             {
                 //搜索会员信息
                 string memberSql = string.Format(@"
-                    SELECT krlsxh00 AS Id, krlsvpkh AS MemberCardNo, krlsmm00 AS MemberPwbByte, krlsye00 AS CardBalance,
-                            krlszjhm AS MemberIdentityNo, krlsmm00 AS MemberPwbByte, krlsdh00 AS MemberPhoneNo,
-                            LTRIM(RTRIM(krlszwxm)) AS MemberName, krlsGPID AS MemberGPID, krlsGUID AS MemberGUID, krlsxb00 AS MemberGender, krlsdh00 as MemberPhoneNo
-                    FROM krls WHERE krlsxh00 = {0}", memberId);
+                    SELECT top 1 krhyxh00 AS Id, krhyvpkh AS MemberCardNo, krhymm00 AS MemberPwd, krhyye00 AS CardBalance
+                    FROM krhy WHERE krhyxh00 = {0}", memberId);
 
                 var members = db.SqlQuery<MemberInfoDTO>(memberSql);
                 if (members == null || members.Count == 0)
                     throw new Exception("客户信息无效！");
 
                 member = members[0];
-                memberPwd = string.IsNullOrEmpty(memberPwd) ? "" : memberPwd;
-                memberPwd = memberPwd ?? string.Empty;
-                if (member.MemberPwd != DESEncrypt.Rc4PassHex(memberPwd))
-                    throw new Exception("客户密码验证不正确！");
+                var memberMD5 = DESEncrypt.GetMD5(memberPwd);
+                if (memberMD5 != member.MemberPwd)
+                {
+                    throw new Exception("会员密码验证不正确");
+                }
+                //memberPwd = string.IsNullOrEmpty(memberPwd) ? "" : memberPwd;
+                //memberPwd = memberPwd ?? string.Empty;
+                //if (member.MemberPwd != DESEncrypt.Rc4PassHex(memberPwd))
+                //    throw new Exception("客户密码验证不正确！");
 
-                if (member.CardBalance + amount > 0)
-                    throw new Exception("会员消费金额已超过会员卡的剩余余额！");
+                //if (member.CardBalance + amount > 0)
+                //    throw new Exception("会员消费金额已超过会员卡的剩余余额！");
             }
             catch (Exception ex)
             {
@@ -1766,14 +1762,15 @@ namespace OPUPMS.Domain.Restaurant.Services
             return member;
         }
 
-        public List<MemberInfoDTO> SearchMemberBy(string text)
+        public List<MemberInfoDTO> SearchMemberBy(string text, int companyId = 0)
         {
             try
             {             
                 List<MemberInfoDTO> res = null;
+                
                 if (!string.IsNullOrEmpty(text))
                 {
-                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/member?chineseName={text}");
+                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/member?query.commonInfo={text}&query.companyId={companyId}");
                     var j = Json.ToJson(strJson);
                     var jsonObject = Json.ToObject<MemberResultDTO>(strJson);
                     if (jsonObject != null)
@@ -1826,35 +1823,57 @@ namespace OPUPMS.Domain.Restaurant.Services
             //}
         }
 
-        public List<SearchKrzlInfo> SearchRoomBy(string text)
+        public List<SearchKrzlInfo> SearchRoomBy(string text,int companyId)
         {
-            using (var db=new SqlSugarClient(Connection))
+            try
             {
-                List<SearchKrzlInfo> infoList = new List<SearchKrzlInfo>();
-                if (text.IsEmpty())
-                    throw new Exception("请输入房号！");
+                List<SearchKrzlInfo> result = null;
 
-                string sqlRoom = string.Format("SELECT TOP 1 krzlfh00 " +
-                                            "FROM krzl WHERE krzlzt00 = 'I' AND (krzlfh00 = '{0}' or (krzlkrlx='G' and krzlth00='{0}'))", text);
-
-                var rooms = db.SqlQuery<string>(sqlRoom);
-                if (rooms == null || rooms.Count == 0)
-                    throw new Exception(string.Format("无此在住房号（{0}）,请重新确认转客房房号！", text));
-
-                //取在住主结人
-                string customerSql = string.Format("SELECT TOP 1 krzlzh00 AS CustomerId, ISNULL(krzlgzxe,0) AS LastAmount,isnull(krzlzwxm,'') as CustomerName,isnull(krzlye00,0) as LimitAmount,krzlfh00 AS RoomNo, " +
-                    "(select sum(ysq0je00) from ysq0 where ysq0zh00=k.krzlzh00) as PreAmount FROM krzl k " +
-                    "WHERE krzlzt00 = 'I' AND (krzlfh00 = '{0}' or (krzlkrlx='G' and krzlth00='{0}')) AND krzlzh00 = krzltzxh", text);
-                infoList = db.SqlQuery<SearchKrzlInfo>(customerSql);
-
-                if (infoList == null || infoList.Count == 0)
-                    throw new Exception(string.Format("此房号（{0}）无在住客人！", text));
-
-                //infoList.Add(codes[0]);
-                //infoList.Add(customers[0].CustomerId.ToString());
-                return infoList;
+                if (!string.IsNullOrEmpty(text))
+                {
+                    string strJson = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/member?query.commonInfo={text}&query.companyId={companyId}");
+                    var jsonObject = Json.ToObject<dynamic>(strJson);
+                    if (jsonObject.MasterList != null)
+                    {
+                        foreach (var item in jsonObject.MasterList)
+                        {
+                            result.Add(new SearchKrzlInfo() { CustomerId = item.GuestNo, RoomNo=item.RoomNum,CustomerName=item.Name,TeamName = item.TeamName });
+                        }
+                    }
+                }
+                return result;
             }
-            
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            //using (var db=new SqlSugarClient(Connection))
+            //{
+            //    List<SearchKrzlInfo> infoList = new List<SearchKrzlInfo>();
+            //    if (text.IsEmpty())
+            //        throw new Exception("请输入房号！");
+
+            //    string sqlRoom = string.Format("SELECT TOP 1 krzlfh00 " +
+            //                                "FROM krzl WHERE krzlzt00 = 'I' AND (krzlfh00 = '{0}' or (krzlkrlx='G' and krzlth00='{0}'))", text);
+
+            //    var rooms = db.SqlQuery<string>(sqlRoom);
+            //    if (rooms == null || rooms.Count == 0)
+            //        throw new Exception(string.Format("无此在住房号（{0}）,请重新确认转客房房号！", text));
+
+            //    //取在住主结人
+            //    string customerSql = string.Format("SELECT TOP 1 krzlzh00 AS CustomerId, ISNULL(krzlgzxe,0) AS LastAmount,isnull(krzlzwxm,'') as CustomerName,isnull(krzlye00,0) as LimitAmount,krzlfh00 AS RoomNo, " +
+            //        "(select sum(ysq0je00) from ysq0 where ysq0zh00=k.krzlzh00) as PreAmount FROM krzl k " +
+            //        "WHERE krzlzt00 = 'I' AND (krzlfh00 = '{0}' or (krzlkrlx='G' and krzlth00='{0}')) AND krzlzh00 = krzltzxh", text);
+            //    infoList = db.SqlQuery<SearchKrzlInfo>(customerSql);
+
+            //    if (infoList == null || infoList.Count == 0)
+            //        throw new Exception(string.Format("此房号（{0}）无在住客人！", text));
+
+            //    //infoList.Add(codes[0]);
+            //    //infoList.Add(customers[0].CustomerId.ToString());
+            //    return infoList;
+            //}
         }
 
 
@@ -2189,6 +2208,22 @@ namespace OPUPMS.Domain.Restaurant.Services
                 }
             }
             return res;
+        }
+
+        public List<TypeCodeInfo> GetCustomerList(CustomerSearchDTO req)
+        {
+            List<TypeCodeInfo> result = new List<TypeCodeInfo>();
+            var str = Json.ObjToGetStr(req);
+            string apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/protocolcustomer?{str}", "", Encoding.UTF8, false, "application/x-www-form-urlencoded", null, 5000);
+            var jsonObject = Json.ToObject<dynamic>(apiStr);
+            if (jsonObject.TotalCount > 0 && jsonObject.ListDto!=null)
+            {
+                foreach (var item in jsonObject.ListDto)
+                {
+                    result.Add(new TypeCodeInfo() { Id=item.Id,Name=item.Name});
+                }
+            }
+            return result;
         }
     }
 

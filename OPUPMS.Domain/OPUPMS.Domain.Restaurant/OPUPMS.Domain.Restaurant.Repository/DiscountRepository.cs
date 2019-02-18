@@ -313,7 +313,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     RestaurantId = req.RestaurantId,
                     MarketId = req.MarketId,
-                    OrderId=req.OrderId==0?33:req.OrderId
+                    OrderId=req.OrderId,
+                    CompanyId=req.CompanyId
                 });
 
                 string sql = $@" SELECT D.*, ISNULL(R.Id, 0) AS RestaurantId, ISNULL(M.Id, 0) AS MarketId, 
@@ -323,7 +324,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                             LEFT JOIN dbo.R_Market M ON M.Id = D.R_Area_Id
                             LEFT JOIN dbo.R_Area A ON A.Id = D.R_Area_Id
                             left join dbo.R_Order OD on R.Id=OD.R_Restaurant_Id
-                            WHERE (GETDATE() BETWEEN D.StartDate AND D.EndDate) AND D.IsEnable = 1 
+                            WHERE D.R_Company_Id=@CompanyId and (GETDATE() BETWEEN D.StartDate AND D.EndDate) AND D.IsEnable = 1 
                                 AND D.R_Restaurant_Id = @RestaurantId and D.IsDelete=0 
                                 and OD.Id=@OrderId
                                 and (OD.R_Market_Id=D.R_Market_Id OR 2=0)";

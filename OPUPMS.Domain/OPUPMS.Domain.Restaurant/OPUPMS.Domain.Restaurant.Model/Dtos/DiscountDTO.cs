@@ -96,6 +96,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
 
         public int MarketId { get; set; }
         public int OrderId { get; set; }
+        public int CompanyId { get; set; }
     }
 
     public class SchemeDiscountDTO

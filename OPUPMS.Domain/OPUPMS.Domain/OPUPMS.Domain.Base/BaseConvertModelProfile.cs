@@ -18,9 +18,9 @@ namespace OPUPMS.Domain.Base
                     .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate))
                     //.ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Czdmbm00))
                     //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Czdmqxzb))
-                    //.ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Czdmzkl0))
+                    .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
                     .ForMember(dest => dest.Permission, opt => opt.MapFrom(src => src.RestaurantAuthority))
-                    //.ForMember(dest => dest.MaxClearValue, opt => opt.MapFrom(src => src.Czdmmlje))
+                    .ForMember(dest => dest.MaxClearValue, opt => opt.MapFrom(src => src.MaxClearValue))
                     //.ForMember(dest => dest.ManagerRestaurant, opt => opt.MapFrom(src => src.Czdmtype))
                     .ReverseMap();
             #endregion
