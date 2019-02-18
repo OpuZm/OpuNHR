@@ -609,7 +609,7 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
 						            if (data.Successed) {//返回成功
 						            	Data = data.Data;
                                         for (var i = 0; i < Data.length; i++){
-                                            Data[i].Payment = (Math.round(Data[i].CardBalance * 100 + parseFloat($('#AmountOfMoney').val()) * 100)) / 100;
+                                            Data[i].Payment = (Math.round(Data[i].CardBalance * 100 - parseFloat($('#AmountOfMoney').val()) * 100)) / 100;
 						            	}
 						            	
 					            		table.reload('dMemberTable', {data:''});
@@ -646,6 +646,10 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                                 $('#dMember .layui-table-body tr').on('dblclick', function () {
                                     $(this).addClass('layui-this').siblings().removeClass('layui-this');
                                     iNum = $(this).index();
+                                    if (Data[iNum].Payment < 0) {
+                                        layer.msg('会员卡余额不足')
+                                        return false;
+                                    }
                                     inidata.Pwd = "";
                                     //如果该会员卡有密码
                                     if (Data[iNum].MemberPwd != null && Data[iNum].MemberPwd != "") {
