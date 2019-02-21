@@ -694,19 +694,42 @@ layui.use(['element', 'form', 'laytpl', 'layer','table'], function () {
                                                 	layer.msg('请输入密码');
                                                 	return false;
                                                 }
-                                                if (Data[iNum].MemberPwd != val) {
-                                                    layer.msg('密码错误')
-                                                }
+                                                $.ajax({
+                                                    type: "post",
+                                                    url: "/Res/CheckOut/VaildPassWord",
+                                                    dataType: "json",
+                                                    data: { req: val },
+                                                    beforeSend: function (xhr) {
+                                                        layindex = layer.open({ type: 3 });
+                                                    },
+                                                    complete: function (XMLHttpRequest, textStatus) {
+                                                        layer.close(layindex);
+                                                    },
+                                                    success: function (data, textStatus) {
+                                                        if (data.Successed) {//返回成功
+                                                            if (Data[iNum].MemberPwd != data.Data) {
+                                                                layer.msg('密码错误')
+                                                                return false;
+                                                            }
 
-                                                pwdInput.blur();
-                                                //提交数据
-                                                var req = { id: Data[iNum].Id, name: val, money: inputval, payType: 3, Pwd: val };
-                                                
-                                                inidata.Pwd = val;//密码
-                                                inidata.SourceId = Data[iNum].Id;
-                                                inidata.SourceName = Data[iNum].MemberCardNo + '-' + Data[iNum].MemberName;
-                                                Payment();
-                                                layer.closeAll();
+                                                            pwdInput.blur();
+                                                            //提交数据
+                                                            var req = { id: Data[iNum].Id, name: val, money: inputval, payType: 3, Pwd: val };
+
+                                                            inidata.Pwd = val;//密码
+                                                            inidata.SourceId = Data[iNum].Id;
+                                                            inidata.SourceName = Data[iNum].MemberCardNo + '-' + Data[iNum].MemberName;
+                                                            Payment();
+                                                            layer.closeAll();
+                                                           
+                                                        } else {
+                                                            layer.alert(data.Message);
+                                                        }
+
+                                                    }
+                                                });
+
+
                                             }
                                             , btn2: function (index, layero) {
                                             }
