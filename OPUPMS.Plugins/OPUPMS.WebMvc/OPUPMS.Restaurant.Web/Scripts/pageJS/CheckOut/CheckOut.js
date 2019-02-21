@@ -2229,9 +2229,6 @@ function CheckOut() {
 
     req.ListOrderDetailDTO = ListOrderDetailDTO;
 
-    var chat = $.connection.systemHub;
-    chat.hubName = 'systemHub';
-    chat.connection.start();
     $.ajax({
         type: "POST",
         url: "/Res/Checkout/Checkout",
@@ -2247,10 +2244,6 @@ function CheckOut() {
         },
         success: function (data, textStatus) {
             if (data.Result == true) {
-                $.connection.hub.start().done(function () {//通知刷新工作台界面
-                    chat.server.notifyResServiceRefersh(true);
-                });
-
                 OrderMainPayId = data.Data.OrderMainPayId;
                 layer.confirm('请选择？', {
                     title: '结账成功！',

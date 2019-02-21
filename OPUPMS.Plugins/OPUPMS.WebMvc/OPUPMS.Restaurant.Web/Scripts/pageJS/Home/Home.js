@@ -25,16 +25,19 @@ $(function () {
     /* 餐饮实时状态更新 --start */
     chat = $.connection.systemHub;
     chat.hubName = 'systemHub';
-    chat.connection.start();
+    $.connection.hub.start().done(function () {
+        chat.server.userConnected();
+    });
 
     chat.client.callResServiceRefersh = function (result) {
         if (result == true) {
             LoadInit(laytpl);
         }
     }
-    
     window.parent.chat = chat;
     /* 餐饮实时状态更新 --end */
+
+
 });
 
 var laytpl;

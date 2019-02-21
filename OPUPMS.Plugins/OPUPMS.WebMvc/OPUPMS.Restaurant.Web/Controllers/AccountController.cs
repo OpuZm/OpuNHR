@@ -15,6 +15,7 @@ using OPUPMS.Restaurant.Web.Models;
 using OPUPMS.Web.Framework.Core.Mvc;
 using OPUPMS.Domain.Base.Repositories;
 using OPUPMS.Domain.Base.Models;
+using Microsoft.AspNet.SignalR;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -130,7 +131,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                             OperatorProvider.Provider.AddCurrent(mUser);
                             res.Data = list;
                             res.Successed = true;
-
+                            
                             #region 账务日期
                             var businessDate = _extendItemRepository.GetModelList(Convert.ToInt32(mUser.CompanyId), 10003).FirstOrDefault();
                             if (businessDate == null)
@@ -258,6 +259,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
             //mUser.MaxClearValue = operatorUser.MaxClearValue;
 
             OperatorProvider.Provider.AddCurrent(mUser);
+
+            var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+            hub.Clients.All.callResServiceRefersh(true);
             res.Data = true;
             return Json(res, JsonRequestBehavior.AllowGet);
         }

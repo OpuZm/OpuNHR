@@ -244,6 +244,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 if (model != null)
                 {
                     res.Data = model;
+
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(operatorUser.DepartmentId, new string[0]).callResServiceRefersh(true);
                 }
                 res.Message = msg;
             }
@@ -351,7 +354,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     if (result)
                     {
                         var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                        hub.Clients.All.callResServiceRefersh(true);
+                        hub.Clients.Group(userInfo.DepartmentId).callResServiceRefersh(true);
                     }
                 }
                 catch (Exception ex)
@@ -799,6 +802,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
         /// <returns></returns>
         public ActionResult NewWelcome()
         {
+            //var operatorUser = OperatorProvider.Provider.GetCurrent();
+            //MyHub myHub = new MyHub();
+            //myHub.UserLogin(operatorUser.DepartmentId.ToInt());
             return View();
         }
 

@@ -108,25 +108,23 @@
     <!-- ▼餐台右侧 筛选/数据 -->
     <div class="right-side console-right-side">
         <div class="MealTable-Screen">
-            <ul  id="TableStatusList_view">
-
-            </ul>
+            <ul id="TableStatusList_view"></ul>
             <script id="TableStatusList_tpml" type="text/html">
                 {{#  layui.each(d, function(index, item){ }}
 
                 <li class="{{#  if(index == 0){ }} layui-this {{#  } }}" data-key="{{ item.Key }}">
-                    {{#  if(item.Key == 0){ }} 
-                        <i class="ScreenMealTable-icon all" data-key="all"></i> {{ item.Text }}
-                        <span class="num">{{ item.Value }}</span>{{#  } }}
+                    {{#  if(item.Key == 0){ }}
+                    <i class="ScreenMealTable-icon all" data-key="all"></i> {{ item.Text }}
+                    <span class="num">{{ item.Value }}</span>{{#  } }}
 
                     {{#  if(item.Key == 1){ }} <i class="ScreenMealTable-icon empty" data-key="empty"></i> {{ item.Text }}
-                        <span class="num">{{ item.Value }}</span>{{#  } }}
+                    <span class="num">{{ item.Value }}</span>{{#  } }}
 
                     {{#  if(item.Key == 2){ }} <i class="ScreenMealTable-icon add" data-key="add"></i> {{ item.Text }}
-                        <span class="num">{{ item.Value }}</span>{{#  } }}
+                    <span class="num">{{ item.Value }}</span>{{#  } }}
 
                     {{#  if(item.Key == 3){ }} <i class="ScreenMealTable-icon dirty" data-key="dirty"></i> {{ item.Text }}
-                        <span class="num">{{ item.Value }}</span>{{#  } }}
+                    <span class="num">{{ item.Value }}</span>{{#  } }}
 
                 </li>
                 {{#  }); }}
@@ -134,10 +132,10 @@
 
         </div>
         <div class="MealTable-box">
-        	<a href="javascript:void(0);" onclick="BatchEmpty();" class="layui-btn layui-btn-primary full">批量置空</a>
+            <a href="javascript:void(0);" onclick="BatchEmpty();" class="layui-btn layui-btn-primary full">批量置空</a>
         </div>
         <div class="MealTable-Data" id="MealTableData_view">
-            
+
         </div>
         <script id="MealTableData_tpml" type="text/html">
             <p>总客数<span class="num">{{ d.CurrentTotalGuestNum }}</span></p>
@@ -152,10 +150,12 @@
             <p id="current-date"></p>
             <h3 id="current-time"></h3>
             <div class="blue">
-            	<p>营业日期</p>
-            	<p id="Date_view"></p>
+                <p>营业日期</p>
+                <p id="Date_view"></p>
             </div>
-            <script id="Date_tpml" type="text/html">{{ d }}</script>
+            <script id="Date_tpml" type="text/html">
+                {{ d }}
+            </script>
         </div>
     </div>
     <!-- ▲餐台右侧 筛选/数据 -->

@@ -108,8 +108,20 @@ layui.use(['element', 'form'], function () {
             success: function (data, textStatus) {
                 var res = data.Data;
                 if (res) {
-                    $.connection.hub.start().done(function () {//通知刷新工作台界面
-                        chat.server.notifyResServiceRefersh(true);
+       //             $.connection.hub.start().done(function () {//通知刷新工作台界面
+       //                 chat.server.notifyResServiceRefersh(true);
+       //                 layer.msg('开台成功！');
+	      //              if (name == 'order') {//开台点餐
+							//layer.open({type: 3});
+	      //                  var orderTableIds = data.Data.OrderTableIds;
+	      //                  location.href = "/Res/Home/NewWelcome";
+	      //                  parent.OpenOrder(orderTableIds);
+	      //              } else {
+	      //              	layer.open({type: 3});
+	      //                  location.href = "/Res/Home/NewWelcome";
+	      //              }
+       //             });
+
                         layer.msg('开台成功！');
 	                    if (name == 'order') {//开台点餐
 							layer.open({type: 3});
@@ -120,9 +132,6 @@ layui.use(['element', 'form'], function () {
 	                    	layer.open({type: 3});
 	                        location.href = "/Res/Home/NewWelcome";
 	                    }
-                    });
-
-
                 } else {
                 	isDisable = false;
                     layer.alert(data["Message"]);

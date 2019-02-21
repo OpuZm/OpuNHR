@@ -848,41 +848,59 @@ namespace OPUPMS.Domain.Restaurant.Services
                             else if (item.CyddPayType == (int)CyddPayType.转客房)
                             {
                                 #region 转客房处理
+                                //var verifyInfo = new VerifySourceInfoDTO();
+                                //verifyInfo.SourceId = item.SourceId;
+                                //verifyInfo.SourceName = item.SourceName;
+                                //verifyInfo.RestaruantId = orderModel.R_Restaurant_Id;
+                                //verifyInfo.PayMethod = (int)CyddPayType.转客房;
+                                //verifyInfo.OperateValue = item.PayAmount;
 
-                                var verifyInfo = new VerifySourceInfoDTO();
-                                verifyInfo.SourceId = item.SourceId;
-                                verifyInfo.SourceName = item.SourceName;
-                                verifyInfo.RestaruantId = orderModel.R_Restaurant_Id;
-                                verifyInfo.PayMethod = (int)CyddPayType.转客房;
-                                verifyInfo.OperateValue = item.PayAmount;
-
-                                //List<string> resultList = VerifyOutsideInfo(verifyInfo, db);
-                                List<string> resultList = VerifyOutsideInfoRoom(verifyInfo, db);
-                                payRecordModel.SourceName = item.SourceName;
-                                try
+                                ////List<string> resultList = VerifyOutsideInfo(verifyInfo, db);
+                                //List<string> resultList = VerifyOutsideInfoRoom(verifyInfo, db);
+                                //payRecordModel.SourceName = item.SourceName;
+                                //try
+                                //{
+                                //    var paras = SqlSugarTool.GetParameters(new
+                                //    {
+                                //        zh00 = resultList[1].ToInt(), //客人账号(krzlzh00)
+                                //        zwdm = resultList[0], //账项代码
+                                //        hsje = item.PayAmount,//金额
+                                //        ckhm = item.SourceName, //房号(krzlfh00)
+                                //        czdm = req.OperateUserCode, //操作员代码
+                                //        xfje = 1,
+                                //        bz00 = "餐厅转客房,单号:"+orderModel.OrderNo,
+                                //        bc00 = "",
+                                //    });
+                                //    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                                //    db.ExecuteCommand("p_zw_addx", paras);
+                                //    db.CommandType = System.Data.CommandType.Text;//还原回默认
+                                //}
+                                //catch (Exception ex)
+                                //{
+                                //    throw new Exception("转客房操作失败：" + ex.Message);
+                                //}
+                                #endregion
+                                string roomNo = !string.IsNullOrEmpty(item.SourceName) ? item.SourceName.Split('-')[0] : item.SourceName;
+                                #region
+                                RoomEntry roomEntry = new RoomEntry()
                                 {
-                                    var paras = SqlSugarTool.GetParameters(new
-                                    {
-                                        zh00 = resultList[1].ToInt(), //客人账号(krzlzh00)
-                                        zwdm = resultList[0], //账项代码
-                                        hsje = item.PayAmount,//金额
-                                        ckhm = item.SourceName, //房号(krzlfh00)
-                                        czdm = req.OperateUserCode, //操作员代码
-                                        xfje = 1,
-                                        bz00 = "餐厅转客房,单号:"+orderModel.OrderNo,
-                                        bc00 = "",
-                                    });
-                                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                                    db.ExecuteCommand("p_zw_addx", paras);
-                                    db.CommandType = System.Data.CommandType.Text;//还原回默认
-                                }
-                                catch (Exception ex)
+                                    GuestNo = item.SourceId,
+                                    CompanyId = req.CompanyId,
+                                    ConsumptionPoints = resObj.Id.ToString(),
+                                    Ticket = roomNo,
+                                    Total = item.PayAmount
+                                };
+                                var jsonStr = Json.ToJson(roomEntry);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/charge?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    throw new Exception("转客房操作失败：" + ex.Message);
+                                    throw new Exception($"请求入账到酒店客房接口失败,信息:{jsonObject.Info}");
                                 }
                                 #endregion
 
-                                string remark = string.Format("转客房房号【{0}】- 客人帐号Id：({1})", item.SourceName, resultList[1]);
+                                payRecordModel.SourceName = item.SourceName;
+                                string remark = string.Format("转客房房号【{0}】- 客人帐号Id：({1})", item.SourceName, item.SourceCode);
                                 if (req.IsReCheckout)
                                     remark = " --> " + remark;
                                 payRecordModel.Remark = remark;

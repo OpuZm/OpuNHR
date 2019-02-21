@@ -646,7 +646,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             ViewBag.Order = model;
 
             var markets = _marketRep.GetList(model.R_Restaurant_Id);
-            var sales = _oldUserRepository.GetByUsersSql(4);
+            var sales = _oldUserRepository.GetCompanySales(currentUser.CompanyId.ToInt());
             ViewBag.Markets = markets;
             ViewBag.IsReview = isReview;
             ViewBag.Sales = sales;
@@ -878,10 +878,12 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 try
                 {
                     bool result= _orderRepository.UpdateOrderTableIsControl(ordertableIds, isControl);
+                    var operatorUser = OperatorProvider.Provider.GetCurrent();
                     if (result)
                     {
                         var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                        hub.Clients.All.callResServiceRefersh(true);
+                        //hub.Clients.All.callResServiceRefersh(true);
+                        hub.Clients.Group(operatorUser.DepartmentId,new string[0]).callResServiceRefersh(true);
                     }
                     res.Data = result;
                 }

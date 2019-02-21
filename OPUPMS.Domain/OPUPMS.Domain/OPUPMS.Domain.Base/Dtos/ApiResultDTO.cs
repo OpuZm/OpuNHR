@@ -61,4 +61,13 @@ namespace OPUPMS.Domain.Base.Dtos
         public string BusinessDate { get; set; }
         public string Remark { get; set; }
     }
+
+    public class RoomEntry
+    {
+        public int GuestNo { get; set; }
+        public string ConsumptionPoints { get; set; }
+        public string Ticket { get; set; }
+        public decimal Total { get; set; }
+        public int CompanyId { get; set; }
+    }
 }

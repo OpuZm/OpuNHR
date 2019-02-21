@@ -15,6 +15,7 @@ using OPUPMS.Domain.Base.Models;
 using OPUPMS.Domain.Base.ConvertModels;
 using OPUPMS.Domain.Base.Repositories.OldRepositories;
 using OPUPMS.Infrastructure.Common.Security;
+using Microsoft.AspNet.SignalR;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -326,15 +327,23 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 req.CurrentMarketId = currentUser.LoginMarketId;
                 req.AuthPermissionDiscount = discount;
                 req.OperateUserCode = currentUser.UserCode;
-                if (_checkOutService.CheckoutVaild(req.ListOrderPayRecordDTO, currentUser.DepartmentId.ToInt()))
+                CheckOutResultDTO resultDto = _checkOutService.WholeOrPartialCheckout(req);
+                if (resultDto != null)
                 {
-                    CheckOutResultDTO resultDto= _checkOutService.WholeOrPartialCheckout(req);
-                    return Json(new { Result = true, Info = "操作成功",Data= resultDto });
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                 }
-                else
-                {
-                    return Json(new { Result = false, Info = "可挂账限额不足" });
-                }
+                return Json(new { Result = true, Info = "操作成功", Data = resultDto });
+
+                //if (_checkOutService.CheckoutVaild(req.ListOrderPayRecordDTO, currentUser.DepartmentId.ToInt()))
+                //{
+                //    CheckOutResultDTO resultDto= _checkOutService.WholeOrPartialCheckout(req);
+                //    return Json(new { Result = true, Info = "操作成功",Data= resultDto });
+                //}
+                //else
+                //{
+                //    return Json(new { Result = false, Info = "可挂账限额不足" });
+                //}
             }
             catch (Exception e)
             {
