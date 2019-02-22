@@ -14,6 +14,13 @@ namespace OPUPMS.Domain.Base.Dtos
         public string Info { get; set; }
     }
 
+    public class MemberApiResult
+    {
+        public int RequestResult { get; set; }
+        public string Result { get; set; }
+        public string Info { get; set; }
+    }
+
     public class CustomerSearchDTO
     {
         public int CompanyId { get; set; }

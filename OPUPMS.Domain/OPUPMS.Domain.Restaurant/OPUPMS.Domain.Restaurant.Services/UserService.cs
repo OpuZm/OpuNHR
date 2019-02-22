@@ -140,11 +140,11 @@ namespace OPUPMS.Domain.Restaurant.Services
             try
             {
                 UserInfo verifyUserDTO = _userRepository.GetByUserId(userId);
-                if (DESEncrypt.Rc4PassHex(oldPassword) != verifyUserDTO.UserPwd)
+                if (DESEncrypt.GetMD5(oldPassword) != verifyUserDTO.UserPwd)
                 {
                     throw new Exception("原密码不一致，请重新输入");
                 }
-                string passWord = DESEncrypt.Rc4PassHex(newPassword);
+                string passWord = DESEncrypt.GetMD5(newPassword);
                 result = _userRepository.UpdatePassWord(userId, passWord);
             }
             catch (Exception e)
