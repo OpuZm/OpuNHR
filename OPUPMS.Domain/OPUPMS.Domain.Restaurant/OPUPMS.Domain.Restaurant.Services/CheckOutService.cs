@@ -776,6 +776,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                         CateringSpendPoint = resObj.Id.ToString(),
                                         CompanyId = req.CompanyId,
                                         BusinessDate = accDate.ToString("yyyy-MM-dd"),
+                                        Password = item.Pwd
                                     };
                                     var jsonStr = Json.ToJson(memberEntry);
                                     apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
