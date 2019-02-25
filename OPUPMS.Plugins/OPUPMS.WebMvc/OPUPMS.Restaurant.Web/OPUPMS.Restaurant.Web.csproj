@@ -1381,6 +1381,7 @@
     <Content Include="Views\AreaPrint\GeneralOrderIndex.cshtml" />
     <Content Include="Views\UserRestaurant\Index.cshtml" />
     <Content Include="Views\UserRestaurant\Edit.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -14,6 +14,13 @@ namespace OPUPMS.Domain.Base.Dtos
         public string Info { get; set; }
     }
 
+    public class MemberApiResult
+    {
+        public int RequestResult { get; set; }
+        public string Result { get; set; }
+        public string Info { get; set; }
+    }
+
     public class CustomerSearchDTO
     {
         public int CompanyId { get; set; }
@@ -60,6 +67,7 @@ namespace OPUPMS.Domain.Base.Dtos
         public string CateringSpendPoint { get; set; }
         public string BusinessDate { get; set; }
         public string Remark { get; set; }
+        public string Password { get; set; }
     }
 
     public class RoomEntry

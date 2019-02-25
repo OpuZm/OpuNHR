@@ -764,6 +764,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                         {
                             if (item.CyddPayType == (int)CyddPayType.会员卡)
                             {
+                                payRecordModel.Remark = string.Format("{0}会员卡Id【{1}】- 信息：({2})", item.Remark, item.SourceId, item.SourceName);
                                 try
                                 {
                                     MemberEntry memberEntry = new MemberEntry()
@@ -775,11 +776,12 @@ namespace OPUPMS.Domain.Restaurant.Services
                                         CateringSpendPoint = resObj.Id.ToString(),
                                         CompanyId = req.CompanyId,
                                         BusinessDate = accDate.ToString("yyyy-MM-dd"),
+                                        Password = item.Pwd
                                     };
                                     var jsonStr = Json.ToJson(memberEntry);
                                     apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
-                                    var jsonObject = Json.ToObject<ApiResult>(apiStr);
-                                    if (string.Compare(jsonObject.Result, "success", true) <= 0)
+                                    var jsonObject = Json.ToObject<MemberApiResult>(apiStr);
+                                    if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                     {
                                         throw new Exception($"请求入账到酒店会员接口失败,信息:{jsonObject.Info}");
                                     }

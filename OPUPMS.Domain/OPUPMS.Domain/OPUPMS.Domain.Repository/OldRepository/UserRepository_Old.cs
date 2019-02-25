@@ -147,7 +147,7 @@ WHERE dbo.SRoles.Code='E9923FBC-71F9-459B-B952-1615F2951A9A' AND dbo.SOrganizati
         {
             using (var session = Factory.Create<ISession>())
             {
-                var result = session.Execute(UpdateUserSql, new { Id = id, Password= strToToHexByte(passWord) });
+                var result = session.Execute(UpdateUserSql, new { Id = id, Password= passWord });
                 return result > 0 ? true : false;
             }
         }
