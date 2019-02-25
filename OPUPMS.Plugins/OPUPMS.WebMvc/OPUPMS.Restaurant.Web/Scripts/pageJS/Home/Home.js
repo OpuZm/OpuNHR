@@ -67,6 +67,8 @@ function LoadInit(laytpl) {
         },
         success: function (data) {
           	inidata=data;
+          	
+          	top.BusinessDate = inidata.BusinessDate;
           	//桌台风格渲染
 			tableStyleInit()
 			

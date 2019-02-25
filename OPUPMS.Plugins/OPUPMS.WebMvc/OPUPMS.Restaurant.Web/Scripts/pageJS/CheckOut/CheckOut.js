@@ -2280,7 +2280,16 @@ function CheckOut() {
                 }, function (index, layero) { //打发票
                     printInvoiceStart();
                 }, function (index, layero) { //打单
-                    reportorJs.printPdb(8804, data.Data.OrderId, data.Data.OrderMainPayId, "'" + data.Data.OrderTables + "'", 0, 0, inidata.PrintModel, '', '');
+                	top.printLayer({
+						title:'结账单',
+						key:{
+							reportId:8804,
+							zh00:data.Data.OrderId,
+							xhs0:data.Data.OrderMainPayId,
+							fzh0:data.Data.OrderTables,
+						}
+					})
+//                  reportorJs.printPdb(8804, data.Data.OrderId, data.Data.OrderMainPayId, "'" + data.Data.OrderTables + "'", 0, 0, inidata.PrintModel, '', '');
                     return false;
                 });
             }
@@ -2485,8 +2494,17 @@ function CheckOutBill(dom, isLocked) {
                 $(inidata.OrderTableList).each(function (i, o) {
                     orderTableIds.push(o.Id);
                 });
-                reportorJs.printPdb(8802, inidata.Id, 0, "'" + orderTableIds.join(",") + "'", 0, 0, inidata.PrintModel, '', "'" + xhs2 + "'", '0');
-				isLocked ? layer.msg('结账单完成') : layer.msg('预结单完成');
+                top.printLayer({
+					title:isLocked ? '结账单' : '预结单完成',
+					key:{
+						reportId:8802,
+						zh00:inidata.Id,
+						xhs0:orderTableIds.join(","),
+						xhs2:xhs2,
+					}
+				})
+//              reportorJs.printPdb(8802, inidata.Id, 0, "'" + orderTableIds.join(",") + "'", 0, 0, inidata.PrintModel, '', "'" + xhs2 + "'", '0');
+//				isLocked ? layer.msg('结账单完成') : layer.msg('预结单完成');
             }
             else {
                 layer.alert(data.Message);

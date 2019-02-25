@@ -3121,7 +3121,15 @@ function MoreShow() {
 
 //打列印单
 function PrintLXDALL() {
-    reportorJs.showPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '', 0, 0, 0, '');
+	top.printLayer({
+		title:'列印全单',
+		key:{
+			reportId:8803,
+			zh00:inidata.OrderAndTables.OrderId,
+			fzh0:Number(OrderTableIds[0]),
+		}
+	})
+//  reportorJs.showPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '', 0, 0, 0, '');
 }
 
 //催菜

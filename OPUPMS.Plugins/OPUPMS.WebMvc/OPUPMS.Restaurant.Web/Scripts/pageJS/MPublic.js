@@ -49,3 +49,31 @@ function isEmptyObject(obj) {
 　　}　　
 　　return true;//返回true，为空对象
 }
+
+
+//打单弹窗
+function printLayer(option){
+	var url = 'http://139.9.40.110:996/report/show?'
+	option.key['RestaurantName'] = inidata.RestaurantName;
+	option.key['OperatorName'] = inidata.UserName;
+	option.key['MarketName'] = inidata.MarketName;
+	option.key['BusinessDate'] = BusinessDate;
+	for(let i in option.key){
+		url += i + '=' + option.key[i] + '&';
+	}
+	url = url.substring(0, url.length - 1);
+	layer.open({
+        type: 2,
+        title: option.title,
+        shadeClose: true,
+        shade: 0.8,
+        area: ['80%', '80%'],
+        content: url,
+        cancel: function (index, layero) {
+        },
+        end: function (layero) {
+            
+        }
+    });
+	console.log(url)
+}

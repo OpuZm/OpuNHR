@@ -1609,7 +1609,16 @@
 
         //开始打单
         function printOrderStart(i) {
-            reportorJs.printPdb(8804, thisOrderDetail.OrderObj.Id, thisOrderDetail.OrderObj.MainPayList[i].Id, "'" + thisOrderDetail.OrderObj.MainPayList[i].OrderTableIds + "'", 0, 0, inidata.PrintModel, '','');
+        	top.printLayer({
+				title:'结账单',
+				key:{
+					reportId:8804,
+					zh00:thisOrderDetail.OrderObj.Id,
+					xhs0:thisOrderDetail.OrderObj.MainPayList[i].Id,
+					fzh0:thisOrderDetail.OrderObj.MainPayList[i].OrderTableIds,
+				}
+			})
+//          reportorJs.printPdb(8804, thisOrderDetail.OrderObj.Id, thisOrderDetail.OrderObj.MainPayList[i].Id, "'" + thisOrderDetail.OrderObj.MainPayList[i].OrderTableIds + "'", 0, 0, inidata.PrintModel, '','');
         }
 
 
