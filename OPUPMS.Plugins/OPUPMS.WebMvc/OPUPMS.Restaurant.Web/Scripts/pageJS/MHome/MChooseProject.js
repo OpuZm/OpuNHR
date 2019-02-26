@@ -513,7 +513,8 @@ function AddOrderBefore(name){
 			data: JSON.stringify(para),
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
-			beforeSend: function (xhr) {
+            beforeSend: function (xhr) {
+                layindex = layer.open({ type: 3 });
 	        },
 	        async:false,
 	        complete: function (XMLHttpRequest, textStatus) {
@@ -613,7 +614,8 @@ function AddOrderSubmit(para){
 		data: JSON.stringify(para),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
-		beforeSend: function (xhr) {
+        beforeSend: function (xhr) {
+            layindex = layer.open({ type: 3 });
         },
         async:false,
         complete: function (XMLHttpRequest, textStatus) {

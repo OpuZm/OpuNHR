@@ -147,9 +147,12 @@ function LoadInit(laytpl) {
 			if(isLoading.length == 2)$('#loading').remove();
 
         },
+        beforeSend: function (xhr) {
+            layindex = layer.open({ type: 3 });
+        },
         complete: function (XMLHttpRequest, textStatus) {
-            //layer.close(layindex);
-        }
+            layer.close(layindex);
+        },
     });
 }
 
