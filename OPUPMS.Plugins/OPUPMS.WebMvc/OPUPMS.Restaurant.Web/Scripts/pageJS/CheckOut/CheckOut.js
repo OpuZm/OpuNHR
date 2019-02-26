@@ -2285,8 +2285,8 @@ function CheckOut() {
 						key:{
 							reportId:8804,
 							zh00:data.Data.OrderId,
-							xhs0:data.Data.OrderMainPayId,
-							fzh0:data.Data.OrderTables,
+                            xhs0: data.Data.OrderTables,
+                            fzh0: data.Data.OrderMainPayId,
 						}
 					})
 //                  reportorJs.printPdb(8804, data.Data.OrderId, data.Data.OrderMainPayId, "'" + data.Data.OrderTables + "'", 0, 0, inidata.PrintModel, '', '');
