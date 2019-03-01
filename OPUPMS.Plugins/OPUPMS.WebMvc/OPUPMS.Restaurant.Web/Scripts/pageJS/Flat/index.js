@@ -50,7 +50,11 @@ var vm = new Vue({
 					_this.$nextTick(function () {
 						$('#loading').hide();
 					});
-				}
+				},
+				error: function(msg) {
+          $('#loading').hide();
+          console.log(msg.responseText);
+        }
 			});
 		},
 
