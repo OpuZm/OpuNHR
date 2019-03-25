@@ -73,6 +73,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             Response res = new Response();
             if (ModelState.IsValid)
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                req.R_Company_Id = currentUser.CompanyId.ToInt();
                 req.IsCustomer = false;
                 try
                 {
@@ -82,8 +84,6 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     }
                     else
                     {
-                        var currentUser = OperatorProvider.Provider.GetCurrent();
-                        req.R_Company_Id = currentUser.CompanyId.ToInt();
                         res.Data = _packageRepository.Create(req);
                     }
                 }

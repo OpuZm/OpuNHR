@@ -81,6 +81,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                req.CompanyId = currentUser.CompanyId.ToInt();
                 try
                 {
                     if (req.Id > 0)
@@ -89,8 +91,6 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     }
                     else
                     {
-                        var currentUser = OperatorProvider.Provider.GetCurrent();
-                        req.CompanyId = currentUser.CompanyId.ToInt();
                         res.Data = _discountRepository.Create(req);
                     }
                 }

@@ -84,6 +84,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                         model.ItemValue = req.ItemValue;
                         model.Sort = req.Sort;
                         model.TypeId = req.TypeId;
+                        model.CompanyId= Convert.ToInt32(operatorUser.CompanyId);
                     }
                     else//新增
                     {

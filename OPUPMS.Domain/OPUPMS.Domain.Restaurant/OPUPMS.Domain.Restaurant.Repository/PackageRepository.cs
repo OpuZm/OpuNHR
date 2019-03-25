@@ -204,7 +204,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     Describe = req.Describe,
                     CostPrice = baseModel.CostPrice,
                     Price = baseModel.Price,
-                    R_Category_Id=req.R_Category_Id
+                    R_Category_Id=req.R_Category_Id,
+                    R_Company_Id = req.R_Company_Id
                 };
                 result = db.Update(model) ? req.Id : 0;
                 return result;

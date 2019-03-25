@@ -68,6 +68,7 @@ namespace OPUPMS.Domain.Base.Dtos
         public string BusinessDate { get; set; }
         public string Remark { get; set; }
         public string Password { get; set; }
+        public bool IsReverseCheckout { get; set; }
     }
 
     public class RoomEntry

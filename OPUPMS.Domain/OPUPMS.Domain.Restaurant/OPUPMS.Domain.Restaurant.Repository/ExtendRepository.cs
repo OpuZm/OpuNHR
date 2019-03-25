@@ -192,7 +192,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     CyxmKzType = req.CyxmKzType,
                     Price = req.Price,
                     Unit = req.Unit,
-                    R_ProjectExtendType_Id = req.ExtendType
+                    R_ProjectExtendType_Id = req.ExtendType,
+                    R_Company_Id=req.R_Company_Id
                 };
                 result = db.Update(model);
                 return result;
@@ -338,7 +339,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 R_ProjectExtendType model = new R_ProjectExtendType()
                 {
                     Name = req.Name,
-                    Id = req.Id
+                    Id = req.Id,
+                    R_Company_Id=req.R_Company_Id
                 };
                 result = db.Update(model);
                 return result;

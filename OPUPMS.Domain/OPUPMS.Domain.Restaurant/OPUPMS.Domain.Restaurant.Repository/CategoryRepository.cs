@@ -297,7 +297,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     DiscountRate = req.DiscountRate,
                     PId = req.Pid,
                     IsDiscount = req.IsDiscount,
-                    Sorted=req.Sorted
+                    Sorted=req.Sorted,
+                    R_Company_Id=req.R_Company_Id
                 };
 
                 result = db.Update(model);

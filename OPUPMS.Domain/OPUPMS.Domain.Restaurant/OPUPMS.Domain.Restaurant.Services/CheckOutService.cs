@@ -756,7 +756,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                         payRecordModel.R_OrderMainPay_Id = mainPayId;
                         payRecordModel.SourceName = item.SourceName;
                         payRecordModel.PId = item.PId;
-                        payRecordModel.R_Restaurant_Id = item.R_Restaurant_Id;
+                        payRecordModel.R_Restaurant_Id = orderModel.R_Restaurant_Id;
 
                         #region 挂账、转客房、会员卡操作
                         if (item.CyddPayType == (int)CyddPayType.挂账 || item.CyddPayType == (int)CyddPayType.转客房
@@ -776,7 +776,8 @@ namespace OPUPMS.Domain.Restaurant.Services
                                         CateringSpendPoint = resObj.Id.ToString(),
                                         CompanyId = req.CompanyId,
                                         BusinessDate = accDate.ToString("yyyy-MM-dd"),
-                                        Password = item.Pwd
+                                        Password = item.Pwd,
+                                        IsReverseCheckout=false
                                     };
                                     var jsonStr = Json.ToJson(memberEntry);
                                     apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);

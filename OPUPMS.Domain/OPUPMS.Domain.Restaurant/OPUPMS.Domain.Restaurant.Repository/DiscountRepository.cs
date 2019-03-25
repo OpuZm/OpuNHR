@@ -268,7 +268,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                         IsEnable = req.IsEnable,
                         Name = req.Name,
                         StartDate = req.StartDate,
-                        EndDate = req.EndDate
+                        EndDate = req.EndDate,
+                        R_Company_Id=req.CompanyId
                     };
                     db.Update(model);
 

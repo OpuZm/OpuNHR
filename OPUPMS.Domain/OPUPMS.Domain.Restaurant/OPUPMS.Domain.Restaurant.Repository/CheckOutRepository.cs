@@ -7,6 +7,9 @@ using SqlSugar;
 using System;
 using System.Data.SqlClient;
 using OPUPMS.Domain.Base.Repositories;
+using OPUPMS.Domain.Base.Dtos;
+using OPUPMS.Infrastructure.Common.Web;
+using System.Text;
 
 namespace OPUPMS.Domain.Restaurant.Repository
 {
@@ -420,6 +423,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     });
 
                     List<R_OrderPayRecord> reverseRecords = new List<R_OrderPayRecord>();
+                    string apiStr = string.Empty;
                     #region 反写应收账
                     foreach (var item in orderPayRecords)
                     {
@@ -430,40 +434,59 @@ namespace OPUPMS.Domain.Restaurant.Repository
                             {
                                 if (EnabelGroupFlag)
                                 {
-                                    try
-                                    {
-                                        var dto= AutoMapper.Mapper.Map<OrderPayRecordDTO>(item);
-                                        dto.Remark = string.Format("{0} {1}", "反结会员卡", item.Remark);
-                                        List<OrderPayRecordDTO> dtoList = new List<OrderPayRecordDTO>
-                                        {
-                                            dto
-                                        };
-                                        SaveMemberConsumeInfo(dtoList, req.UserCode, false,orderModel.R_Restaurant_Id);
-                                        //ApplyChangeMemberToDb(item.SourceId, item.SourceName, req.UserCode,
-                                        //    -item.PayAmount, string.Format("{0} {1}", "反结会员卡", item.Remark), false, new SqlSugarClient(ConnentionGroup));
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        throw new Exception("反结集团库记录会员卡消费信息操作失败：" + ex.Message);
-                                    }
-                                    
+                                    //try
+                                    //{
+                                    //    var dto= AutoMapper.Mapper.Map<OrderPayRecordDTO>(item);
+                                    //    dto.Remark = string.Format("{0} {1}", "反结会员卡", item.Remark);
+                                    //    List<OrderPayRecordDTO> dtoList = new List<OrderPayRecordDTO>
+                                    //    {
+                                    //        dto
+                                    //    };
+                                    //    SaveMemberConsumeInfo(dtoList, req.UserCode, false,orderModel.R_Restaurant_Id);
+                                    //}
+                                    //catch (Exception ex)
+                                    //{
+                                    //    throw new Exception("反结集团库记录会员卡消费信息操作失败：" + ex.Message);
+                                    //}
                                 }
                                 else
                                 {
                                     try
                                     {
-                                        ApplyChangeMemberToDb(item.SourceId, item.SourceName, req.UserCode,
-                                            -item.PayAmount, string.Format("{0} {1}", "反结会员卡", item.Remark), false, db, orderModel.R_Restaurant_Id);
+                                        MemberEntry memberEntry = new MemberEntry()
+                                        {
+                                            MemberId = item.SourceId,
+                                            UserId = item.CreateUser,
+                                            PayAmount = -item.PayAmount,
+                                            Remark = item.Remark,
+                                            CateringSpendPoint = orderModel.R_Restaurant_Id.ToString(),
+                                            CompanyId = req.CompanyId,
+                                            BusinessDate = accDate.ToString("yyyy-MM-dd"),
+                                            Password = string.Empty,
+                                            IsReverseCheckout=true
+                                        };
+                                        var jsonStr = Json.ToJson(memberEntry);
+                                        apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                        var jsonObject = Json.ToObject<MemberApiResult>(apiStr);
+                                        if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            throw new Exception($"请求入账到酒店会员接口失败,信息:{jsonObject.Info}");
+                                        }
                                     }
                                     catch (Exception ex)
                                     {
-                                        throw new Exception("反结本地库记录会员卡消费信息操作失败：" + ex.Message);
+                                        throw new Exception("会员卡入账调取错误：" + ex.Message);
                                     }
+                                    //try
+                                    //{
+                                    //    ApplyChangeMemberToDb(item.SourceId, item.SourceName, req.UserCode,
+                                    //        -item.PayAmount, string.Format("{0} {1}", "反结会员卡", item.Remark), false, db, orderModel.R_Restaurant_Id);
+                                    //}
+                                    //catch (Exception ex)
+                                    //{
+                                    //    throw new Exception("反结本地库记录会员卡消费信息操作失败：" + ex.Message);
+                                    //}
                                 }
-                                //if (!EnabelGroupFlag)
-                                //{
-                                //    //若已启用集团会员库，里面则不再执行，本地库会员消费记录已在插入集团库时一并插入到本地库
-                                //}
                             }
                             else if (item.CyddPayType == (int)CyddPayType.挂账)
                             {
@@ -474,65 +497,101 @@ namespace OPUPMS.Domain.Restaurant.Repository
                                 verifyInfo.PayMethod = (int)CyddPayType.挂账;
                                 verifyInfo.OperateValue = item.PayAmount;
                                 string remark = string.Format("反结挂账客户【{0}】- 代码：({1})", item.SourceName, item.SourceId);
-                                List<string> resultList = SearchVerifyOutsideInfo(verifyInfo, db);
-                                try
+                                //List<string> resultList = SearchVerifyOutsideInfo(verifyInfo, db);
+                                //try
+                                //{
+                                //    var paras = SqlSugarTool.GetParameters(new
+                                //    {
+                                //        xh = orderModel.Id, //餐饮单序号
+                                //        dh = orderModel.R_Restaurant_Id + "." + orderModel.Id, //餐厅代码+'.'+餐饮单单号
+                                //        lx = resultList[0].Trim(), //协议单位代码(lxdmdm00)
+                                //        je = -item.PayAmount,//金额
+                                //        cz = req.UserCode, //操作员代码
+                                //        ctmc = orderModel.R_Restaurant_Id, //餐厅名称
+                                //        fsmc = "", //分市名称
+                                //        th = orderModel.Id,
+                                //        rs = orderModel.PersonNum,
+                                //        bz = remark,
+                                //        mz = "",
+                                //        atr = 0
+                                //    });
+                                //    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                                //    db.ExecuteCommand("p_po_toys_newCY", paras);
+                                //    db.CommandType = System.Data.CommandType.Text;//还原回默认
+                                //}
+                                //catch (Exception ex)
+                                //{
+                                //    throw new Exception("反结挂账操作失败：" + ex.Message);
+                                //}
+                                ProtocolEntry protocolEntry = new ProtocolEntry()
                                 {
-                                    var paras = SqlSugarTool.GetParameters(new
-                                    {
-                                        xh = orderModel.Id, //餐饮单序号
-                                        dh = orderModel.R_Restaurant_Id + "." + orderModel.Id, //餐厅代码+'.'+餐饮单单号
-                                        lx = resultList[0].Trim(), //协议单位代码(lxdmdm00)
-                                        je = -item.PayAmount,//金额
-                                        cz = req.UserCode, //操作员代码
-                                        ctmc = orderModel.R_Restaurant_Id, //餐厅名称
-                                        fsmc = "", //分市名称
-                                        th = orderModel.Id,
-                                        rs = orderModel.PersonNum,
-                                        bz = remark,
-                                        mz = "",
-                                        atr = 0
-                                    });
-                                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                                    db.ExecuteCommand("p_po_toys_newCY", paras);
-                                    db.CommandType = System.Data.CommandType.Text;//还原回默认
-                                }
-                                catch (Exception ex)
+                                    ProtocolId = item.SourceId,
+                                    BillNum = orderModel.OrderNo,
+                                    Amount = -item.PayAmount,
+                                    Remark = remark,
+                                    SpendPonit = orderModel.R_Restaurant_Id.ToString(),
+                                    CompanyId = req.CompanyId,
+                                    BillDate = accDate.ToString("yyyy-MM-dd"),
+                                    //EnterBillSign = "",
+                                    //Code = string.IsNullOrEmpty(item.SourceCode) ? "D000002" : item.SourceCode
+                                };
+                                var jsonStr = Json.ToJson(protocolEntry);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    throw new Exception("反结挂账操作失败：" + ex.Message);
+                                    throw new Exception($"请求入账到酒店应收账接口失败,信息:{jsonObject.Info}");
                                 }
                             }
                             else if (item.CyddPayType == (int)CyddPayType.转客房)
                             {
                                 #region 转客房处理
 
-                                var verifyInfo = new VerifySourceInfoDTO();
-                                verifyInfo.SourceId = item.SourceId;
-                                verifyInfo.SourceName = item.SourceName;
-                                verifyInfo.RestaruantId = orderModel.R_Restaurant_Id;
-                                verifyInfo.PayMethod = (int)CyddPayType.转客房;
-                                verifyInfo.OperateValue = item.PayAmount;
-
-                                List<string> resultList = SearchVerifyOutsideInfo(verifyInfo, db);
-                                try
+                                //var verifyInfo = new VerifySourceInfoDTO();
+                                //verifyInfo.SourceId = item.SourceId;
+                                //verifyInfo.SourceName = item.SourceName;
+                                //verifyInfo.RestaruantId = orderModel.R_Restaurant_Id;
+                                //verifyInfo.PayMethod = (int)CyddPayType.转客房;
+                                //verifyInfo.OperateValue = item.PayAmount;
+                                //List<string> resultList = SearchVerifyOutsideInfo(verifyInfo, db);
+                                //try
+                                //{
+                                //    var paras = SqlSugarTool.GetParameters(new
+                                //    {
+                                //        zh00 = Convert.ToInt32(resultList[1]), //客人账号(krzlzh00)
+                                //        zwdm = resultList[0], //账项代码
+                                //        hsje = -item.PayAmount,//金额
+                                //        ckhm = item.SourceName, //房号(krzlfh00)
+                                //        czdm = req.UserCode, //操作员代码
+                                //        xfje = 1,
+                                //        bz00 = "反结餐厅转客房",
+                                //        bc00 = "",
+                                //    });
+                                //    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                                //    db.ExecuteCommand("p_zw_addx", paras);
+                                //    db.CommandType = System.Data.CommandType.Text;//还原回默认
+                                //}
+                                //catch (Exception ex)
+                                //{
+                                //    throw new Exception("反结转客房操作失败：" + ex.Message);
+                                //}
+                                #endregion
+                                string roomNo = !string.IsNullOrEmpty(item.SourceName) ? item.SourceName.Split('-')[0] : item.SourceName;
+                                #region
+                                RoomEntry roomEntry = new RoomEntry()
                                 {
-                                    var paras = SqlSugarTool.GetParameters(new
-                                    {
-                                        zh00 = Convert.ToInt32(resultList[1]), //客人账号(krzlzh00)
-                                        zwdm = resultList[0], //账项代码
-                                        hsje = -item.PayAmount,//金额
-                                        ckhm = item.SourceName, //房号(krzlfh00)
-                                        czdm = req.UserCode, //操作员代码
-                                        xfje = 1,
-                                        bz00 = "反结餐厅转客房",
-                                        bc00 = "",
-                                    });
-                                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                                    db.ExecuteCommand("p_zw_addx", paras);
-                                    db.CommandType = System.Data.CommandType.Text;//还原回默认
-                                }
-                                catch (Exception ex)
+                                    GuestNo = item.SourceId,
+                                    CompanyId = req.CompanyId,
+                                    ConsumptionPoints = orderModel.R_Restaurant_Id.ToString(),
+                                    Ticket = roomNo,
+                                    Total = -item.PayAmount
+                                };
+                                var jsonStr = Json.ToJson(roomEntry);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/charge?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                var jsonObject = Json.ToObject<ApiResult>(apiStr);
+                                if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    throw new Exception("反结转客房操作失败：" + ex.Message);
+                                    throw new Exception($"请求入账到酒店客房接口失败,信息:{jsonObject.Info}");
                                 }
                                 #endregion
                             }
