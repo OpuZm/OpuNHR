@@ -1748,7 +1748,7 @@ function NewTcProjects(TCthisArr,type) {
 			}
 		} else {
 			layer.msg('请输入数字!');
-			$(this).val(max);
+			$(this).val(1);
 			return false;
 		}
 	})

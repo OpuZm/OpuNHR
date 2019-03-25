@@ -247,8 +247,12 @@
 						if (data.Message) _this.$alert(data.Message, '提示', { confirmButtonText: '确定' });
 						$('#loading').hide();
 					}
-				}
-			});
+				},
+				,error: function(msg) {
+          $('#loading').hide();
+          console.log(msg.responseText);
+        }
+      });
 		},
 		//上拉回调
 		upCallback: function upCallback(page) {
