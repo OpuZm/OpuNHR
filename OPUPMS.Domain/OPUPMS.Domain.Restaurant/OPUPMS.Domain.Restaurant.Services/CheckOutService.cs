@@ -385,7 +385,9 @@ namespace OPUPMS.Domain.Restaurant.Services
 
             var checkOutOrderDTO = GetCheckOutOrderDTO(req.OrderId, req.TableIds);
 
-            VerifyAndCalcDetailInfo(req, checkOutOrderDTO);
+            VerifyOrderDetail(req, checkOutOrderDTO);
+
+            //VerifyAndCalcDetailInfo(req, checkOutOrderDTO);
 
             using (var db= new SqlSugarClient(Connection))
             {

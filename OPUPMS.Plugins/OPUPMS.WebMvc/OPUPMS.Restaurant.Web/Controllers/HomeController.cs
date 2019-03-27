@@ -843,7 +843,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 UserName = operatorUser.UserName,
                 MarketName = markets.Where(x => x.Id == operatorUser.LoginMarketId).Select(x => x.Name).FirstOrDefault(),
                 NightTrial=_printerRepository.GetNightTrial(),
-                CompanyId = operatorUser.CompanyId
+                CompanyId = operatorUser.CompanyId,
+                IsMemberPrice=_projectRepository.GetIsProjectMemberPrice()
             };
 
             return Json(info);

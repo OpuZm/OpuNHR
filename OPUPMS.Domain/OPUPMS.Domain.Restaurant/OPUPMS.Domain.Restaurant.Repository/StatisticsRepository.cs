@@ -252,13 +252,13 @@ namespace OPUPMS.Domain.Restaurant.Repository
             }
         }
 
-        public List<ReportListDTO> GetReportList()
+        public List<ReportListDTO> GetReportList(int companyId)
         {
             using (var db=new SqlSugarClient(Connection))
             {
-                var data = db.Sqlable().From("pobb", "s1")
-                    .Where("s1.pobbsslb='05' and s1.pobbbzs0='Y'")
-                    .SelectToList<ReportListDTO>("s1.pobbid00 as Id,s1.pobbmc00 as Name,s1.pobbsslb as Category");
+                var data = db.Sqlable().From("SReport", "s1")
+                    .Where("CompanyId="+companyId+" and SUBSTRING(Code,1,1)='5'")
+                    .SelectToList<ReportListDTO>("s1.Id as Id,s1.Name as Name,s1.Code as Code");
                 return data;
             }
         }

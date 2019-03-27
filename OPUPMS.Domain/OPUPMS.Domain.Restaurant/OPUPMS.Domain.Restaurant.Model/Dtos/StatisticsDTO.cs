@@ -63,5 +63,6 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public int Id { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
+        public string Code { get; set; }
     }
 }

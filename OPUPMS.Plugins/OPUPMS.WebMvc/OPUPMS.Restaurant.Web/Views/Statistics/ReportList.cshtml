@@ -28,7 +28,7 @@
     </div>
 </body>
 <script type="text/html" id="bartable">
-    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="edit" onclick="ReportSearch({{d.Id}})" data-id="{{d.Id}}"><i class="iconfont">&#xe633;</i> 打印</a>
+    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="edit" onclick="ReportSearch({{d.Code}})" data-id="{{d.Id}}"><i class="iconfont">&#xe633;</i> 打印</a>
 </script>
 @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
@@ -103,7 +103,13 @@
     })
     
     function ReportSearch(id) {
-        reportorJs.showPdb(id,0,0);
+        //reportorJs.showPdb(id,0,0);
+        top.printLayer({
+            title: '列印单',
+            key: {
+                reportId: id,
+            }
+        })
     }
     
     

@@ -58,6 +58,7 @@ namespace OPUPMS.Domain.Restaurant.Model
         public decimal UnitRate { get; set; }
 
         public bool IsDelete { get; set; }
+        public decimal MemberPrice { get; set; }
 
     }
 }

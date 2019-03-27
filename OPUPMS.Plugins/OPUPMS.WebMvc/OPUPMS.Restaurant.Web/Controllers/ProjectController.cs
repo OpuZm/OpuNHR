@@ -397,9 +397,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             var categorys = _categoryRepository.GetChildList();
             var model = _projectRepository.GetModel(id);
             var extend = _extendRepository.GetList();
+            var IsProjectMemberPrice = _projectRepository.GetIsProjectMemberPrice();
             ViewBag.Project = model;
             ViewBag.Categorys = categorys;
             ViewBag.Extend = extend;
+            ViewBag.IsProjectMemberPrice = IsProjectMemberPrice;
             return View();
         }
 

@@ -5,10 +5,12 @@
     ProjectCreateDTO Project = ViewBag.Project ?? new ProjectCreateDTO();
     List<CategoryListDTO> Categorys = ViewBag.Categorys;
     List<ExtendListDTO> extends = ViewBag.Extend;
+    bool IsProjectMemberPrice = ViewBag.IsProjectMemberPrice;
     IEnumerable<ExtendListDTO> zf = null;
     IEnumerable<ExtendListDTO> yq = null;
     IEnumerable<ExtendListDTO> pc = null;
     var ProjectExtends = Project.Extends == null ? new List<R_ProjectExtendAttribute>() : Project.Extends;
+    var isDisabled = Project.Id > 0 ? true : false;
 }
 
 <!DOCTYPE html>
@@ -121,16 +123,55 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">成本价</label>
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="CostPrice" name="CostPrice" placeholder="请输入价格" lay-verify="required|number" value="@Project.CostPrice">
+                                @{
+                                    if (!isDisabled)
+                                    {
+                                        <input type="text" class="layui-input" id="CostPrice" name="CostPrice" placeholder="请输入价格" lay-verify="required|number" value="@Project.CostPrice">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="layui-input" id="CostPrice" name="CostPrice" placeholder="请输入价格" lay-verify="required|number" value="@Project.CostPrice" disabled="disabled">
+                                    }
+                                }
                             </div>
                         </div>
 
                         <div class="layui-form-item layui-inline-block">
                             <label class="layui-form-label ">销售价</label>
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="Price" name="Price" placeholder="请输入销售价" lay-verify="required|number" value="@Project.Price">
+                                @{
+                                    if (!isDisabled)
+                                    {
+                                        <input type="text" class="layui-input" id="Price" name="Price" placeholder="请输入销售价" lay-verify="required|number" value="@Project.Price">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="layui-input" id="Price" name="Price" placeholder="请输入销售价" lay-verify="required|number" value="@Project.Price" disabled="disabled">
+                                    }
+                                }
                             </div>
                         </div>
+
+                        @{
+                            if (IsProjectMemberPrice)
+                            {
+                                <div class="layui-form-item layui-inline-block">
+                                    <label class="layui-form-label ">会员价</label>
+                                    <div class="layui-input-inline">
+                                        @{
+                                            if (!isDisabled)
+                                            {
+                                                <input type="text" class="layui-input" id="MemberPrice" name="MemberPrice" placeholder="请输入会员价" lay-verify="required|number" value="@Project.MemberPrice">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" class="layui-input" id="MemberPrice" name="MemberPrice" placeholder="请输入会员价" lay-verify="required|number" value="@Project.MemberPrice" disabled="disabled">
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
 
                         <div class="layui-form-item" style="width:100%">
                             <label class="layui-form-label">提成方式</label>

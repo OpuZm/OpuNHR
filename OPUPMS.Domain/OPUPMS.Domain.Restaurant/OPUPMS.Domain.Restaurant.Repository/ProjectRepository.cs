@@ -52,7 +52,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                                 Price = req.Price,
                                 Unit = req.BaseUnit,
                                 IsDelete = false,
-                                UnitRate = 1
+                                UnitRate = 1,
+                                MemberPrice=req.MemberPrice
                             });
                         }
                         #endregion
@@ -519,6 +520,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
 
                     model.Extends = extends;
                     model.Details = details;
+                    model.MemberPrice = details.FirstOrDefault().MemberPrice;
 
                     int property = data.Property;
                     model.IsDiscount =
@@ -608,7 +610,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                                     Price = item.Price,
                                     CostPrice = item.CostPrice,
                                     UnitRate = item.UnitRate,
-                                    IsDelete = false
+                                    IsDelete = false,
+                                    MemberPrice=item.MemberPrice
                                 });
                             }
                             else
@@ -1181,6 +1184,11 @@ namespace OPUPMS.Domain.Restaurant.Repository
         public bool GetOrderDetailIsTeset()
         {
             return OrderDetailPrintTest;
+        }
+
+        public bool GetIsProjectMemberPrice()
+        {
+            return ProjectMemberPrice;
         }
     }
 }

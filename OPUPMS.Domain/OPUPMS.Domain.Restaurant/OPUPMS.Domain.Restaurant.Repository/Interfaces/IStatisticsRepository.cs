@@ -7,6 +7,6 @@ namespace OPUPMS.Domain.Restaurant.Repository
     {
         List<ProducedStatisticsDTO> Produced(ProducedSearchDTO req);
         List<TurnDutyStatisticsGroupDto> GetTurnDuty(TurnDutySearchDTO req);
-        List<ReportListDTO> GetReportList();
+        List<ReportListDTO> GetReportList(int companyId);
     }
 }

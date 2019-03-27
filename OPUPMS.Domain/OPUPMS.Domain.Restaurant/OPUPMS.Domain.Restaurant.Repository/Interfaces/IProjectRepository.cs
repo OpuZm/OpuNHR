@@ -45,5 +45,6 @@ namespace OPUPMS.Domain.Restaurant.Repository
         bool ProjectRecommendSubmit(List<ProjectRecomandDTO> req);
         List<PrinterProject> OrderDetailPrintTesting(List<OrderDetailDTO> req);
         bool GetOrderDetailIsTeset();
+        bool GetIsProjectMemberPrice();
     }
 }

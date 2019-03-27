@@ -43,6 +43,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public int ExtractType { get; set; }
         public decimal ExtractPrice { get; set; }
         public int IsServiceCharge { get; set; }
+        public decimal MemberPrice { get; set; }
     }
 
     public class ProjectSearchDTO : BaseSearch

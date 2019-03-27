@@ -3772,25 +3772,25 @@ req.PersonNum / orderTableCount : req.PersonNum;    //台号人均
                         throw new Exception("餐饮账务日期设置错误，请联系管理员");
                     string itemValue = accDate.Date.AddDays(1).ToString("yyyy-MM-dd");
                     db.BeginTran();
-                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                    db.ExecuteCommand("p_rcl_cytj_new");
-                    db.CommandType = System.Data.CommandType.Text;//还原回默认
+                    //db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                    //db.ExecuteCommand("p_rcl_cytj_new");
+                    //db.CommandType = System.Data.CommandType.Text;//还原回默认
 
                     res = _extendItemRepository.UpdateItemValue(companyId, 10003, itemValue);
-                    _extendItemRepository.UpdateXtcs("SYSDATE",Convert.ToDateTime(itemValue));
-                    OperateLogInfo logInfo = new OperateLogInfo
-                    {
-                        OperateType = "YS",
-                        OperateTime = DateTime.Now,
-                        UserCode = userCode,
-                        Remark = "于" + DateTime.Now.ToString() +
-        "登陆，电脑名称-" + Net.Host + "，登陆IP地址-" + Net.Ip
-                    };
+                    //_extendItemRepository.UpdateXtcs("SYSDATE",Convert.ToDateTime(itemValue));
+        //            OperateLogInfo logInfo = new OperateLogInfo
+        //            {
+        //                OperateType = "YS",
+        //                OperateTime = DateTime.Now,
+        //                UserCode = userCode,
+        //                Remark = "于" + DateTime.Now.ToString() +
+        //"登陆，电脑名称-" + Net.Host + "，登陆IP地址-" + Net.Ip
+        //            };
 
-                    logInfo.OperateRemark = "餐饮夜审";
-                    logInfo.ActionName = "餐饮夜审";
+        //            logInfo.OperateRemark = "餐饮夜审";
+        //            logInfo.ActionName = "餐饮夜审";
 
-                    _userLogRepository.SaveLogN("", logInfo);//写入操作日志记录
+        //            _userLogRepository.SaveLogN("", logInfo);//写入操作日志记录
                     db.CommitTran();
                 }
                 catch (Exception ex)

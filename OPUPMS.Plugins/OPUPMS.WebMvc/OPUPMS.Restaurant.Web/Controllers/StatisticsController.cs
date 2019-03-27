@@ -77,7 +77,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
         public ActionResult GetReports()
         {
-            var Data = _statisticsRepository.GetReportList();
+            var operatorUser = OperatorProvider.Provider.GetCurrent();
+            var Data = _statisticsRepository.GetReportList(Convert.ToInt32(operatorUser.CompanyId));
             return NewtonSoftJson(new
             {
                 rows = Data,
