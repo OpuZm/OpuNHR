@@ -690,6 +690,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                             {
                                 item.DiscountRate = detailObj.DiscountRate;
                                 item.PayableTotalPrice = detailObj.DiscountedAmount;
+                                item.Price = detailObj.Price;
                                 var projectId = orderProjectDetailList.Where(p => p.Id == detailObj.CyddMxId).Select(p => p.R_Project_Id).FirstOrDefault();
                                 var projectObj = orderProjectList.Where(p => p.Id == projectId).FirstOrDefault();
                                 if (projectObj != null)
