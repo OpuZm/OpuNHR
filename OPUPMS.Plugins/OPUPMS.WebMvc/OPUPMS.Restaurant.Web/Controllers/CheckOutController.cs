@@ -837,5 +837,32 @@ namespace OPUPMS.Restaurant.Web.Controllers
             }
             return Json(res);
         }
+
+        [CustomerAuthorize(Permission.结账)]
+        [HttpPost]
+        public ActionResult GetOrderMemberPrice(List<CheckOutOrderTableDTO> req)
+        {
+            Response res = new Response();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    
+                }
+                catch (Exception ex)
+                {
+                    res.Message = ex.Message;
+                }
+            }
+            else
+            {
+                res.Data = null;
+                res.Message = string.Join(",", ModelState
+                .SelectMany(ms => ms.Value.Errors)
+                .Select(e => e.ErrorMessage));
+            }
+            return Json(res);
+        }
     }
 }

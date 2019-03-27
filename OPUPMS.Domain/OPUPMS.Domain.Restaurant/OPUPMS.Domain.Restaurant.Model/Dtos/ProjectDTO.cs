@@ -118,6 +118,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         /// 单位倍率 [1,1.5,2等]
         ///</summary>
         public decimal UnitRate { get; set; }
+        public decimal MemberPrice { get; set; }
     }
 
     public class ProjectDetailListDTO

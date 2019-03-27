@@ -46,5 +46,6 @@ namespace OPUPMS.Domain.Restaurant.Repository
         List<PrinterProject> OrderDetailPrintTesting(List<OrderDetailDTO> req);
         bool GetOrderDetailIsTeset();
         bool GetIsProjectMemberPrice();
+        List<CheckOutOrderTableDTO> GetOrderMemberPrice(List<CheckOutOrderTableDTO> req);
     }
 }

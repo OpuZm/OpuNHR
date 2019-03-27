@@ -105,7 +105,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                 }
 
                 orderDetail.ProjectName = orderDetail.CyddMxName;
-                orderDetail.Unit = orderDetail.Unit ?? ""; 
+                orderDetail.Unit = orderDetail.Unit ?? "";
                 if (orderDetail.CyddMxType == CyddMxType.餐饮项目)
                 {
                     var detailItem = projectDetailList.Where(x => x.Id == orderDetail.CyddMxId).SingleOrDefault();
@@ -117,7 +117,8 @@ namespace OPUPMS.Domain.Restaurant.Services
                     orderDetail.CategoryId = detailItem.CategoryId;
                     orderDetail.IsForceDiscount = (detailItem.Property & (int)CyxmProperty.是否强制打折) > 0 ? 1 : 0;
                     orderDetail.IsServiceCharge = (detailItem.Property & (int)CyxmProperty.是否收取服务费) > 0 ? 1 : 0;
-
+                    orderDetail.MemberPrice = projectDetailList.Where(p => p.Id == orderDetail.CyddMxId)
+                        .FirstOrDefault().MemberPrice;
                 }
                 else if (orderDetail.CyddMxType == CyddMxType.餐饮套餐)
                 {
@@ -128,6 +129,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                     orderDetail.IsDiscount = (packageItem.Property & (int)CytcProperty.是否可打折) > 0 ? 1 : 0;
                     orderDetail.ProjectName = packageItem.Name;
                     orderDetail.CategoryId = packageItem.R_Category_Id;
+                    orderDetail.MemberPrice = orderDetail.Price;
                 }
             }
 

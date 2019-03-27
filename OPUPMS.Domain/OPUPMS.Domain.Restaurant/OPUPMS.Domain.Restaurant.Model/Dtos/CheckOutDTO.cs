@@ -286,6 +286,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         /// 金额
         /// </summary>
         public decimal Amount { get; set; }
+        public decimal MemberPrice { get; set; }
 
         /// <summary>
         /// 折后金额

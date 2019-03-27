@@ -1190,5 +1190,14 @@ namespace OPUPMS.Domain.Restaurant.Repository
         {
             return ProjectMemberPrice;
         }
+
+        public List<CheckOutOrderTableDTO> GetOrderMemberPrice(List<CheckOutOrderTableDTO> req)
+        {
+            using (var db=new SqlSugarClient(Connection))
+            {
+                var projectDetailIds = req.Select(p => p.OrderDetailList.Select(p1 => p1.CyddMxId)).ToArray();
+                return null;
+            }
+        }
     }
 }

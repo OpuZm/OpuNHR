@@ -123,7 +123,8 @@ namespace OPUPMS.Domain.Restaurant.Repository
                             Property = s1.Property,
                             R_Project_Id = s2.R_Project_Id,
                             Unit = s2.Unit,
-                            UnitRate = s2.UnitRate
+                            UnitRate = s2.UnitRate,
+                            MemberPrice = s2.MemberPrice
                         }).ToList();
                 return list;
             }
