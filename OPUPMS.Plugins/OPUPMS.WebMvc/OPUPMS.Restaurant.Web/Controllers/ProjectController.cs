@@ -219,7 +219,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             var orderAndTables = _orderRepository.GetOrderAndTablesByOrderTableId(orderTableId[0]);
             //var projectExtendSplitList = _projectRepository.GetProjectExtendSplitList();
             var projectExtendSplitList = _projectRepository.GetProjectExtendSplitListNew();
-            var projects = _projectRepository.GetDetailList(0, false);
+            //var projects = _projectRepository.GetDetailList(0, false);
             List<OrderDetailDTO> orderTableProjects = new List<OrderDetailDTO>();
             if (orderTableId.Count == 1)//
             {
@@ -247,7 +247,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 CategoryList = categories,
                 OrderTableProjects = orderTableProjects,
                 ProjectExtendSplitList = projectExtendSplitList,
-                Projects = projects,
+                //Projects = projects,
                 PrintModel = _printerRepository.GetPrintModel(),
                 UserPermission = permissions,
                 GiveCauses = orderDetailCauses.Where(p => p.CauseType == CauseType.赠菜).ToList(),
