@@ -176,17 +176,20 @@ namespace OPUPMS.Domain.Restaurant.Services
                 if (IsMemberPrice)
                 {
                     item.Amount = item.MemberPrice * item.Num;
+                    item.MemberAmount = item.MemberPrice * item.Num;
                 }
                 else
                 {
                     item.Amount = item.Price * item.Num;
+                    item.MemberAmount = item.MemberPrice * item.Num;
                 }
                 
                 //计算拓展费用
                 if (item.OrderDetailAllExtends != null)
                 {
                     var extendTotal = item.OrderDetailAllExtends.Sum(x => x.Price * item.Num);
-                    item.Amount += extendTotal;                    
+                    item.Amount += extendTotal;
+                    item.MemberAmount += extendTotal;
                 }
 
                 //数量减去 转出，赠菜，退菜
@@ -210,13 +213,16 @@ namespace OPUPMS.Domain.Restaurant.Services
                         var removeNum = returnOrMoveOutItem.Sum(x => x.Num);
 
                         item.Amount = item.Amount - (item.Price * removeNum);//剔除菜品价格
+                        item.MemberAmount = item.MemberAmount - (item.MemberPrice * removeNum);
 
                         var extendTotal = item.OrderDetailAllExtends.Sum(x => x.Price * removeNum);
                         item.Amount = item.Amount - extendTotal; //剔除扩展（配菜、做法等）价格
+                        item.MemberAmount = item.MemberAmount - extendTotal;
                     }                    
                 }
 
                 item.DiscountedAmount = MoneyFormant(item.Amount * item.DiscountRate);
+                item.MemberDiscountedAmount = MoneyFormant(item.MemberAmount * item.DiscountRate);
             }
 
             #region 查询订单主结列表
@@ -2260,6 +2266,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                         model.TotalPrice = detail.DiscountedAmount;
                         model.ParentCategoryId = parentCategoryId;
                         model.ParentCategoryName = parentCategory.Name;
+                        model.TotalMemberPrice = detail.MemberDiscountedAmount;
                         res.Add(model);
                     }
                 }
@@ -2270,7 +2277,8 @@ namespace OPUPMS.Domain.Restaurant.Services
                         {
                             ParentCategoryId = p.Key.ParentCategoryId,
                             ParentCategoryName = p.Key.ParentCategoryName,
-                            TotalPrice = p.Sum(x => x.TotalPrice)
+                            TotalPrice = p.Sum(x => x.TotalPrice),
+                            TotalMemberPrice = p.Sum(x => x.TotalMemberPrice)
                         }).OrderByDescending(p => p.TotalPrice).ToList();
                 }
             }

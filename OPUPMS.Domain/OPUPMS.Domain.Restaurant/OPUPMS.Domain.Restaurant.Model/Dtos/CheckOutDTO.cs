@@ -287,7 +287,8 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         /// </summary>
         public decimal Amount { get; set; }
         public decimal MemberPrice { get; set; }
-
+        public decimal MemberAmount { get; set; }
+        public decimal MemberDiscountedAmount { get; set; }
         /// <summary>
         /// 折后金额
         /// </summary>
@@ -641,5 +642,6 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public string ParentCategoryName { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal Num { get; set; }
+        public decimal TotalMemberPrice { get; set; }
     }
 }
