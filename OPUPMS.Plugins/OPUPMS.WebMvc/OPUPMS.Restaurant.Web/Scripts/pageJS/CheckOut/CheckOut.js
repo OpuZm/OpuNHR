@@ -56,9 +56,25 @@ layui.use(['element', 'form', 'laytpl', 'layer', 'table'], function() {
       for(var i=0;i<inidata.OrderTableList.length;i++){
         for(var j=0;j<inidata.OrderTableList[i].OrderDetailList.length;j++){
           var item = inidata.OrderTableList[i].OrderDetailList[j];
-          item.ExtendPrice = parseFloat((minusNumFloat(item.Amount,item.Price) / item.Num).toFixed(2));
+          var othernum = 0;
+          if(item.ODRecordCountList) {
+            for(var k = 0; k < item.ODRecordCountList.length; k++) {
+              var otherItem = item.ODRecordCountList[k];
+              if(otherItem.CyddMxCzType == 1 || otherItem.CyddMxCzType == 2 || otherItem.CyddMxCzType == 4) {
+                othernum += parseFloat(item.ODRecordCountList[k].Num);
+              }
+            }
+          }
+          
+          if(item.Num - othernum > 0){
+            item.ExtendPrice = parseFloat((minusNumFloat([item.Amount,item.Price * item.Num]) / item.Num).toFixed(2));
+          }else{
+            item.ExtendPrice = 0;
+          }
         }
       }
+      
+      
 
       CheckoutRoundHTML = "四舍五入";
       //去小数方法  文字提示
@@ -122,7 +138,7 @@ layui.use(['element', 'form', 'laytpl', 'layer', 'table'], function() {
         OrderPaidRecordList.push(Arr);
       }
       newOrderPaidRecordList();
-
+      
       //渲染数据
       UpdateData(0);
 
@@ -2326,6 +2342,7 @@ function CheckOut() {
   req.Fraction = inidata.Fraction; //四舍五入值
   req.IsReCheckout = false; //正常结账
   req.AuthUserList = AuthObjArr;
+  
 
   req.Remark = $('#Remark').val();
 
@@ -2337,7 +2354,9 @@ function CheckOut() {
       this.Extend = null;
       this.ExtendRequire = null;
       this.ExtendExtra = null;
-
+      if(inidata.MemberData){
+        this.Price = this.MemberPrice
+      }
     });
   });
 
@@ -2612,14 +2631,32 @@ function memberPriceRender(is) {
     for(var i = 0; i < inidata.OrderTableList.length; i++) {
       for(var j = 0; j < inidata.OrderTableList[i].OrderDetailList.length; j++) {
         var item = inidata.OrderTableList[i].OrderDetailList[j];
-        item.Amount = (item.MemberPrice + item.ExtendPrice) * item.Num;
+        var othernum = 0;
+        if(item.ODRecordCountList) {
+          for(var k = 0; k < item.ODRecordCountList.length; k++) {
+            var otherItem = item.ODRecordCountList[k];
+            if(otherItem.CyddMxCzType == 1 || otherItem.CyddMxCzType == 2 || otherItem.CyddMxCzType == 4) {
+              othernum += parseFloat(item.ODRecordCountList[k].Num);
+            }
+          }
+        }
+        item.Amount = (item.MemberPrice + item.ExtendPrice) * (item.Num - othernum);
       }
     }
   }else{
     for(var i = 0; i < inidata.OrderTableList.length; i++) {
       for(var j = 0; j < inidata.OrderTableList[i].OrderDetailList.length; j++) {
         var item = inidata.OrderTableList[i].OrderDetailList[j];
-        item.Amount = (item.Price + item.ExtendPrice) * item.Num;
+        var othernum = 0;
+        if(item.ODRecordCountList) {
+          for(var k = 0; k < item.ODRecordCountList.length; k++) {
+            var otherItem = item.ODRecordCountList[k];
+            if(otherItem.CyddMxCzType == 1 || otherItem.CyddMxCzType == 2 || otherItem.CyddMxCzType == 4) {
+              othernum += parseFloat(item.ODRecordCountList[k].Num);
+            }
+          }
+        }
+        item.Amount = (item.Price + item.ExtendPrice) * (item.Num - othernum);
       }
     }
   }

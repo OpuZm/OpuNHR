@@ -13,6 +13,8 @@
     @StylesEx.Render(Plugin.Instance.Name, "PublicStyle")
 </head>
 <style>
+	.order-content{overflow:hidden;overflow-x: auto;}
+	
 	.MealTable-lists li:hover{background:#f1f1f1;opacity: 0.9;}
 	.MealTable-lists li a:hover{color:#333;}
 	
@@ -56,6 +58,8 @@
 	.keyboard-number.layui-form .layui-form-item{padding:6px;margin-bottom: 0;}
 	.Keyboard-input-group input{font-size:14px;line-height:38px;height:38px;}
 	
+	.table-header thead th{background-color: #393d49 !important;color: #fff;padding: 9px 5px;}
+	
 </style>
 <body>
 	
@@ -82,11 +86,11 @@
                             <td width="14%" class="tr">人数:</td>
                             <td width="24%" class="">{{ d.PersonNum }}</td>
                             <td width="18%" class="tr">客源类型:</td>
-                            <td width="25%" class="">{{ d.OrderSourceType }}</td>
+                            <td width="25%" class=""><h5 style="width:100px;" class="sl">{{ d.OrderSourceType }}</h5></td>
                         </tr>
                         <tr>
                             <td width="14%" class="tr">操作员:</td>
-                            <td width="24%" class="">{{ d.UserName }}</td>
+                            <td width="24%" class=""><h5 style="width:100px;" class="sl">{{ d.UserName }}</h5></td>
                             <td width="18%" class="tr">开单时间:</td>
                             <td width="25%" class="">{{ d.CreateDate }}</td>
                         </tr>
@@ -95,27 +99,42 @@
             </div>
             <!-- ▲左侧 点菜头部信息 -->
             <!-- ▼左侧 点菜内容 -->
-            <table class="layui-table layui-table-header table-head" lay-skin="line" style="margin: 0;">
-                <thead>
-                    <tr>
-                        <th width="">菜名</th>
-                        <th width="13%"><div class="tc">单位</div></th>
-                        <th width="13%"><div class="tc">数量</div></th>
-                        <th width="15%"><div class="tc">单价</div></th>
-                        <th width="17%"><div class="tc">金额</div></th>
-                    </tr>
-                </thead>
-            </table>
-            <!--滚动按钮  开始-->
-            <div class="orderScrollBtn">
-            	<div class="layui-btn layui-btn-normal scrollTopBtn"><i class="layui-icon">&#xe619;</i></div>
-            	<div class="layui-btn layui-btn-normal scrollBottomBtn"><i class="layui-icon">&#xe61a;</i></div>
+            <div class="table-header scroll-hidden" style="overflow-x: auto;">
+	            <table class="layui-table layui-table-header table-head" lay-skin="line" style="margin: 0;width:480px;border:none;">
+	            	<colgroup>
+						<col width="130"/>
+						<col width="60"/>
+						<col width="60"/>
+						<col width="70"/>
+						<col width="80"/>  
+						<col width="80"/>  
+					</colgroup>
+	                <thead>
+	                    <tr>
+	                        <th>菜名</th>
+	                        <th><div class="tc">单位</div></th>
+	                        <th><div class="tc">数量</div></th>
+	                        <th><div class="tc">单价</div></th>
+	                        <th><div class="tc">金额</div></th>
+	                        <th><div class="tc">时间</div></th>
+	                    </tr>
+	                </thead>
+	            </table>
             </div>
-            <!--滚动按钮  结束-->
-            <div class="order-content sm-scroll-hidden">
-                <table class="layui-table" lay-skin="line" style="margin: 0;">
-                    <tbody id="ProjectLists_view"></tbody>
-                </table>
+            <div class="order-content sm-scroll-hidden" style="width:400px;">
+            	<div class="scroll-hidden" style="overflow-y:auto ;width:480px;height:100%;">
+	                <table class="layui-table table-header" lay-skin="line" style="margin:0;border:0;">
+	                	<colgroup>
+							<col width="130"/>
+							<col width="60"/>
+							<col width="60"/>
+							<col width="70"/>
+							<col width="80"/>  
+							<col width="80"/>  
+						</colgroup>
+	                    <tbody id="ProjectLists_view"></tbody>
+	                </table>
+            	</div>
                 <script id="ProjectLists_tpml" type="text/html">
                     {{#  layui.each(d, function(index, item){ var totalprice=0; }}
                     <tr data-id="{{ item.R_Project_Id }}"   data-CyddMxType="{{ item.CyddMxType }}"  {{#  if(index==thisProjectsIndex){  }} class="layui-this" {{#  } }}  {{# if(item.CyddMxType == 2){ }} style="background:#a4f5d4" {{# } }}>
@@ -190,16 +209,27 @@
                                 {{#  } }}
                             </p>
                         </td>
-                        <td class="tc" width="13%"><span class="Unit">{{ item.Unit }}</span></td>
-                        <td class="tc" width="13%"><span class="Num">{{ item.Num }}</span></td>
-                        <td class="tc" width="15%"><span class="Price">{{ item.Price }}</span></td>
-                        <td class="tc" width="17%"><span class="TotalPrice">{{# var totall=(item.Price+totalprice)*item.Num - ((item.Price+totalprice)*totalothernum); }} {{ totall.toFixed(2) }}</span></td>
+                        <td class="tc"><span class="Unit">{{ item.Unit }}</span></td>
+                        <td class="tc"><span class="Num">{{ item.Num }}</span></td>
+                        <td class="tc"><span class="Price">{{ item.Price }}</span></td>
+                        <td class="tc"><span class="TotalPrice">{{# var totall=(item.Price+totalprice)*item.Num - ((item.Price+totalprice)*totalothernum); }} {{ totall.toFixed(2) }}</span></td>
+                        <td class="tc">
+                        	{{# if(item.Id > 0){ }}
+                        		{{# item.Date = item.CreateDate.split(' ')[1];}}
+                        		{{item.Date.split(':')[0] + ':' + item.Date.split(':')[1]}}
+                        	{{# } }}
+                        </td>
                     </tr>
                     {{#  }); }}
                 </script>
             </div>
-
             <!-- ▲左侧 点菜内容 -->
+            <!--滚动按钮  开始-->
+            <div class="orderScrollBtn">
+            	<div class="layui-btn layui-btn-normal scrollTopBtn"><i class="layui-icon">&#xe619;</i></div>
+            	<div class="layui-btn layui-btn-normal scrollBottomBtn"><i class="layui-icon">&#xe61a;</i></div>
+            </div>
+            <!--滚动按钮  结束-->
             <!-- ▼左侧 点菜统计 -->
             <div class="order-total">
                 <table class="layui-table" lay-even lay-skin="nob">
@@ -225,7 +255,7 @@
         	<div class="actions-vertical-list">
                 <ul class="row" id="operation_lists">
                     <!--<li><a href="javascript:void(0);" onclick="Package();">套餐</a></li>-->
-                    <li><a onclick="PrintLXD(this)">列印单</a></li>
+                    <li><a onclick="PrintLXD(this)" id="PrintLXD">列印单</a></li>
                     <li><a onclick="NumberKeyboard('editSum',this);">人数修改</a></li>
                     <li class="operation_item add"><a href="javascript:void(0);" class="Disable" onclick="EditNum(this,1,'plus');">+1</a></li>
                     <li class="operation_item minus"><a href="javascript:void(0);" class="Disable" onclick="EditNum(this,1,'minus');">-1</a></li>
@@ -255,7 +285,6 @@
                             {{#  layui.each(d, function(index, item){ }}
                             <li>{{ item.Name }}</li>
                             {{#  }); }}
-                            
                         </ul>
                         <div class="layui-tab-content">
                             <div class="layui-tab-item layui-show">
@@ -329,7 +358,13 @@
                                 </div>
                                 <div class="MealTable-footer flex">
                                     {{#  if(item.IsStock == false){ var stock='<span>--</span>'; }}  {{#  }else{ var stock='<span class="color-red">'+item.Stock+'</span>'; }} {{#  } }}
-                                    <span class="MealTable-stock"><i class="iconfont">&#xe645;</i>{{ stock }}</span>
+                                    <span class="MealTable-stock">
+                                    	<i class="iconfont">&#xe645;</i>
+                                    	{{ stock }}
+                                    	{{# if(item.ProjectDetailList && item.ProjectDetailList.length > 0){ }}
+                                    		&nbsp;&nbsp;<span>{{ item.ProjectDetailList[0].Unit }}</span>
+                                    	{{# } }}
+                                    </span>
                                     
                                     {{#  if(item.CyddMxType ==1){ }}
 	                                    {{#  layui.each(item.ProjectDetailList, function(index, item){ }}
@@ -422,7 +457,7 @@
     <script type="text/javascript">
     	//已选菜品向下滚动 一页
         $(document).on('mousedown touchstart','.orderScrollBtn .scrollBottomBtn',function(){
-        	var list = $(this).parent().next();
+        	var list = $(this).parent().prev().children();
         	var isScoll = true;//是否继续滚动
         	var x = list.scrollTop();
         	maxScroll = 0;
@@ -454,7 +489,7 @@
         
         //已选菜品向上滚动 一页
         $(document).on('mousedown touchstart','.orderScrollBtn .scrollTopBtn',function(){
-        	var list = $(this).parent().next();
+        	var list = $(this).parent().prev().children();
         	var isScoll = true;//是否继续滚动
             $(this).on('mouseup touchend',function(){
             	isScoll = false;
@@ -509,7 +544,6 @@
         
         //操作栏  向下滚动 一页
         $(document).on('click','.actions-vertical .actionsScrollBottomBtn',function(){
-        	debugger
         	var list = $('#operation_lists').parent();
         	var listH = list.height();
         	var h = list.scrollTop();
@@ -519,7 +553,6 @@
         
         //操作栏  向上滚动 一页
         $(document).on('click','.actions-vertical .actionsScrollTopBtn',function(){
-        	debugger
         	var list = $('#operation_lists').parent();
         	var listH = list.height();
         	var h = list.scrollTop();
@@ -593,6 +626,11 @@
     				setTimeout(moving,15);
         		}
             }
+        })
+        
+        //监控已选菜品横向滚动条	滚动
+        $('.chooseOrder .order-content').on('scroll',function(){
+        	$(this).prev().scrollLeft($(this).scrollLeft())
         })
 		
 
