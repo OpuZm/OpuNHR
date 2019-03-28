@@ -492,10 +492,11 @@ namespace OPUPMS.Domain.Restaurant.Services
                 {
                     throw new Exception("结账和点餐的菜品数量不一致,请返回该台号点餐界面重新进行结账操作");
                 }
-                //if (verifyItem.Amount != reqItem.Amount)
-                //{
-                //    throw new Exception(string.Format("结账和点餐的应收价不一致,请返回该台号点餐界面重新进行结账操作", verifyItem.CyddMxName,verifyItem.Unit));
-                //}
+
+                if (verifyItem.Amount != reqItem.Amount)
+                {
+                    throw new Exception(string.Format("结账和点餐的应收价不一致,请返回该台号点餐界面重新进行结账操作", verifyItem.CyddMxName, verifyItem.Unit));
+                }
             }
         }
 
