@@ -67,7 +67,7 @@ layui.use(['element', 'form', 'laytpl', 'layer', 'table'], function() {
           }
           
           if(item.Num - othernum > 0){
-            item.ExtendPrice = parseFloat((minusNumFloat([item.Amount,item.Price * item.Num]) / item.Num).toFixed(2));
+            item.ExtendPrice = parseFloat((minusNumFloat([item.Amount,item.Price * (item.Num - othernum)]) / (item.Num - othernum)).toFixed(2));
           }else{
             item.ExtendPrice = 0;
           }
@@ -2660,6 +2660,12 @@ function memberPriceRender(is) {
       }
     }
   }
+  //类别总计
+  var getTpl = CheckOutStaticsList_tpml.innerHTML,
+    view = document.getElementById('CheckOutStaticsList_view');
+  laytpl(getTpl).render(inidata.CheckOutStaticsList, function(html) {
+    view.innerHTML = html;
+  });
 }
 
 //结账小票打单

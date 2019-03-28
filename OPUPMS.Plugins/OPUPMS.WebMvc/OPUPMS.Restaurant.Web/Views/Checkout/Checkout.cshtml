@@ -282,15 +282,23 @@
                     </ul>
                 </div>
             </script>
-            <div id="CheckOutStaticsList_view">
-            	<script id="CheckOutStaticsList_tpml" type="text/html">
-					<div class="layui-row">
-						{{#  layui.each(d, function(index, item){  }}
-						<div class="layui-col-md4">{{item.ParentCategoryName}} : <span class="price">{{item.TotalPrice.toFixed(2)}}</span></div>
-						{{#  })  }}
-					</div>
-            	</script>
-            </div>
+            <div id="CheckOutStaticsList_view"></div>
+          	<script id="CheckOutStaticsList_tpml" type="text/html">
+    					<div class="layui-row">
+    						{{#  layui.each(d, function(index, item){  }}
+    						<div class="layui-col-md4">
+    						  {{item.ParentCategoryName}} : 
+    						  <span class="price">
+    						    {{# if(inidata.MemberData){ }}
+    						    {{item.TotalMemberPrice.toFixed(2)}}
+    						    {{# }else{ }}
+    						    {{item.TotalPrice.toFixed(2)}}
+    						    {{# } }}
+    						  </span>
+    						</div>
+    						{{#  })  }}
+    					</div>
+          	</script>
             <!-- ▲付款信息-->
             <!-- ▼记录表-->
             <div class="record-table">
