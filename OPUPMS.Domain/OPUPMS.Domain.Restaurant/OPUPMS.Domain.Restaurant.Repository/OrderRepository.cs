@@ -4488,5 +4488,36 @@ req.OrderNo, tableNames.Join(",")),
         {
             return DefaultPromptly;
         }
+
+        public bool ClearSaveOrderDetail(List<int> orderTableIds, CyddMxStatus status)
+        {
+            using (var db = new SqlSugarClient(Connection))
+            {
+                try
+                {
+                    db.BeginTran();
+                    var oldItemIds = new List<int>();
+                    if (status == CyddMxStatus.保存)
+                    {
+                        oldItemIds = db.Queryable<R_OrderDetail>().Where(p => orderTableIds.Contains(p.R_OrderTable_Id) && p.CyddMxStatus == CyddMxStatus.保存).Select(p => p.Id).ToList();
+                    }
+                    if (oldItemIds != null && oldItemIds.Any())
+                    {
+                        db.Delete<R_OrderDetail>(p => oldItemIds.Contains(p.Id));
+                        db.Delete<R_OrderDetailExtend>(p => oldItemIds.Contains(p.R_OrderDetail_Id));
+                        db.Delete<R_OrderDetailRecord>(p => oldItemIds.Contains(p.R_OrderDetail_Id));
+                        db.Delete<R_OrderDetailPackageDetail>(p => oldItemIds.Contains(p.R_OrderDetail_Id));
+                    }
+                    db.CommitTran();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    db.RollbackTran();
+                    throw e;
+                }
+
+            }
+        }
     }
 }
