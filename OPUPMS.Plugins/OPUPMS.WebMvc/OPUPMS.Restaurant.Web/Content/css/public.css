@@ -1127,3 +1127,35 @@ body{background-color: #efefef;}
 /*.layui-table-sort[lay-sort=asc] .layui-table-sort-asc{border-bottom-color: #7afbd1;}
 .layui-table-sort[lay-sort=desc] .layui-table-sort-desc{border-top-color: #7afbd1;}*/
 /*颜色调配  结束*/
+
+
+/*模拟checkbox Button*/
+.checkedBtn .layui-btn{margin:5px !important;padding-right:49px;position: relative;border:1px solid #009688;}
+.checkedBtn .layui-btn i{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 36px;
+    border-left: 1px solid #009688;
+    color: #fff;
+    font-size: 20px;
+    text-align: center;
+    margin:0;
+    background:#fff;
+}
+.checkedBtn .layui-btn i:before {
+    content: "\e605";
+    color:#009688;
+    
+}
+
+.checkedBtn .layui-btn-primary{
+  border:1px solid #C9C9C9;
+}
+.checkedBtn .layui-btn-primary i{
+  border-color:#C9C9C9;
+}
+.checkedBtn .layui-btn-primary i:before{
+  color:#333;
+}

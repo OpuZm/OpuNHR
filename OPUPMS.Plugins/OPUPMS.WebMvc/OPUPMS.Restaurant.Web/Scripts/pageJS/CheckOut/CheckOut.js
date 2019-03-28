@@ -52,6 +52,13 @@ layui.use(['element', 'form', 'laytpl', 'layer', 'table'], function() {
       inidata.SourceId = 0;
       inidata.SourceName = "";
       userClearMoney = inidata.AuthClearValue;
+      
+      for(var i=0;i<inidata.OrderTableList.length;i++){
+        for(var j=0;j<inidata.OrderTableList[i].OrderDetailList.length;j++){
+          var item = inidata.OrderTableList[i].OrderDetailList[j];
+          item.ExtendPrice = parseFloat((minusNumFloat(item.Amount,item.Price) / item.Num).toFixed(2));
+        }
+      }
 
       CheckoutRoundHTML = "四舍五入";
       //去小数方法  文字提示
@@ -717,7 +724,7 @@ layui.use(['element', 'form', 'laytpl', 'layer', 'table'], function() {
                 $('#dMember .layui-table-body tr').on('dblclick', function() {
                   $(this).addClass('layui-this').siblings().removeClass('layui-this');
                   iNum = $(this).index();
-                  if(inidata.MemberData)memberCardValidate(Data[iNum]);
+                  memberCardValidate(Data[iNum]);
                 });
               }
             });
@@ -1706,7 +1713,6 @@ function allzk(editDiscountRateItemVal) {
     }
   }
   console.log(inidata)
-  debugger
 
   var thisTableIndex = $("#OrderTables_view .layui-this").index();
   if(messageArr.length > 0) { //存在不允许打折的提示
@@ -2300,7 +2306,6 @@ function CheckOut() {
   }
 
     isCheckOut = true;
-    debugger
   var req = new Object();
   if (inidata.MemberData)req.MemberInfo = inidata.MemberData;
   req.OrderId = inidata.Id; //订单id
@@ -2452,149 +2457,170 @@ function invoiceSubmit(para) {
 
 //会员价
 function memberPay() {
-  var str = '<div id="dMember" style="padding:10px 20px;"><div class="layui-form" style="text-align:right">' + $("#divMember").html() + '</div>';
-  str += '<table id="dMemberTable" lay-filter="dMemberTable"></table></div>'
-  str = str.replace('<a href="javascript:;" class="layui-btn layui-btn-primary readMemberCard" onclick="readMemberCard()">读卡</a>', '')
-  layer.open({
-    type: 1,
-    title: '会员卡搜索',
-    content: str,
-    skin: 'layer-form-group',
-    area: ['700px', '540px'],
-    success: function(layero, index) {
-      var str1 = '<div class="layui-form" style="padding:20px 40px 0 0;"><div class="layui-form-item" style="margin:0;"><label class="layui-form-label">密码:</label><div class="layui-input-inline"><input class="layui-input" type="password" name="memberPwd" placeholder="请输入密码" data-lang="en" onfocus="ShowKeyboard(this.name)" /><a class="input-keyboard"><i class="iconfont">&#xe67a;</i></a></div></div></div>'
-      var serachInput = layero.find('.layui-input');
-      var searchBtn = layero.find('.searchMember');
-      var Data = [];
-      var iNum;
-      //键盘事件绑定
-      $(layero).delegate('a.input-keyboard', 'click', function(event) {
-        var input = $(this).prev('.layui-input');
-        var type = input.attr('data-type');
-        var name = input.attr('name');
-        input.focus();
-        var mymode = layui.data('set');
-        if(mymode.mymode != 'touch') { //触摸
-          Keyboard(name);
-        }
-      });
-
-      //回车
-      serachInput.on('focus', function() {
-        $(this).on('keydown', function(e) {
-          if(e.keyCode == 13) {
-            if($('.layui-layer.layui-layer-dialog').length > 0) {
-              layer.close(layindex);
-            } else {
-              searchBtn.click();
-            }
-          }
-        })
-      }).on('blur', function() {
-        $(this).off('keydown')
-      })
-      //查询
-      searchBtn.on('click', function() {
-        var val = serachInput.val();
-        if(val == "") {
-          layer.msg('请输入查询内容');
-          return false;
-        }
-        //会员卡请求验证
-        $.ajax({
-          type: "post",
-          url: "/Res/CheckOut/SearchMemberInofBy",
-          dataType: "json",
-          data: {
-            text: val
-          },
-          beforeSend: function(xhr) {
-            layindex = layer.open({
-              type: 3
-            });
-          },
-          success: function(data, textStatus) {
-            layer.close(layindex);
-            if(data.Successed) { //返回成功
-              Data = data.Data;
-              for(var i = 0; i < Data.length; i++) {
-                Data[i].Payment = (Math.round(Data[i].CardBalance * 100 - parseFloat($('#AmountOfMoney').val()) * 100)) / 100;
-              }
-
-              table.reload('dMemberTable', {
-                data: ''
-              });
-              table.reload('dMemberTable', {
-                data: Data
-              });
-            } else {
-              layindex = layer.alert(data.Message);
-              table.reload('dMemberTable', {
-                data: ''
-              });
-            }
-
+  var btn = $('#memberPaySwitch');
+  if(btn.hasClass('layui-btn-primary')){
+    var str = '<div id="dMember" style="padding:10px 20px;"><div class="layui-form" style="text-align:right">' + $("#divMember").html() + '</div>';
+    str += '<table id="dMemberTable" lay-filter="dMemberTable"></table></div>'
+    str = str.replace('<a href="javascript:;" class="layui-btn layui-btn-primary readMemberCard" onclick="readMemberCard()">读卡</a>', '')
+    layer.open({
+      type: 1,
+      title: '会员卡搜索',
+      content: str,
+      skin: 'layer-form-group',
+      area: ['700px', '540px'],
+      success: function(layero, index) {
+        var str1 = '<div class="layui-form" style="padding:20px 40px 0 0;"><div class="layui-form-item" style="margin:0;"><label class="layui-form-label">密码:</label><div class="layui-input-inline"><input class="layui-input" type="password" name="memberPwd" placeholder="请输入密码" data-lang="en" onfocus="ShowKeyboard(this.name)" /><a class="input-keyboard"><i class="iconfont">&#xe67a;</i></a></div></div></div>'
+        var serachInput = layero.find('.layui-input');
+        var searchBtn = layero.find('.searchMember');
+        var Data = [];
+        var iNum;
+        //键盘事件绑定
+        $(layero).delegate('a.input-keyboard', 'click', function(event) {
+          var input = $(this).prev('.layui-input');
+          var type = input.attr('data-type');
+          var name = input.attr('name');
+          input.focus();
+          var mymode = layui.data('set');
+          if(mymode.mymode != 'touch') { //触摸
+            Keyboard(name);
           }
         });
-      })
-      //表格渲染
-      table.render({
-        elem: '#dMemberTable',
-        where: '',
-        height: layero.height() - 150,
-        cols: [
-          [{
-            field: 'MemberName',
-            title: '会员名',
-            align: 'center'
-          }, {
-            field: 'MemberPhoneNo',
-            title: '联系电话',
-            align: 'center'
-          }, {
-            field: 'MemberCardNo',
-            title: '会员卡号',
-            align: 'center'
-          }, {
-            field: 'MemberIdentityNo',
-            title: '证件号码',
-            align: 'center'
-          }, {
-            field: 'CardBalance',
-            title: '余额',
-            align: 'center'
-          }]
-        ],
-        even: true,
-        page: false,
-        data: Data,
-        skin: 'line',
-        limit: 999,
-        done: function(res, curr, count) {
-          var Data = res.data
-          //选中
-          $('#dMember .layui-table-body tr').on('dblclick', function() {
-            inidata.MemberData = Data[$(this).index()];
-            memberPriceRender();
-            DelAllPay()
-            layer.closeAll();
+  
+        //回车
+        serachInput.on('focus', function() {
+          $(this).on('keydown', function(e) {
+            if(e.keyCode == 13) {
+              if($('.layui-layer.layui-layer-dialog').length > 0) {
+                layer.close(layindex);
+              } else {
+                searchBtn.click();
+              }
+            }
+          })
+        }).on('blur', function() {
+          $(this).off('keydown')
+        })
+        //查询
+        searchBtn.on('click', function() {
+          var val = serachInput.val();
+          if(val == "") {
+            layer.msg('请输入查询内容');
+            return false;
+          }
+          //会员卡请求验证
+          $.ajax({
+            type: "post",
+            url: "/Res/CheckOut/SearchMemberInofBy",
+            dataType: "json",
+            data: {
+              text: val
+            },
+            beforeSend: function(xhr) {
+              layindex = layer.open({
+                type: 3
+              });
+            },
+            success: function(data, textStatus) {
+              layer.close(layindex);
+              if(data.Successed) { //返回成功
+                Data = data.Data;
+                for(var i = 0; i < Data.length; i++) {
+                  Data[i].Payment = (Math.round(Data[i].CardBalance * 100 - parseFloat($('#AmountOfMoney').val()) * 100)) / 100;
+                }
+  
+                table.reload('dMemberTable', {
+                  data: ''
+                });
+                table.reload('dMemberTable', {
+                  data: Data
+                });
+              } else {
+                layindex = layer.alert(data.Message);
+                table.reload('dMemberTable', {
+                  data: ''
+                });
+              }
+  
+            }
           });
-        }
-      });
-
-      serachInput.focus();
-
-    },
-    maxmin: false
-  });
+        })
+        //表格渲染
+        table.render({
+          elem: '#dMemberTable',
+          where: '',
+          height: layero.height() - 150,
+          cols: [
+            [{
+              field: 'MemberName',
+              title: '会员名',
+              align: 'center'
+            }, {
+              field: 'MemberPhoneNo',
+              title: '联系电话',
+              align: 'center'
+            }, {
+              field: 'MemberCardNo',
+              title: '会员卡号',
+              align: 'center'
+            }, {
+              field: 'MemberIdentityNo',
+              title: '证件号码',
+              align: 'center'
+            }, {
+              field: 'CardBalance',
+              title: '余额',
+              align: 'center'
+            }]
+          ],
+          even: true,
+          page: false,
+          data: Data,
+          skin: 'line',
+          limit: 999,
+          done: function(res, curr, count) {
+            var Data = res.data
+            //选中
+            $('#dMember .layui-table-body tr').on('dblclick', function() {
+              btn.removeClass('layui-btn-primary')
+              inidata.MemberData = Data[$(this).index()];
+              memberPriceRender(true);
+              DelAllPay()
+              layer.closeAll();
+            });
+          }
+        });
+  
+        serachInput.focus();
+  
+      },
+      maxmin: false
+    });
+  }else{
+    btn.addClass('layui-btn-primary')
+    delete inidata.MemberData
+    memberPriceRender(false)
+    DelAllPay()
+    
+  }
+  
 }
 
-function memberPriceRender() {
-  for(var i = 0; i < inidata.OrderTableList.length; i++) {
-    for(var j = 0; j < inidata.OrderTableList[i].OrderDetailList.length; j++) {
-      var item = inidata.OrderTableList[i].OrderDetailList[j]
-      item.Amount = item.Amount + (item.MemberPrice - item.Price) * item.Num;
-      item.Price = item.MemberPrice;
+function memberPriceRender(is) {
+  $('#PayTypeList_view .active').removeClass('active');
+  $('#AmountOfMoney').val('');
+  if(is){
+    for(var i = 0; i < inidata.OrderTableList.length; i++) {
+      for(var j = 0; j < inidata.OrderTableList[i].OrderDetailList.length; j++) {
+        var item = inidata.OrderTableList[i].OrderDetailList[j];
+        item.Amount = (item.MemberPrice + item.ExtendPrice) * item.Num;
+      }
+    }
+  }else{
+    for(var i = 0; i < inidata.OrderTableList.length; i++) {
+      for(var j = 0; j < inidata.OrderTableList[i].OrderDetailList.length; j++) {
+        var item = inidata.OrderTableList[i].OrderDetailList[j];
+        item.Amount = (item.Price + item.ExtendPrice) * item.Num;
+      }
     }
   }
 }

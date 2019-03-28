@@ -1,233 +1,199 @@
-﻿
-@{
-    Layout = null;
-    ViewBag.Title = "用户设置";
-}
+﻿ @{ Layout = null; ViewBag.Title = "用户设置"; }
 
 <!DOCTYPE html>
 <html>
-<head>
+
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>用户设置</title>
-    @StylesEx.Render(FrameworkInfo.Name, "LayUIStyle2x")
-    @StylesEx.Render(Plugin.Instance.Name, "PublicStyle")
+    @StylesEx.Render(FrameworkInfo.Name, "LayUIStyle2x") @StylesEx.Render(Plugin.Instance.Name, "PublicStyle")
     <style>
-    	.label-title{margin-left:10px;}
-    	#SubmitForm .layui-row .layui-btn{margin:5px !important;}
-    	
-    	#SubmitForm .layui-row .layui-btn{padding-right:49px;position: relative;border:1px solid #009688;}
-    	#SubmitForm .layui-row .layui-btn i{
-    		position: absolute;
-		    right: 0;
-		    top: 0;
-		    width: 30px;
-		    height: 36px;
-		    border-left: 1px solid #009688;
-		    color: #fff;
-		    font-size: 20px;
-		    text-align: center;
-		    margin:0;
-		    background:#fff;
-		}
-    	#SubmitForm .layui-row .layui-btn i:before {
-    		content: "\e605";
-    		color:#009688;
-    		
-		}
-		
-		#SubmitForm .layui-row .layui-btn-primary{
-			border:1px solid #C9C9C9;
-		}
-		#SubmitForm .layui-row .layui-btn-primary i{
-			border-color:#C9C9C9;
-		}
-		#SubmitForm .layui-row .layui-btn-primary i:before{
-			color:#333;
-		}
+      .label-title {
+        margin-left: 10px;
+      }
     </style>
-</head>
-<body>
-	<div class="layui-tab layui-tab-brief layer-form-box" lay-filter="docDemoTabBrief">
-        <div class="layui-tab-content">
-    		<form class="layui-form form-col-two" id="SubmitForm">
-            </form>
-            <script id="SubmitForm_tpml" type="text/html">
-            	<div class="layui-row">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">最大抹零：</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="MaxClearValue" name="MaxClearValue" placeholder="请输入最大抹零" lay-verify="required|number|positiveNumber|fixed_2" lay-required-msg="请输入最大抹零" value="{{d.user.MaxClearValue}}">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">最大折扣：</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="MinDiscountValue" name="MinDiscountValue" placeholder="请输入最大折扣" lay-verify="required|number|ServerRate" lay-required-msg="请输入最大折扣" value="{{d.user.MinDiscountValue}}">
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-row" id="restaurantList">
-                	<blockquote class="label-title">餐厅</blockquote>
-                	{{#  layui.each(d.restaurantList, function(index, item){ }}
-                		<a href="javascript:;" class="layui-btn 
+  </head>
+
+  <body>
+    <div class="layui-tab layui-tab-brief layer-form-box" lay-filter="docDemoTabBrief">
+      <div class="layui-tab-content">
+        <form class="layui-form form-col-two" id="SubmitForm"></form>
+        <script id="SubmitForm_tpml" type="text/html">
+          <div class="layui-row">
+            <div class="layui-form-item">
+              <label class="layui-form-label">最大抹零：</label>
+              <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="MaxClearValue" name="MaxClearValue" placeholder="请输入最大抹零" lay-verify="required|number|positiveNumber|fixed_2" lay-required-msg="请输入最大抹零" value="{{d.user.MaxClearValue}}">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label class="layui-form-label">最大折扣：</label>
+              <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="MinDiscountValue" name="MinDiscountValue" placeholder="请输入最大折扣" lay-verify="required|number|ServerRate" lay-required-msg="请输入最大折扣" value="{{d.user.MinDiscountValue}}">
+              </div>
+            </div>
+          </div>
+          <div class="layui-row checkedBtn" id="restaurantList">
+            <blockquote class="label-title">餐厅</blockquote>
+            {{# layui.each(d.restaurantList, function(index, item){ }}
+            <a href="javascript:;" class="layui-btn 
                 			{{# if(d.user.ManagerRestaurantList.indexOf(item.Id)< 0) { }}
                 			layui-btn-primary
                 			{{# } }}
                 			" data-id="{{item.Id}}">
-                			{{item.Name}}
-                			<i class="layui-icon layui-icon-ok"></i>
-                		</a>
-                	{{# }); }}
-            	</div>
-                <div class="layui-row" id="permissions">
-                	<blockquote class="label-title">权限</blockquote>
-                	{{#  layui.each(d.permissions, function(index, item){ }}
-                		{{# if(item.Value > 0){ }}
-                		<a href="javascript:;" class="layui-btn 
+              {{item.Name}}
+              <i class="layui-icon layui-icon-ok"></i>
+            </a>
+            {{# }); }}
+          </div>
+          <div class="layui-row checkedBtn" id="permissions">
+            <blockquote class="label-title">权限</blockquote>
+            {{# layui.each(d.permissions, function(index, item){ }} {{# if(item.Value > 0){ }}
+            <a href="javascript:;" class="layui-btn 
                 			{{# if((d.user.RestaurantAuthority & item.Value) == 0){ }}
                 			layui-btn-primary
                 			{{# } }}
                 			" data-id="{{item.Value}}">
-                			{{item.Key}}
-                			<i class="layui-icon layui-icon-ok"></i>
-                		</a>
-                		{{# } }}
-                	{{# }); }}
-            	</div>
-                <div class="layer-btns-bottom">
-                	<button class="layui-btn layui-btn-normal" lay-submit lay-filter="form1">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消</button>
-                </div>
-            </script>
-        </div>
+              {{item.Key}}
+              <i class="layui-icon layui-icon-ok"></i>
+            </a>
+            {{# } }} {{# }); }}
+          </div>
+          <div class="layer-btns-bottom">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="form1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消</button>
+          </div>
+        </script>
+      </div>
     </div>
-</body>
+  </body>
+
 </html>
-@ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
-@ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
-@ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
+@ScriptsEx.Render(FrameworkInfo.Name, "CommonJs") @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x") @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
 <script type="text/javascript">
-	var Id = getUrlParam('id') || 0;
-	layui.use(['element', 'table', 'layer','laytpl','form'], function () {
-        var element = layui.element,
-            layer = layui.layer;
-            table = layui.table;
-            laytpl = layui.laytpl;
-            form = layui.form;
-        
-        
-		$.ajax({
-	        type: "get",
-	        url: "/Res/UserRestaurant/GetCompanyUseById",
-	        dataType: "json",
-	        contentType: "application/json; charset=utf-8",
-	        data: {Id:Id},
-	        beforeSend: function (XMLHttpRequest) {
-	            layindex = layer.open({ type: 3 });
-	        },
-	        success: function (data, textStatus) {
-	        	console.log(data)
-	        	inidata = data;
-	        	
-				var getTpl = SubmitForm_tpml.innerHTML,
-					view = document.getElementById('SubmitForm');
-				laytpl(getTpl).render(data, function(html) {
-					view.innerHTML = html;
-					
-					form.render();
-					
-					$('#SubmitForm .layui-row .layui-btn').on('click',function(){
-						if($(this).hasClass('layui-btn-primary')){
-							$(this).removeClass('layui-btn-primary')
-						}else{
-							$(this).addClass('layui-btn-primary')
-						}
-					})
-				});
-	        },
-	        complete: function (XMLHttpRequest, textStatus) {
-	            layer.close(layindex);
-	        }
-	    });
-	    
-	    form.verify({
-			ServerRate: function(value, item){
-				if(value < 0 || value > 1 || value.indexOf('.') + 1 === value.length){
-					return '必须大于等于0小于等于1且是数字';
-				}
-				if(value.split(".")[1] && value.split(".")[1].length > 2){
-					return '最多只能有两位小数'
-				}
-			},
-			fixed_2: function(value,item){
-				if(value.split(".")[1] && value.split(".")[1].length > 2){
-					return '最多只能有两位小数'
-				}
-				if(value.indexOf('.') + 1 === value.length){
-					return '必须是数字';
-				}
-			},
-			positiveNumber: function(value,item){
-				if(value < 0){
-					return '必须是正数'
-				}
-			}
-		});
-	    
-	    //基本要求提交
-        form.on('submit(form1)', function (data) {
-        	var req = {};
-	        req.user = $.extend(true,inidata.user,data.field)
-	        req.restaurantIds = [];
-	        
-	        var restaurantBtn = $('#restaurantList').find('a:not(.layui-btn-primary)')
-	        for(var i=0;i<restaurantBtn.length;i++){
-	        	req.restaurantIds.push(restaurantBtn.eq(i).attr('data-id'))
-	        }
-	        
-	        var permissionsBtn = $('#permissions').find('a:not(.layui-btn-primary)')
-	        req.user.RestaurantAuthority = 0;
-	        for(var i=0;i<permissionsBtn.length;i++){
-	        	req.user.RestaurantAuthority += parseInt(permissionsBtn.eq(i).attr('data-id'))
-	        }
-	        
-	      	
-	        
-	        req.user.UserId = Id
-	        $.ajax({
-		        type: "post",
-		        url: "/Res/UserRestaurant/UpdateUserManagerRestaurant",
-		        dataType: "json",
-		        contentType : "application/json; charset=utf-8",
-//	        	contentType: "application/json; charset=utf-8",
-		        data: JSON.stringify(req),
-		        beforeSend: function (XMLHttpRequest) {
-		            layindex = layer.open({ type: 3 });
-		        },
-		        success: function (data, textStatus) {
-		        	if (data["Data"] == true) {
-                        parent.layer.msg('提交完成')
-                        var curr = parent.isEdIT ? parent.location.hash.replace('#!fenye=', '') : 1;
-			            parent.location.hash = '#!fenye=' + curr;
-			            parent.table.reload('table', {
-			                where: parent.para
-			                ,page: {
-							    curr: curr //重新从第 1 页开始
-							}
-			            });
-						parent.layer.close(parent.layer.getFrameIndex(window.name));
-                        //parent.Refresh();
-                    } else {
-                        layer.alert(data["Message"]);
-                    }
-		        },
-		        complete: function (XMLHttpRequest, textStatus) {
-		            layer.close(layindex);
-		        }
-		    });
-	        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+  var Id = getUrlParam('id') || 0;
+  layui.use(['element', 'table', 'layer', 'laytpl', 'form'], function() {
+    var element = layui.element,
+      layer = layui.layer;
+    table = layui.table;
+    laytpl = layui.laytpl;
+    form = layui.form;
+
+    $.ajax({
+      type: "get",
+      url: "/Res/UserRestaurant/GetCompanyUseById",
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      data: {
+        Id: Id
+      },
+      beforeSend: function(XMLHttpRequest) {
+        layindex = layer.open({
+          type: 3
         });
-  	})
-	
+      },
+      success: function(data, textStatus) {
+        console.log(data)
+        inidata = data;
+
+        var getTpl = SubmitForm_tpml.innerHTML,
+          view = document.getElementById('SubmitForm');
+        laytpl(getTpl).render(data, function(html) {
+          view.innerHTML = html;
+
+          form.render();
+
+          $('#SubmitForm .layui-row .layui-btn').on('click', function() {
+            if($(this).hasClass('layui-btn-primary')) {
+              $(this).removeClass('layui-btn-primary')
+            } else {
+              $(this).addClass('layui-btn-primary')
+            }
+          })
+        });
+      },
+      complete: function(XMLHttpRequest, textStatus) {
+        layer.close(layindex);
+      }
+    });
+
+    form.verify({
+      ServerRate: function(value, item) {
+        if(value < 0 || value > 1 || value.indexOf('.') + 1 === value.length) {
+          return '必须大于等于0小于等于1且是数字';
+        }
+        if(value.split(".")[1] && value.split(".")[1].length > 2) {
+          return '最多只能有两位小数'
+        }
+      },
+      fixed_2: function(value, item) {
+        if(value.split(".")[1] && value.split(".")[1].length > 2) {
+          return '最多只能有两位小数'
+        }
+        if(value.indexOf('.') + 1 === value.length) {
+          return '必须是数字';
+        }
+      },
+      positiveNumber: function(value, item) {
+        if(value < 0) {
+          return '必须是正数'
+        }
+      }
+    });
+
+    //基本要求提交
+    form.on('submit(form1)', function(data) {
+      var req = {};
+      req.user = $.extend(true, inidata.user, data.field)
+      req.restaurantIds = [];
+
+      var restaurantBtn = $('#restaurantList').find('a:not(.layui-btn-primary)')
+      for(var i = 0; i < restaurantBtn.length; i++) {
+        req.restaurantIds.push(restaurantBtn.eq(i).attr('data-id'))
+      }
+
+      var permissionsBtn = $('#permissions').find('a:not(.layui-btn-primary)')
+      req.user.RestaurantAuthority = 0;
+      for(var i = 0; i < permissionsBtn.length; i++) {
+        req.user.RestaurantAuthority += parseInt(permissionsBtn.eq(i).attr('data-id'))
+      }
+
+      req.user.UserId = Id
+      $.ajax({
+        type: "post",
+        url: "/Res/UserRestaurant/UpdateUserManagerRestaurant",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        //	        	contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(req),
+        beforeSend: function(XMLHttpRequest) {
+          layindex = layer.open({
+            type: 3
+          });
+        },
+        success: function(data, textStatus) {
+          if(data["Data"] == true) {
+            parent.layer.msg('提交完成')
+            var curr = parent.isEdIT ? parent.location.hash.replace('#!fenye=', '') : 1;
+            parent.location.hash = '#!fenye=' + curr;
+            parent.table.reload('table', {
+              where: parent.para,
+              page: {
+                curr: curr //重新从第 1 页开始
+              }
+            });
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            //parent.Refresh();
+          } else {
+            layer.alert(data["Message"]);
+          }
+        },
+        complete: function(XMLHttpRequest, textStatus) {
+          layer.close(layindex);
+        }
+      });
+      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
+  })
 </script>

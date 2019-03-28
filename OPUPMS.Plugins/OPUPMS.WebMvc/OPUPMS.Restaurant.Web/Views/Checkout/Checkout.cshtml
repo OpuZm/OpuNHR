@@ -22,6 +22,8 @@
     	#dMember table .layui-this {background-color: #8BC34A !important;color: #fff;}
     	
     	#CheckOutStaticsList_view{padding: 10px;margin-top: 10px;background: #fce8cf;border-radius: 6px;}
+    	
+    	.checkedBtn{margin-bottom:10px;margin-left:-5px;}
     </style>
 </head>
 <body>
@@ -192,7 +194,11 @@
                                         </td>
                                         <td class="tc">{{ item.Unit }}</td>
                                         <td class="tc">{{ item.Num }}</td>
+                                        {{# if(inidata.MemberData){ }}
+                                        <td class="tc">{{ item.MemberPrice }}</td>
+                                        {{# }else{ }}
                                         <td class="tc">{{ item.Price }}</td>
+                                        {{# } }}
                                         <td class="tc">
                                         	{{# if(item.IsDiscount > 0){ }}
                                         	<i class="layui-icon" style="color:#5FB878">&#xe618;</i>
@@ -243,12 +249,6 @@
                 <li><a href="javascript:void(0);" onclick="OpenPlanAgio()">方案折</a></li>
                 <li><a href="javascript:void(0);" onclick="OpenClear()">抹零</a></li>
                 <li><a href="javascript:void(0);" onclick="DelClear()">取消抹零</a></li>
-                <li>
-                    <a href="javascript:void(0);" onclick="memberPay();">
-                        <span>会员价</span>
-                        <span class="iconfont">&#xe60f;</span>
-                    </a>
-                </li>
                 <li><a href="javascript:void(0);" onclick="UnLock(this)">解锁</a></li>
                 <li><a href="javascript:void(0);" onclick="CheckOutBill(this, true)">结账单</a></li>
                 <li><a href="javascript:void(0);" onclick="CheckOutBill(this, false)">预结单</a></li>
@@ -371,22 +371,26 @@
         <!-- ▲点菜操作 -->
         <!--▼付款-->
         <div class="paymentCon" style="top:0">
-            <div class="payment-method">
+            <div class="payment-method" id="PayTypeList_view">
+              <script id="PayTypeList_tpml" type="text/html">
+                {{# if(top.inidata.IsMemberPrice){ }}
+                <div class="checkedBtn">
+                  <button class="layui-btn layui-btn-primary" id="memberPaySwitch" onclick="memberPay();"><span>会员价</span><i class="layui-icon layui-icon-ok"></i></button>
+                </div>
+                {{# } }}
                 <h3>付款方式</h3>
-                <ul class="layui-clear" id="PayTypeList_view">
-                    <!--<li class="active">现金</li>-->
+                <ul class="layui-clear">
+                  {{#  if(d.length > 0){  }}
+                    {{#  layui.each(d, function(index, item){  }}
+                    	{{# if(item.Pid === 0){ }}
+                    		<li data-default-key="{{ item.Id }}" data-key="{{ item.Pid }}" {{#  if(index == 0){  }} class="active" {{#  } }}>
+                    			<p>{{ item.Name }}</p>
+                    		</li>
+                    	{{# } }}
+                    {{#  }); }}
+                  {{#  } }}
                 </ul>
-                <script id="PayTypeList_tpml" type="text/html">
-                    {{#  if(d.length > 0){  }}
-	                    {{#  layui.each(d, function(index, item){  }}
-	                    	{{# if(item.Pid === 0){ }}
-	                    		<li data-default-key="{{ item.Id }}" data-key="{{ item.Pid }}" {{#  if(index == 0){  }} class="active" {{#  } }}>
-	                    			<p>{{ item.Name }}</p>
-	                    		</li>
-	                    	{{# } }}
-	                    {{#  }); }}
-                    {{#  } }}
-                </script>
+              </script>
             </div>
         </div>
         <!--▲付款-->
@@ -478,7 +482,7 @@
             	<div class="layui-inline">
 	                <label class="layui-form-label">客户:</label>
 	                <div class="layui-input-inline" style='width: 210px;'>
-	                    <input class="layui-input" type="text" name="txtMemberInfo"
+	                    <input class="layui-input" type="text" name="txtMemberInfo" autocomplete="off" 
 	                           placeholder="客户名/电话/证件号/卡号" data-type="text" data-lang="en" onfocus="ShowKeyboard(this.name)" />
 	                    <a class="input-keyboard"><i class="iconfont">&#xe67a;</i></a>
 	                </div>
