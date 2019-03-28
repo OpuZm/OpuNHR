@@ -2299,13 +2299,15 @@ function CheckOut() {
     return false;
   }
 
-  isCheckOut = true;
-
+    isCheckOut = true;
+    debugger
   var req = new Object();
+  if (inidata.MemberData)req.MemberInfo = inidata.MemberData;
   req.OrderId = inidata.Id; //订单id
   req.TableIds = inidata.TableIds; //当前订单下待结账台号
   req.ListOrderPayRecordDTO = OrderPaidRecordList;
   req.Money = money; //结账金额
+
 
   req.ConAmount = inidata.ConAmount;
   req.OriginalAmount = inidata.OriginalAmount;
