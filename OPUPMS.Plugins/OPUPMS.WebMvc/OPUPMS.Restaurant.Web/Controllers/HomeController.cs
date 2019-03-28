@@ -348,7 +348,15 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 try
                 {
                     var userInfo = OperatorProvider.Provider.GetCurrent();
-                    bool result = _orderRepository.OrderDetailCreate(req, orderTableIds, status, userInfo, out msg);
+                    bool result = false;
+                    if (req == null && status == CyddMxStatus.保存)
+                    {
+                        result = _orderRepository.ClearSaveOrderDetail(orderTableIds, status);
+                    }
+                    else
+                    {
+                        result = _orderRepository.OrderDetailCreate(req, orderTableIds, status, userInfo, out msg);
+                    }
                     res.Data = result;
                     res.Message = msg;
                     if (result)

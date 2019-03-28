@@ -208,5 +208,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
         bool GetAutoListPrint();
 
         bool GetDefaultPromptly();
+
+        bool ClearSaveOrderDetail(List<int> orderTableIds, CyddMxStatus status)
     }
 }
