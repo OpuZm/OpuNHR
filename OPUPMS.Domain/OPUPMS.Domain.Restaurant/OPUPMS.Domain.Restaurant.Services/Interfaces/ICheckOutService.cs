@@ -34,7 +34,7 @@ namespace OPUPMS.Domain.Restaurant.Services.Interfaces
         /// <param name="orderId"></param>
         /// <param name="tableIdList"></param>
         /// <returns></returns>
-        CheckOutOrderDTO GetCheckOutOrderDTO(int orderId, List<int> tableIdLis,OrderTableStatus oStatus);
+        CheckOutOrderDTO GetCheckOutOrderDTO(int orderId, List<int> tableIdLis,OrderTableStatus oStatus,bool isMemberPrice=false);
         void VerifyOrderInfo(WholeOrPartialCheckoutDto requestDto);
         void VerifyAndCalcDetailInfo(WholeOrPartialCheckoutDto requestDto, CheckOutOrderDTO verifyObj);
 

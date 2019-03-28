@@ -143,7 +143,7 @@ namespace OPUPMS.Domain.Restaurant.Services
         /// <param name="orderId"></param>
         /// <param name="tableIdList"></param>
         /// <returns></returns>
-        public CheckOutOrderDTO GetCheckOutOrderDTO(int orderId, List<int> tableIdList, OrderTableStatus oStatus = OrderTableStatus.所有)
+        public CheckOutOrderDTO GetCheckOutOrderDTO(int orderId, List<int> tableIdList, OrderTableStatus oStatus = OrderTableStatus.所有, bool IsMemberPrice = false)
         {
             //查询订单实体
             CheckOutOrderDTO checkoutOrder = _checkOutRepository.GetOrderById(orderId);
@@ -173,8 +173,15 @@ namespace OPUPMS.Domain.Restaurant.Services
 
             foreach (var item in detailList)
             {
-                item.Amount = item.Price * item.Num;
-
+                if (IsMemberPrice)
+                {
+                    item.Amount = item.MemberPrice * item.Num;
+                }
+                else
+                {
+                    item.Amount = item.Price * item.Num;
+                }
+                
                 //计算拓展费用
                 if (item.OrderDetailAllExtends != null)
                 {
@@ -485,10 +492,10 @@ namespace OPUPMS.Domain.Restaurant.Services
                 {
                     throw new Exception("结账和点餐的菜品数量不一致,请返回该台号点餐界面重新进行结账操作");
                 }
-                if (verifyItem.Amount != reqItem.Amount)
-                {
-                    throw new Exception(string.Format("结账和点餐的应收价不一致,请返回该台号点餐界面重新进行结账操作", verifyItem.CyddMxName,verifyItem.Unit));
-                }
+                //if (verifyItem.Amount != reqItem.Amount)
+                //{
+                //    throw new Exception(string.Format("结账和点餐的应收价不一致,请返回该台号点餐界面重新进行结账操作", verifyItem.CyddMxName,verifyItem.Unit));
+                //}
             }
         }
 
@@ -497,11 +504,16 @@ namespace OPUPMS.Domain.Restaurant.Services
         /// </summary>
         public CheckOutResultDTO WholeOrPartialCheckout(WholeOrPartialCheckoutDto req,CyddCzjlUserType userType=CyddCzjlUserType.员工)
         {
+            bool isMemberPrice = false;
+            if (req.MemberInfo!=null && req.MemberInfo.Id>0)
+            {
+                isMemberPrice = true;
+            }
             CheckOutResultDTO resultDto = new CheckOutResultDTO();
 
             VerifyOrderInfo(req);
 
-            var checkOutOrderDTO = GetCheckOutOrderDTO(req.OrderId, req.TableIds);
+            var checkOutOrderDTO = GetCheckOutOrderDTO(req.OrderId, req.TableIds,OrderTableStatus.所有,isMemberPrice);
 
             VerifyOrderDetail(req, checkOutOrderDTO);
 
@@ -598,7 +610,6 @@ namespace OPUPMS.Domain.Restaurant.Services
                     #endregion
 
                     #region 订单台号，订单记录及餐台状态处理
-
                     var tableIdList = list.Select(x => x.R_Table_Id).ToList();
                     var originalTabOrderList = db.Queryable<R_OrderTable>()
                         .Where(x => !x.IsCheckOut //尚未结账
@@ -667,7 +678,6 @@ namespace OPUPMS.Domain.Restaurant.Services
                     #endregion
 
                     #region 订单明细更新
-
                     var needUpdateDetailList = req.ListOrderDetailDTO.ToList();
                     var detailIds = needUpdateDetailList.Select(x => x.Id).ToList();
                     var projectDetailIds = needUpdateDetailList
@@ -917,6 +927,36 @@ namespace OPUPMS.Domain.Restaurant.Services
                         #endregion
 
                         newPayRecords.Add(payRecordModel);
+                    }
+
+                    if (isMemberPrice && !req.ListOrderPayRecordDTO.Any(p=>p.CyddPayType==(int)CyddPayType.会员卡))
+                    {
+                        try
+                        {
+                            MemberEntry memberEntry = new MemberEntry()
+                            {
+                                MemberId = req.MemberInfo.Id,
+                                UserId = req.OperateUser,
+                                PayAmount = orderModel.ConAmount,
+                                Remark = "按会员价买单",
+                                CateringSpendPoint = resObj.Id.ToString(),
+                                CompanyId = req.CompanyId,
+                                BusinessDate = accDate.ToString("yyyy-MM-dd"),
+                                Password = string.Empty,
+                                IsReverseCheckout = false
+                            };
+                            var jsonStr = Json.ToJson(memberEntry);
+                            apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamountnoreducemoney?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                            var jsonObject = Json.ToObject<MemberApiResult>(apiStr);
+                            if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
+                            {
+                                throw new Exception($"请求会员积份接口失败,信息:{jsonObject.Info}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("会员积份调取错误：" + ex.Message);
+                        }
                     }
 
                     if (updatePayRecords.Count > 0)

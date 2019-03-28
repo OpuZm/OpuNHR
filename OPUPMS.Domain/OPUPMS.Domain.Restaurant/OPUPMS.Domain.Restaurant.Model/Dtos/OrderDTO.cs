@@ -865,6 +865,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         public OrderTableStatus OrderTableStatus { get; set; }
         public string Remark { get; set; }
         public int PreOrderMainPayId { get; set; }
+        public MemberInfoDTO MemberInfo { get; set; }
     }
 
     #endregion
