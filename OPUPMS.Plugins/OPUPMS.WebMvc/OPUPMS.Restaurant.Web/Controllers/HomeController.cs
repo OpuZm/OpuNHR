@@ -41,6 +41,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
         readonly IPrintService _printService;
         readonly IProjectRepository _projectRepository;
         readonly IPrinterRepository _printerRepository;
+        readonly ISCompanyRepository _sCompanyRepository;
         public HomeController(
             IOrderRepository orderRepository,
             ICategoryRepository categoryRepository,
@@ -59,7 +60,8 @@ namespace OPUPMS.Restaurant.Web.Controllers
             IOrderPayRecordRepository orderPayRecordRepository,
             IPrintService printService,
             IProjectRepository projectRepository,
-            IPrinterRepository printerRepository)
+            IPrinterRepository printerRepository,
+            ISCompanyRepository sCompanyRepository)
         {
             _orderRepository = orderRepository;
             _tableRepository = tableRepository;
@@ -80,6 +82,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             _printService = printService;
             _projectRepository = projectRepository;
             _printerRepository = printerRepository;
+            _sCompanyRepository = sCompanyRepository;
         }
         
         public ActionResult Index()
@@ -850,9 +853,10 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 RestaurantList = list,
                 UserName = operatorUser.UserName,
                 MarketName = markets.Where(x => x.Id == operatorUser.LoginMarketId).Select(x => x.Name).FirstOrDefault(),
-                NightTrial=_printerRepository.GetNightTrial(),
+                NightTrial = _printerRepository.GetNightTrial(),
                 CompanyId = operatorUser.CompanyId,
-                IsMemberPrice=_projectRepository.GetIsProjectMemberPrice()
+                IsMemberPrice = _projectRepository.GetIsProjectMemberPrice(),
+                ApiStr = _sCompanyRepository.GetApiStr()
             };
 
             return Json(info);

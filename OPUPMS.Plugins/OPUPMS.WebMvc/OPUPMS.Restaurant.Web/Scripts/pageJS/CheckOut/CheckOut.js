@@ -2816,7 +2816,7 @@ function CheckOutBill(dom, isLocked) {
             reportId: 8802,
             zh00: inidata.Id,
             xhs0: orderTableIds.join("|"),
-            xhs2: xhs2.replace(",","|"),
+            xhs2: xhs2.replace(/,/g,"|"),
           }
         })
         //              reportorJs.printPdb(8802, inidata.Id, 0, "'" + orderTableIds.join(",") + "'", 0, 0, inidata.PrintModel, '', "'" + xhs2 + "'", '0');

@@ -31,5 +31,10 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 return res;
             }
         }
+
+        public string GetApiStr()
+        {
+            return ApiConnection;
+        }
     }
 }

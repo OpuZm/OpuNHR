@@ -10,5 +10,6 @@ namespace OPUPMS.Domain.Restaurant.Repository
     public interface ISCompanyRepository
     {
         List<SCompanyDTO> GetGroupCompanys(int groupId = 0);
+        string GetApiStr();
     }
 }
