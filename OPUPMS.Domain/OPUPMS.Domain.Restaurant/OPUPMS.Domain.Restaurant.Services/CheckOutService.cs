@@ -212,7 +212,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                     {
                         var removeNum = returnOrMoveOutItem.Sum(x => x.Num);
 
-                        item.Amount = item.Amount - (item.Price * removeNum);//剔除菜品价格
+                        item.Amount = item.Amount - ((IsMemberPrice?item.MemberPrice : item.Price) * removeNum);//剔除菜品价格
                         item.MemberAmount = item.MemberAmount - (item.MemberPrice * removeNum);
 
                         var extendTotal = item.OrderDetailAllExtends.Sum(x => x.Price * removeNum);

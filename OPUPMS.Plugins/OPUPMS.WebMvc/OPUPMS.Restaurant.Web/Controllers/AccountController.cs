@@ -46,9 +46,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
             return View();
         }
 
-        public ActionResult NewLogin()
+        public ActionResult NewLogin(int group=0)
         {
-            ViewBag.Companys = _scompanyRepository.GetGroupCompanys();
+            ViewBag.Companys = _scompanyRepository.GetGroupCompanys(group);
             return View();
         }
 

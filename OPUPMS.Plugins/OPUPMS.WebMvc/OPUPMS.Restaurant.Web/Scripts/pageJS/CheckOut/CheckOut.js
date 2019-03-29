@@ -2399,7 +2399,7 @@ function CheckOut() {
             key: {
               reportId: 8804,
               zh00: data.Data.OrderId,
-              xhs0: data.Data.OrderTables,
+              xhs0: data.Data.OrderTables.join("|"),
               fzh0: data.Data.OrderMainPayId,
             }
           })
@@ -2815,8 +2815,8 @@ function CheckOutBill(dom, isLocked) {
           key: {
             reportId: 8802,
             zh00: inidata.Id,
-            xhs0: orderTableIds.join(","),
-            xhs2: xhs2,
+            xhs0: orderTableIds.join("|"),
+            xhs2: xhs2.replace(",","|"),
           }
         })
         //              reportorJs.printPdb(8802, inidata.Id, 0, "'" + orderTableIds.join(",") + "'", 0, 0, inidata.PrintModel, '', "'" + xhs2 + "'", '0');
