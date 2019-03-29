@@ -3719,8 +3719,16 @@ function MoreShow(thisdom) {
 
 //打列印单
 function PrintLXD(thisdom) {
-  if($(thisdom).hasClass('Disable')) return;
-  reportorJs.printPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '0', 0, 0, inidata.PrintModel, '', '', '');
+  if($(thisdom).hasClass('Disable'))return;
+  top.printLayer({
+    title:'列印单',
+    key:{
+      reportId:8801,
+      zh00:inidata.OrderAndTables.OrderId,
+      fzh0:Number(OrderTableIds[0]),
+    }
+  })
+  //reportorJs.printPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '0', 0, 0, inidata.PrintModel, '', '', '');
   /*
   	$.ajax({
   		type: "post",
@@ -3754,8 +3762,16 @@ function PrintLXD(thisdom) {
 
 //列印全单
 function PrintLXDALL(thisdom) {
-  if($(thisdom).hasClass('Disable')) return;
-  reportorJs.printPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '1', 0, 0, inidata.PrintModel, '', '', '');
+  if ($(thisdom).hasClass('Disable')) return;
+    top.printLayer({
+    title:'列印全单',
+    key:{
+      reportId:8803,
+      zh00:inidata.OrderAndTables.OrderId,
+      fzh0:Number(OrderTableIds[0]),
+    }
+  })
+  //reportorJs.printPdb(8801, inidata.OrderAndTables.OrderId, Number(OrderTableIds[0]), '1', 0, 0, inidata.PrintModel, '', '', '');
 }
 
 //催菜
