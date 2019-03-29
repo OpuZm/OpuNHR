@@ -962,8 +962,8 @@ function printLayer(option){
 	option.key['RestaurantName'] = inidata.RestaurantName;
 	option.key['OperatorName'] = inidata.UserName;
 	option.key['MarketName'] = inidata.MarketName;
-  option.key['BusinessDate'] = BusinessDate;
-  option.key['CompanyId'] = inidata.CompanyId;
+    option.key['BusinessDate'] = BusinessDate;
+    option.key['CompanyId'] = inidata.CompanyId;
 
 	for(let i in option.key){
 		url += i + '=' + option.key[i] + '&';
