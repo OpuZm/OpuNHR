@@ -897,7 +897,7 @@ function memberCardValidate($data){
       var req = {
         id: $data.Id,
         name: "",
-        money: inputval,
+        money: $('#AmountOfMoney').val(),
         payType: 3,
         Pwd: ""
       };
