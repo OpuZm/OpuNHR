@@ -21,7 +21,7 @@ namespace OPUPMS.Domain.Restaurant.Model
         private string _phone;
         private string _content;
         private int _s_areaid;
-        private int? _s_groupid;
+        private int? _parentId;
         private string _fax;
         private int? _creator;
         private DateTime _createdtime;
@@ -124,10 +124,10 @@ namespace OPUPMS.Domain.Restaurant.Model
         /// <summary>
         /// 
         /// </summary>
-        public int? S_GroupId
+        public int? ParentId
         {
-            set { _s_groupid = value; }
-            get { return _s_groupid; }
+            set { _parentId = value; }
+            get { return _parentId; }
         }
         /// <summary>
         /// 

@@ -20,7 +20,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 var sql = db.Queryable<SCompany>();
                 if (groupId > 0)
                 {
-                    sql.Where(p => p.S_GroupId == groupId);
+                    sql.Where(p => p.ParentId == groupId);
                 }
                 var res = sql.Select<SCompanyDTO>(p => new SCompanyDTO
                 {
