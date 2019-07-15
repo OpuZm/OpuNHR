@@ -31,6 +31,11 @@ namespace OPUPMS.Domain.Restaurant.Services
             _resRepository = restaurantRepository;
         }
 
+        public string GetLoginOutUrl()
+        {
+            return LoginOutUrl;
+        }
+
         public RestaurantPlatformDTO LoadPlatformInfo(int restaurantId)
         {
             string errMsg = null;
@@ -79,11 +84,12 @@ namespace OPUPMS.Domain.Restaurant.Services
                 CurrentTotalAmount = totalAmount,
                 CurrentTotalGuestNum = totalGuest,
                 TableList = tableList,
-                TableStatusList = tableStatusList,
-                LoginOutUrl = LoginOutUrl
+                TableStatusList = tableStatusList
             };
 
             return resInfo;
         }
+
+        
     }
 }

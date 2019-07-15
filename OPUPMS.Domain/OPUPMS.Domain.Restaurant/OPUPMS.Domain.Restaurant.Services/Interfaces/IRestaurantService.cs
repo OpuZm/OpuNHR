@@ -8,6 +8,7 @@ namespace OPUPMS.Domain.Restaurant.Services.Interfaces
         /// 加载餐厅工作台信息
         /// </summary>
         /// <returns></returns>
-        RestaurantPlatformDTO LoadPlatformInfo(int restaurantId);        
+        RestaurantPlatformDTO LoadPlatformInfo(int restaurantId);
+        string GetLoginOutUrl();
     }
 }

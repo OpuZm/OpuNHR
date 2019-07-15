@@ -906,7 +906,7 @@ function myStyleSetting(form, data) {
 
 //退出登录
 function LoginOut() {
-    window.location.href = "/Res/Account/NewLogout";
+    window.location.href = inidata.LoginOutUrl ? inidata.LoginOutUrl : "/Res/Account/NewLogout";
 }
 
 

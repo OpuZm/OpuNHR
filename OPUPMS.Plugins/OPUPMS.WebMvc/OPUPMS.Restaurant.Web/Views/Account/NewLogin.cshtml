@@ -84,30 +84,30 @@
                         <p class="form-error"></p>
                     </li>
                     <li>
-                    	<label class="layui-form-label">公司:</label>
-                    	<div class="layui-input-inline">
-	                        <select class="form-control" id="CompanyId" name="CompanyId">
-	                        	@{ 
-	                                foreach (var item in companys)
-	                                {
-	                                    <option value="@item.Id">@item.Name</option>
-	                                }
-	                            }
-		                    </select>
-	                    </div>
+                        <label class="layui-form-label">公司:</label>
+                        <div class="layui-input-inline">
+                            <select class="form-control" id="CompanyId" name="CompanyId">
+                                @{
+                                    foreach (var item in companys)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
                     </li>
                     <div id="keyboard"></div>
                     @*<li class="yzm-group">
-            <label>验证码:</label>
-            <div class="yzm">
-                <input id="txtCode" maxlength="4" type="text" size="8" placeholder="验证码">
-                <div class="yzmimg">
-                    <img id="imgCode" class="authcode" src="~/Res/Account/GetAuthCode" width="80" height="25" />
-                    <a id="switchCode" href="#" onclick="changeCode();">换一张</a>
-                </div>
-            </div>
-            <p class="form-error"></p>
-        </li>*@
+                            <label>验证码:</label>
+                            <div class="yzm">
+                                <input id="txtCode" maxlength="4" type="text" size="8" placeholder="验证码">
+                                <div class="yzmimg">
+                                    <img id="imgCode" class="authcode" src="~/Res/Account/GetAuthCode" width="80" height="25" />
+                                    <a id="switchCode" href="#" onclick="changeCode();">换一张</a>
+                                </div>
+                            </div>
+                            <p class="form-error"></p>
+                        </li>*@
                     <li>
 
                         <button class="btn btn-default" lay-submit lay-filter="login" id="btnLogin" type="button">
@@ -123,22 +123,25 @@
     <footer>
         <!--<p>OPU·奥普软件</p>-->
     </footer>
-
+    @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
     <script>
+        var token = getUrlParam('token');
         layui.use(['layer', 'form'], function () {
             var layer = layui.layer,
                 $ = layui.jquery,
                 form = layui.form;
-                
-                $('#txtAccount').focus();
-                ShowKeyboard('txtAccount')
+
+            $('#txtAccount').focus();
+            ShowKeyboard('txtAccount')
+
+            
 
             form.on('submit(login)', function (data) {
-//              var username = $("#txtAccount").val().trim();
-//              var password = $("#txtPassword").val().trim();
+                //              var username = $("#txtAccount").val().trim();
+                //              var password = $("#txtPassword").val().trim();
 
                 console.log(data)
-					
+
                 //var code = $("#txtCode").val().trim();
                 if (data.field.Account == "") {
                     $("#txtAccount").focus();
@@ -153,8 +156,7 @@
                 else {
                     $("#btnLogin").attr('disabled', 'disabled').html("loading...");
                     var para = data.field;
-                    var shoplist = '';
-                    
+
                     $.ajax({
                         url: "/Res/Account/LoginIn",
                         data: JSON.stringify(para),
@@ -167,178 +169,18 @@
                         },
                         success: function (data, textStatus) {
                             if (data.Successed && data.Data != null) {
-                                if (data.Message && data.Message!="") {
-                                    var a = layer.confirm(data.Message, {
-                                        btn: ['确定', '取消'] //按钮
-                                    }, function () {
-                                        var list = data.Data;
-                                        if (list.length > 0) {
-                                            for (var i = 0; i < list.length; i++) {
+                                var list = data.Data;
+                                if (data.Message && data.Message != "") {
+                                    restaurantChoose(list,true)
 
-                                                var marketList = '<option value="" >请选择</option>';
-                                                for (var j = 0; j < list[i].MarketList.length; j++) {
-                                                    var selected = list[i].MarketList[j].IsDefault == true ? 'selected' : '';
-                                                    marketList += '<option value="' + list[i].MarketList[j].Id + '" ' + selected
-                                                        + '>' + list[i].MarketList[j].Name + '</option>';
-                                                }
-                                                shoplist += '<li>'
-                                                    + '<h4>' + list[i].Name + '</h4>'
-                                                    + '<div>'
-                                                    + '<div class="layui-input-inline" style="width:60%;margin-top:6px;">'
-                                                    + '<select name="Market" lay-verify="Market">' + marketList + '</select>'
-                                                    + '</div>'
-                                                    + '<a href="javascript:void(0);" data-id="' + list[i].Id
-                                                    + '" class="ok">进入餐厅</a>'
-                                                    + '</div>'
-                                                    + '</li>';
-                                            }
-
-                                            layer.open({
-                                                type: 1,
-                                                title: "选择操作的餐厅",
-                                                area: ["600px", "500px"],
-                                                content: '<ul class="choice-shop layui-form">' + shoplist + '</ul>',
-                                                maxmin: false,
-                                                success: function (layero, index) {
-                                                    $(layero).find('.layui-layer-content').css('overflow', 'visible');
-                                                    
-                                                    $(window).one('keypress',function(e){
-														if(e.keyCode == 13){
-															$(layero).find('.choice-shop li:eq(0) a.ok').click()
-														}
-													})
-                                                },
-                                                end: function () {
-                                                    $("#btnLogin").removeAttr('disabled').html("登录");
-                                                    $("#switchCode").trigger("click");
-                                                    $("#txtCode").val('');
-                                                }
-                                            });
-                                            form.render('select');
-
-                                            //进入餐厅点击
-                                            $('.choice-shop a.ok').click(function () {
-                                                var Marketid = $(this).prev('.layui-input-inline').find('select[name="Market"]').val();
-                                                var shopid = $(this).attr('data-id');
-                                                if (!Marketid) {
-                                                    layer.msg('请选择餐厅分市!');
-                                                } else {
-                                                    entrySys(shopid, Marketid);
-                                                }
-                                            })
-                                        }
-                                    }, function () {
-                                        location.reload();
-                                    });
-									
-									$(window).one('keypress',function(e){
-										if(e.keyCode == 13){
-											$('.layui-layer').find('.layui-layer-btn0').click();
-										}
-									})
+                                    //$(window).one('keypress', function (e) {
+                                    //    if (e.keyCode == 13) {
+                                    //        $('.layui-layer').find('.layui-layer-btn0').click();
+                                    //    }
+                                    //})
+                                }else if (list.length > 0){
+                                    restaurantChoose(list, true)
                                 }
-                                else {
-                                    var list = data.Data;
-                                    if (list.length > 0) {
-                                        for (var i = 0; i < list.length; i++) {
-
-                                            var marketList = '<option value="" >请选择</option>';
-                                            for (var j = 0; j < list[i].MarketList.length; j++) {
-                                                var selected = list[i].MarketList[j].IsDefault == true ? 'selected' : '';
-                                                marketList += '<option value="' + list[i].MarketList[j].Id + '" ' + selected
-                                                    + '>' + list[i].MarketList[j].Name + '</option>';
-                                            }
-                                            shoplist += '<li>'
-                                                + '<h4>' + list[i].Name + '</h4>'
-                                                + '<div>'
-                                                + '<div class="layui-input-inline" style="width:60%;margin-top:6px;">'
-                                                + '<select name="Market" lay-verify="Market">' + marketList + '</select>'
-                                                + '</div>'
-                                                + '<a href="javascript:void(0);" data-id="' + list[i].Id
-                                                + '" class="ok">进入餐厅</a>'
-                                                + '</div>'
-                                                + '</li>';
-                                        }
-
-                                        layer.open({
-                                            type: 1,
-                                            title: "选择操作的餐厅",
-                                            area: ["600px", "500px"],
-                                            content: '<ul class="choice-shop layui-form">' + shoplist + '</ul>',
-                                            maxmin: false,
-                                            success: function(layero, index){
-										        $(layero).find('.layui-layer-content').css('overflow','visible');
-										    },
-										    end: function(){
-											    $("#btnLogin").removeAttr('disabled').html("登录");
-			                                    $("#switchCode").trigger("click");
-			                                    $("#txtCode").val('');
-										    }
-                                        });
-                                        form.render('select');
-
-                                        //进入餐厅点击
-                                        $('.choice-shop a.ok').click(function () {
-                                            var Marketid = $(this).prev('.layui-input-inline').find('select[name="Market"]').val();
-                                            var shopid = $(this).attr('data-id');
-                                            if (!Marketid) {
-                                                layer.msg('请选择餐厅分市!');
-                                            } else {
-                                                entrySys(shopid, Marketid);
-                                            }
-                                        })
-                                    }
-                                }
-          //                      var list = data.Data;
-          //                      if (list.length > 0) {
-          //                          for (var i = 0; i < list.length; i++) {
-
-          //                              var marketList = '<option value="" >请选择</option>';
-          //                              for (var j = 0; j < list[i].MarketList.length; j++) {
-          //                                  var selected = list[i].MarketList[j].IsDefault == true ? 'selected' : '';
-          //                                  marketList += '<option value="' + list[i].MarketList[j].Id + '" ' + selected
-          //                                      + '>' + list[i].MarketList[j].Name + '</option>';
-          //                              }
-          //                              shoplist += '<li>'
-          //                                  + '<h4>' + list[i].Name + '</h4>'
-          //                                  + '<div>'
-          //                                  + '<div class="layui-input-inline" style="width:60%;margin-top:6px;">'
-          //                                  + '<select name="Market" lay-verify="Market">' + marketList + '</select>'
-          //                                  + '</div>'
-          //                                  + '<a href="javascript:void(0);" data-id="' + list[i].Id
-          //                                  + '" class="ok">进入餐厅</a>'
-          //                                  + '</div>'
-          //                                  + '</li>';
-          //                          }
-
-          //                          layer.open({
-          //                              type: 1,
-          //                              title: "选择操作的餐厅",
-          //                              area: ["600px", "500px"],
-          //                              content: '<ul class="choice-shop layui-form">' + shoplist + '</ul>',
-          //                              maxmin: false,
-          //                              success: function(layero, index){
-										//    $(layero).find('.layui-layer-content').css('overflow','visible');
-										//},
-										//end: function(){
-										//	$("#btnLogin").removeAttr('disabled').html("登录");
-			       //                         $("#switchCode").trigger("click");
-			       //                         $("#txtCode").val('');
-										//}
-          //                          });
-          //                          form.render('select');
-
-          //                          //进入餐厅点击
-          //                          $('.choice-shop a.ok').click(function () {
-          //                              var Marketid = $(this).prev('.layui-input-inline').find('select[name="Market"]').val();
-          //                              var shopid = $(this).attr('data-id');
-          //                              if (!Marketid) {
-          //                                  layer.msg('请选择餐厅分市!');
-          //                              } else {
-          //                                  entrySys(shopid, Marketid);
-          //                              }
-          //                          })
-          //                      }
                             } else {
                                 $("#btnLogin").removeAttr('disabled').html("登录");
                                 $("#switchCode").trigger("click");
@@ -377,7 +219,95 @@
                     document.getElementById("btnLogin").click();
                 }
             }
+
+            if (token) {
+                $.ajax({
+                    type: "get",
+                    url: "/Res/Account/TokenLogin",
+                    data: { token: token},
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        layindex = layer.open({
+                            type: 3,
+                            shadeClose: false, //点击遮罩关闭层
+                        });
+                    },
+                    success: function (data, textStatus) {
+                        layer.close(layindex);
+                        if (data.Successed && data.Data && data.Data.length > 0) {
+                            restaurantChoose(data.Data)
+                        } else if (!data.Data || data.Data.length == 0){
+                            layer.msg('没有餐厅权限,请联系管理员')
+                        }
+                    },
+                    complete: function (XMLHttpRequest, textStatus) {
+                    }
+                });
+            }
+
+
+            function restaurantChoose(list, isCloseBtn) {
+                var shoplist = "";
+                if (list.length > 0) {
+                    for (var i = 0; i < list.length; i++) {
+
+                        var marketList = '<option value="" >请选择</option>';
+                        for (var j = 0; j < list[i].MarketList.length; j++) {
+                            var selected = list[i].MarketList[j].IsDefault == true ? 'selected' : '';
+                            marketList += '<option value="' + list[i].MarketList[j].Id + '" ' + selected
+                                + '>' + list[i].MarketList[j].Name + '</option>';
+                        }
+                        shoplist += '<li>'
+                            + '<h4>' + list[i].Name + '</h4>'
+                            + '<div>'
+                            + '<div class="layui-input-inline" style="width:60%;margin-top:6px;">'
+                            + '<select name="Market" lay-verify="Market">' + marketList + '</select>'
+                            + '</div>'
+                            + '<a href="javascript:void(0);" data-id="' + list[i].Id
+                            + '" class="ok">进入餐厅</a>'
+                            + '</div>'
+                            + '</li>';
+                    }
+
+                    layer.open({
+                        type: 1,
+                        title: "选择操作的餐厅",
+                        area: ["600px", "500px"],
+                        content: '<ul class="choice-shop layui-form">' + shoplist + '</ul>',
+                        maxmin: false,
+                        closeBtn: isCloseBtn ? 1 : 0,
+                        success: function (layero, index) {
+                            $(layero).find('.layui-layer-content').css('overflow', 'visible');
+
+                            $(window).one('keypress', function (e) {
+                                if (e.keyCode == 13) {
+                                    $(layero).find('.choice-shop li:eq(0) a.ok').click()
+                                }
+                            })
+                        },
+                        end: function () {
+                            $("#btnLogin").removeAttr('disabled').html("登录");
+                            $("#switchCode").trigger("click");
+                            $("#txtCode").val('');
+                        }
+                    });
+                    form.render('select');
+
+                    //进入餐厅点击
+                    $('.choice-shop a.ok').click(function () {
+                        var Marketid = $(this).prev('.layui-input-inline').find('select[name="Market"]').val();
+                        var shopid = $(this).attr('data-id');
+                        if (!Marketid) {
+                            layer.msg('请选择餐厅分市!');
+                        } else {
+                            entrySys(shopid, Marketid);
+                        }
+                    })
+                }
+            }
         });
+
 
         function changeCode() {
             $("#imgCode").attr("src", "/Res/Account/GetAuthCode?random=" + Math.random());
@@ -403,7 +333,7 @@
                         var chat = $.connection.systemHub;
                         chat.hubName = 'systemHub';
                         chat.connection.start(function () {
-                            chat.server.userLogin(id); 
+                            chat.server.userLogin(id);
                         });
                         */
                         $("#btnLogin").find('span').html("登录成功，正在跳转...");
@@ -422,186 +352,186 @@
         }
 
     </script>
-    
-    
+
+
     <script type="text/javascript">
-  var data;
-  var keycache='';
-  var thisfontArr=[];
-  var thisleft=[];
-  var languagetype='ch';
-  var keysdata=[
-                [1]
-               ,[2,'A','B','C']
-               ,[3,'D','E','F']
-               ,[4,'G','H','I']
-               ,[5,'J','K','L']
-               ,[6,'M','N','O']
-               ,[7,'P','Q','R','S']
-               ,[8,'T','U','V']
-               ,[9,'W','X','Y','Z']
-               ];
-          
-  function ShowKeyboard(inputname) {
-  	  
-      var input=$('input[name="'+inputname+'"]');
-      if (input.hasClass('keythis')) {
-        return false;
-      }
-      $('input').removeClass('keythis');
-      input.addClass('keythis');
-      //构建键盘
-      var keyboardkeys='';
-      for (var i = 0; i < keysdata.length; i++) {
-        var keylabel='',keyvalue='';
-        if (keysdata[i].length==1) {
-          keyvalue=keysdata[i][0];
-        }else{
-          keylabel=keysdata[i][0];
-          for (var j = 0; j < keysdata[i].length; j++) {
-            if (j!=0) {
-                keyvalue+=keysdata[i][j];
+        var data;
+        var keycache = '';
+        var thisfontArr = [];
+        var thisleft = [];
+        var languagetype = 'ch';
+        var keysdata = [
+            [1]
+            , [2, 'A', 'B', 'C']
+            , [3, 'D', 'E', 'F']
+            , [4, 'G', 'H', 'I']
+            , [5, 'J', 'K', 'L']
+            , [6, 'M', 'N', 'O']
+            , [7, 'P', 'Q', 'R', 'S']
+            , [8, 'T', 'U', 'V']
+            , [9, 'W', 'X', 'Y', 'Z']
+        ];
+
+        function ShowKeyboard(inputname) {
+
+            var input = $('input[name="' + inputname + '"]');
+            if (input.hasClass('keythis')) {
+                return false;
             }
-          }
-        }
-        keyboardkeys+='<li><label>'+keylabel+'</label><div class="keyboard-value">'+keyvalue+'</div></li>';
-      }
-        keyboardkeys+='<li class="keyboard-zero" style="width:62%;"><label></label><div class="keyboard-value">0</div></li>';
-        if (languagetype=='en') {
-           keyboardkeys+='<li data-type="en" class="keyboard-other keyboard-language"><label>123</label><div class="keyboard-value">英</div></li>';
-        }else{
-           keyboardkeys+='<li data-type="ch" class="keyboard-other keyboard-language"><label>英</label><div class="keyboard-value">123</div></li>';
-        }
-        
-
-      var keyboardHtml='<div class="hg-keyboard" >'
-                      +   '<div class="keyboard-keys"></div>'
-                      +   '<div class="keyboard-head"><span></span><a href="javascript:void(0);" class="del" data-type="del"> ← </a></div>'
-                      +   '<div class="keyboard-body">'
-                      +     '<div class="keyboard-key-box">'
-                      +        '<ul>'+keyboardkeys+'</ul>'
-                      +     '</div>'
-                      +   '</div>'
-                      +   '<div class="keyboard-more-font"></div>'
-                      +'</div>';
-      $('#keyboard').html(keyboardHtml);
-
-      //data=ChineseData();
-      //键盘点击
-      $('.keyboard-key-box li').click(function(event) {
-          if ($(this).hasClass('keyboard-language')) {//中英文切换
-              if (languagetype=='en') {
-                 languagetype='ch';
-                 $(this).attr('data-type','ch').find('label').text('英').next('.keyboard-value').text('123');
-              }else{
-                 languagetype='en';
-                 $(this).attr('data-type','en').find('label').text('123').next('.keyboard-value').text('英'); 
-              }
-              $('.keyboard-side-left').html('');
-          }else if ($(this).hasClass('keyboard-zero')) {//0
-               setinputval('0');
-          }else{
-               var keyindex=$(this).index();
-               var keydata=keysdata[keyindex];
-               if (keydata.length==1) {//数字
-                     setinputval(keydata[0]);
-               }else{
-                     if (languagetype=='en') {//英文输入
-                         var newkeydata=[];
-                         for (var i = 0; i < keydata.length; i++) {
-                            newkeydata.push(keydata[i]);
-                            if (i>0) {
-                               var xiao=keydata[i].toLowerCase();
-                               newkeydata.push(xiao);
-                            }
-                         }
-                         newhead(newkeydata);
-                     }else{//数字输入
-                        setinputval(keydata[0]); 
-                     }
-               }
-          }
-         
-          
-      });
-
-      //文字点击
-      $('.keyboard-head').delegate('a', 'click', function(event) {
-          var type=$(this).attr('data-type');
-          if (type=='del') {
-              var leftArr=keycache.split('');
-              if (leftArr==0) {//删除输入框
-                var inputdom=$('input.keythis');
-                var inputval=inputdom.val();
-                var newval = inputval.substring(0, inputval.length - 1);
-                inputdom.val(newval);
-              }else{
-                var newindex=leftArr.length-1;
-                leftArr.splice(newindex,1);
-                var newkeycache='';
-                for (var i = 0; i < leftArr.length; i++) {
-                    newkeycache+=leftArr[i];
+            $('input').removeClass('keythis');
+            input.addClass('keythis');
+            //构建键盘
+            var keyboardkeys = '';
+            for (var i = 0; i < keysdata.length; i++) {
+                var keylabel = '', keyvalue = '';
+                if (keysdata[i].length == 1) {
+                    keyvalue = keysdata[i][0];
+                } else {
+                    keylabel = keysdata[i][0];
+                    for (var j = 0; j < keysdata[i].length; j++) {
+                        if (j != 0) {
+                            keyvalue += keysdata[i][j];
+                        }
+                    }
                 }
-                //var font=fontdata(newkeycache,newkeycache);
-                newhead(font);
-              }
-
-          }else if (type=='more') {
-              //更多文字弹出
-              var morebox=$('.keyboard-more-font');
-              if (morebox.hasClass('show')) {
-                  morebox.removeClass('show');
-              }else{
-                  morebox.addClass('show');
-              }
-          } else{
-              var thisfont=$(this).text();
-              if (thisfont) {
-                 setinputval(thisfont);
-              }
-          }
-      });
-
-      //更多文字点击
-      $('.keyboard-more-font').delegate('a', 'click', function(event) {
-            var thisfont=$(this).text();
-            if (thisfont) {
-               setinputval(thisfont);
+                keyboardkeys += '<li><label>' + keylabel + '</label><div class="keyboard-value">' + keyvalue + '</div></li>';
             }
-      })
-  }
+            keyboardkeys += '<li class="keyboard-zero" style="width:62%;"><label></label><div class="keyboard-value">0</div></li>';
+            if (languagetype == 'en') {
+                keyboardkeys += '<li data-type="en" class="keyboard-other keyboard-language"><label>123</label><div class="keyboard-value">英</div></li>';
+            } else {
+                keyboardkeys += '<li data-type="ch" class="keyboard-other keyboard-language"><label>英</label><div class="keyboard-value">123</div></li>';
+            }
 
-  //更新文字
-  function newhead(font) {
-       var fontArr=font;
-       thisfontArr=fontArr;
-       var hrad_font='';
-       var more_font='';
-       for (var i = 0; i < fontArr.length; i++) {
-          if (i<6) {
-             hrad_font+='<a href="javascript:void(0);">'+fontArr[i]+'</a>';
-          }else{
-             more_font+='<a href="javascript:void(0);">'+fontArr[i]+'</a>';
-          }
-       }
-       if (fontArr.length>6) {
-          hrad_font+='<a href="javascript:void(0);" data-type="more">></a>';
-       }
-       $('.keyboard-head span').html(hrad_font);
-       $('.keyboard-more-font').html('<div class="keyboard-more-box">'+more_font+'</div>');
-       $('input.keythis').focus();
-  }
- 
 
-  function setinputval(value) {
-       var inputval= $('input.keythis').val();
-       keycache='';
-       $('input.keythis').val(inputval+value).focus();
-       $('.keyboard-head span').html('');
-       $('.keyboard-keys').html('');
-       $('.keyboard-more-font').removeClass('show').html('');
-  }
-</script>
+            var keyboardHtml = '<div class="hg-keyboard" >'
+                + '<div class="keyboard-keys"></div>'
+                + '<div class="keyboard-head"><span></span><a href="javascript:void(0);" class="del" data-type="del"> ← </a></div>'
+                + '<div class="keyboard-body">'
+                + '<div class="keyboard-key-box">'
+                + '<ul>' + keyboardkeys + '</ul>'
+                + '</div>'
+                + '</div>'
+                + '<div class="keyboard-more-font"></div>'
+                + '</div>';
+            $('#keyboard').html(keyboardHtml);
+
+            //data=ChineseData();
+            //键盘点击
+            $('.keyboard-key-box li').click(function (event) {
+                if ($(this).hasClass('keyboard-language')) {//中英文切换
+                    if (languagetype == 'en') {
+                        languagetype = 'ch';
+                        $(this).attr('data-type', 'ch').find('label').text('英').next('.keyboard-value').text('123');
+                    } else {
+                        languagetype = 'en';
+                        $(this).attr('data-type', 'en').find('label').text('123').next('.keyboard-value').text('英');
+                    }
+                    $('.keyboard-side-left').html('');
+                } else if ($(this).hasClass('keyboard-zero')) {//0
+                    setinputval('0');
+                } else {
+                    var keyindex = $(this).index();
+                    var keydata = keysdata[keyindex];
+                    if (keydata.length == 1) {//数字
+                        setinputval(keydata[0]);
+                    } else {
+                        if (languagetype == 'en') {//英文输入
+                            var newkeydata = [];
+                            for (var i = 0; i < keydata.length; i++) {
+                                newkeydata.push(keydata[i]);
+                                if (i > 0) {
+                                    var xiao = keydata[i].toLowerCase();
+                                    newkeydata.push(xiao);
+                                }
+                            }
+                            newhead(newkeydata);
+                        } else {//数字输入
+                            setinputval(keydata[0]);
+                        }
+                    }
+                }
+
+
+            });
+
+            //文字点击
+            $('.keyboard-head').delegate('a', 'click', function (event) {
+                var type = $(this).attr('data-type');
+                if (type == 'del') {
+                    var leftArr = keycache.split('');
+                    if (leftArr == 0) {//删除输入框
+                        var inputdom = $('input.keythis');
+                        var inputval = inputdom.val();
+                        var newval = inputval.substring(0, inputval.length - 1);
+                        inputdom.val(newval);
+                    } else {
+                        var newindex = leftArr.length - 1;
+                        leftArr.splice(newindex, 1);
+                        var newkeycache = '';
+                        for (var i = 0; i < leftArr.length; i++) {
+                            newkeycache += leftArr[i];
+                        }
+                        //var font=fontdata(newkeycache,newkeycache);
+                        newhead(font);
+                    }
+
+                } else if (type == 'more') {
+                    //更多文字弹出
+                    var morebox = $('.keyboard-more-font');
+                    if (morebox.hasClass('show')) {
+                        morebox.removeClass('show');
+                    } else {
+                        morebox.addClass('show');
+                    }
+                } else {
+                    var thisfont = $(this).text();
+                    if (thisfont) {
+                        setinputval(thisfont);
+                    }
+                }
+            });
+
+            //更多文字点击
+            $('.keyboard-more-font').delegate('a', 'click', function (event) {
+                var thisfont = $(this).text();
+                if (thisfont) {
+                    setinputval(thisfont);
+                }
+            })
+        }
+
+        //更新文字
+        function newhead(font) {
+            var fontArr = font;
+            thisfontArr = fontArr;
+            var hrad_font = '';
+            var more_font = '';
+            for (var i = 0; i < fontArr.length; i++) {
+                if (i < 6) {
+                    hrad_font += '<a href="javascript:void(0);">' + fontArr[i] + '</a>';
+                } else {
+                    more_font += '<a href="javascript:void(0);">' + fontArr[i] + '</a>';
+                }
+            }
+            if (fontArr.length > 6) {
+                hrad_font += '<a href="javascript:void(0);" data-type="more">></a>';
+            }
+            $('.keyboard-head span').html(hrad_font);
+            $('.keyboard-more-font').html('<div class="keyboard-more-box">' + more_font + '</div>');
+            $('input.keythis').focus();
+        }
+
+
+        function setinputval(value) {
+            var inputval = $('input.keythis').val();
+            keycache = '';
+            $('input.keythis').val(inputval + value).focus();
+            $('.keyboard-head span').html('');
+            $('.keyboard-keys').html('');
+            $('.keyboard-more-font').removeClass('show').html('');
+        }
+    </script>
 </body>
 
 </html>
