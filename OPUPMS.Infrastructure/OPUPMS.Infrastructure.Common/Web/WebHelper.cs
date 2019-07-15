@@ -352,7 +352,7 @@ namespace OPUPMS.Infrastructure.Common.Web
         /// <param name="cookie">Cookie容器</param>
         /// <param name="timeout">超时时间</param>
         public static string HttpWebRequest(string url, string parameters, Encoding encoding, bool isPost = false,
-             string contentType = "application/x-www-form-urlencoded", CookieContainer cookie = null, int timeout = 120000)
+             string contentType = "application/x-www-form-urlencoded", CookieContainer cookie = null, int timeout = 120000,string header = "")
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Timeout = timeout;
@@ -367,6 +367,10 @@ namespace OPUPMS.Infrastructure.Common.Web
                 {
                     stream.Write(postData, 0, postData.Length);
                 }
+            }
+            if (!string.IsNullOrEmpty(header))
+            {
+                request.Headers.Add("Authorization", header);
             }
             var response = (HttpWebResponse)request.GetResponse();
             string result;

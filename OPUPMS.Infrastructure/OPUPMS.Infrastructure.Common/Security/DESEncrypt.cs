@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -238,6 +239,34 @@ namespace OPUPMS.Infrastructure.Common.Security
             byte[] arrCodes = Convert.FromBase64String(base64String);
             codeString = Encoding.Default.GetString(arrCodes);
             return codeString;
+        }
+
+        /// <summary>
+        /// 3DES解密
+        /// </summary>
+        /// <param name="data">解密数据</param>
+        /// <param name="key">24位字符的密钥字符串(需要和加密时相同)</param>
+        /// <param name="iv">8位字符的初始化向量字符串(需要和加密时相同)</param>
+        /// <returns></returns>
+        public static string DESDecrypst(string data, string key, string IV)
+        {
+            SymmetricAlgorithm mCSP = new TripleDESCryptoServiceProvider
+            {
+                Key = Encoding.UTF8.GetBytes(key),
+                IV = Encoding.UTF8.GetBytes(IV)
+            };
+            ICryptoTransform ct;
+            MemoryStream ms;
+            CryptoStream cs;
+            byte[] byt;
+            ct = mCSP.CreateDecryptor(mCSP.Key, mCSP.IV);
+            byt = Convert.FromBase64String(data);
+            ms = new MemoryStream();
+            cs = new CryptoStream(ms, ct, CryptoStreamMode.Write);
+            cs.Write(byt, 0, byt.Length);
+            cs.FlushFinalBlock();
+            cs.Close();
+            return Encoding.UTF8.GetString(ms.ToArray());
         }
         #endregion
     }

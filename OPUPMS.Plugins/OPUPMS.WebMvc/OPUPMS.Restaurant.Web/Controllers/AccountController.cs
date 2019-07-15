@@ -16,6 +16,12 @@ using OPUPMS.Web.Framework.Core.Mvc;
 using OPUPMS.Domain.Base.Repositories;
 using OPUPMS.Domain.Base.Models;
 using Microsoft.AspNet.SignalR;
+using System.Web.Http.Controllers;
+using JWT;
+using JWT.Serializers;
+using System.Text;
+using System.Configuration;
+using OPUPMS.Domain.Base.Dtos;
 
 namespace OPUPMS.Restaurant.Web.Controllers
 {
@@ -46,10 +52,30 @@ namespace OPUPMS.Restaurant.Web.Controllers
             return View();
         }
 
-        public ActionResult NewLogin(int group=0)
+        public ActionResult NewLogin(string token,int group=0)
         {
+            //var headers = HttpContext.Request.Headers;
+            //string tokenValue = headers["auth"];
+            //var authInfo = AuthToken.GetAuth(tokenValue, ConfigurationManager.AppSettings["TokenKey"].ToString());
             ViewBag.Companys = _scompanyRepository.GetGroupCompanys(group);
             return View();
+        }
+
+        public ActionResult TokenLogin(string token)
+        {
+            Response res = new Response();
+            if (!string.IsNullOrEmpty(token))
+            {
+                var userDto = _userService.GetUserIdByToken(token);
+                var user = _userService.GetUserInfo(new VerifyUserDTO() { UserId = userDto.UserId, CompanyId = Convert.ToInt32(userDto.RoleId) });
+                var list = AddOperUser(user);
+                if (list!=null && list.Any())
+                {
+                    res.Data = list;
+                    res.Successed = true;
+                }
+            }
+            return Json(res, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -429,6 +455,82 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 res.Message = ex.Message;
             }
             return Json(res);
-        } 
+        }
+
+
+        public List<RestaurantListDTO> AddOperUser(UserDto user)
+        {
+            OperatorModel mUser = new OperatorModel();
+            mUser.UserId = user.UserId;
+            mUser.UserCode = user.UserCode;
+            mUser.UserName = user.UserName;
+            mUser.UserPwd = user.UserPwd;
+            mUser.RoleId = user.RoleId;
+            mUser.CompanyId = user.GroupCode;
+            //mUser.MinDiscountValue = user.Discount;
+            mUser.Permission = user.Permission;
+            mUser.LoginTime = DateTime.Now;
+            //mUser.MaxClearValue = user.MaxClearValue;
+
+            List<RestaurantListDTO> list = new List<RestaurantListDTO>();
+            if (!string.IsNullOrEmpty(user.ManagerRestaurant))
+            {
+                mUser.ManagerRestaurant = new List<int>();
+                var sourceList = user.ManagerRestaurant.Split(';').ToList();
+                foreach (var str in sourceList)
+                {
+                    string id = str.Substring(0, str.IndexOf('-'));
+                    string name = str.Substring(str.IndexOf('-') + 1);
+                    list.Add(new RestaurantListDTO()
+                    {
+                        Id = id.ToInt(),
+                        Name = name
+                    });
+                    //mUser.ManagerRestaurant.Add(id.ToInt());
+                }
+
+                list = _restaurantRepository.FilterCompanyRestaurant(list, Convert.ToInt32(user.GroupCode));
+                mUser.ManagerRestaurant = list.Select(p => p.Id).ToList();
+                var ids = list.Select(x => x.Id).ToList();
+                var allMarkets = _marketRepository.GetList(ids);
+                var selectMarkets = allMarkets.Where(x => ids.Contains(x.RestaurantId)).ToList();
+                foreach (var item in list)
+                {
+                    item.MarketList = selectMarkets.Where(x => x.RestaurantId == item.Id).ToList();
+                }
+            }
+            OperatorProvider.Provider.AddCurrent(mUser);
+            return list;
+        }
+    }
+
+    public static class AuthToken
+    {
+        public static AuthInfo GetAuth(string token,string secretKey)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                try
+                {
+                    byte[] key = Encoding.UTF8.GetBytes(secretKey);
+                    IJsonSerializer serializer = new JsonNetSerializer();
+                    IDateTimeProvider provider = new UtcDateTimeProvider();
+                    IJwtValidator validator = new JwtValidator(serializer, provider);
+                    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+                    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
+                    //解密
+                    var json = decoder.DecodeToObject<AuthInfo>(token, key, verify: true);
+                    return json;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

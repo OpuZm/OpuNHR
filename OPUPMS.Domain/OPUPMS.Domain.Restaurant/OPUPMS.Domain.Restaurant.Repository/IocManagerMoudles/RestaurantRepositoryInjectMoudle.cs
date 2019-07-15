@@ -96,6 +96,7 @@ namespace OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles
         readonly static bool _autoListPrint= ConfigurationManager.AppSettings["AutoListPrint"].ObjToBool();
         readonly static bool _defaultPromptly = ConfigurationManager.AppSettings["DefaultPromptly"].ObjToBool();
         readonly static bool _projectMemberPrice = ConfigurationManager.AppSettings["ProjectMemberPrice"].ObjToBool();
+        readonly static string _loginOutUrl = ConfigurationManager.AppSettings["LoginOutUrl"].ObjToString();
 
         public string Connection { get; } = _connectionString;
 
@@ -170,6 +171,11 @@ namespace OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles
         public static bool ProjectMemberPrice
         {
             get { return _projectMemberPrice; }
+        }
+
+        public static string LoginOutUrl
+        {
+            get { return _loginOutUrl; }
         }
 
         protected SqlSugarService()

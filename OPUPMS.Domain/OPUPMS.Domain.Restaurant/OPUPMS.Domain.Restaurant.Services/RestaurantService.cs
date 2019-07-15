@@ -79,7 +79,8 @@ namespace OPUPMS.Domain.Restaurant.Services
                 CurrentTotalAmount = totalAmount,
                 CurrentTotalGuestNum = totalGuest,
                 TableList = tableList,
-                TableStatusList = tableStatusList
+                TableStatusList = tableStatusList,
+                LoginOutUrl = LoginOutUrl
             };
 
             return resInfo;

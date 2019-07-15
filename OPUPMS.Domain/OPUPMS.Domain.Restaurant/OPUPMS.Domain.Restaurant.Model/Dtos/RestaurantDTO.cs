@@ -83,6 +83,7 @@ namespace OPUPMS.Domain.Restaurant.Model.Dtos
         /// 登录分市Id
         /// </summary>
         public int LoginMarketId { get; set; }
+        public string LoginOutUrl { get; set; }
     }
 
     public class VerifyUserDTO

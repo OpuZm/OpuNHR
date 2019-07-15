@@ -14,5 +14,6 @@ namespace OPUPMS.Domain.Restaurant.Services.Interfaces
 
         List<UserDto> GetSales();
         bool UpdateUserPassWord(int userId, string oldPassword, string newPassword);
+        UserDto GetUserIdByToken(string token);
     }
 }

@@ -3772,9 +3772,13 @@ req.PersonNum / orderTableCount : req.PersonNum;    //台号人均
                         throw new Exception("餐饮账务日期设置错误，请联系管理员");
                     string itemValue = accDate.Date.AddDays(1).ToString("yyyy-MM-dd");
                     db.BeginTran();
-                    //db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
-                    //db.ExecuteCommand("p_rcl_cytj_new");
-                    //db.CommandType = System.Data.CommandType.Text;//还原回默认
+                    db.CommandType = System.Data.CommandType.StoredProcedure;//指定为存储过程可比上面少写EXEC和参数
+                    var paras = SqlSugarTool.GetParameters(new
+                    {
+                        CompanyId = companyId, //餐饮单序号
+                    });
+                    db.ExecuteCommand("p_rcl_cytj_new",paras);
+                    db.CommandType = System.Data.CommandType.Text;//还原回默认
 
                     res = _extendItemRepository.UpdateItemValue(companyId, 10003, itemValue);
                     //_extendItemRepository.UpdateXtcs("SYSDATE",Convert.ToDateTime(itemValue));

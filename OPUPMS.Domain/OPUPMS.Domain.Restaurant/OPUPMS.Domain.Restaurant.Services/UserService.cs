@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using OPUPMS.Domain.Base;
 using OPUPMS.Domain.Base.ConvertModels;
@@ -8,15 +9,17 @@ using OPUPMS.Domain.Base.Dtos;
 using OPUPMS.Domain.Base.Repositories.OldRepositories;
 using OPUPMS.Domain.Restaurant.Model.Dtos;
 using OPUPMS.Domain.Restaurant.Repository;
+using OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles;
 using OPUPMS.Domain.Restaurant.Services.Interfaces;
 using OPUPMS.Infrastructure.Common;
 using OPUPMS.Infrastructure.Common.Net;
 using OPUPMS.Infrastructure.Common.Security;
+using OPUPMS.Infrastructure.Common.Web;
 using OPUPMS.Infrastructure.Dapper;
 
 namespace OPUPMS.Domain.Restaurant.Services
 {
-    public class UserService : IUserService
+    public class UserService : SqlSugarService, IUserService
     {
         readonly IUserRepository_Old _userRepository;
         readonly IOperateLogRepository _userLogRepository;
@@ -151,6 +154,19 @@ namespace OPUPMS.Domain.Restaurant.Services
             {
                 result = false;
                 throw e;
+            }
+            return result;
+        }
+
+        public UserDto GetUserIdByToken(string token)
+        {
+            UserDto result = new UserDto();
+            string apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/entrance/usercode", "", Encoding.UTF8, false, "application/x-www-form-urlencoded", null, 8000, $"Bearer {token}");
+            var jsonObject = Json.ToObject<dynamic>(apiStr);
+            if (jsonObject.Result == "success")
+            {
+                result.UserId = jsonObject.UserId;
+                result.RoleId = jsonObject.CompanyId;
             }
             return result;
         }
