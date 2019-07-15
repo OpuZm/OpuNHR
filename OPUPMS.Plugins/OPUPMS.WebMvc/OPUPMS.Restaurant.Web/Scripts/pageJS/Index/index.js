@@ -958,7 +958,7 @@ function isEmptyObject(obj) {
 
 //打单弹窗
 function printLayer(option){
-	var url = 'http://139.196.195.35:996/report/show?'
+    var url = 'http://139.9.40.110:980/report/show?'
 	option.key['RestaurantName'] = inidata.RestaurantName;
 	option.key['OperatorName'] = inidata.UserName;
 	option.key['MarketName'] = inidata.MarketName;
