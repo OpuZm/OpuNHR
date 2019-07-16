@@ -906,7 +906,24 @@ function myStyleSetting(form, data) {
 
 //退出登录
 function LoginOut() {
-    window.location.href = inidata.LoginOutUrl ? inidata.LoginOutUrl + '?Token=' + sessionStorage.getItem('token') : "/Res/Account/NewLogout";
+    if (inidata.LoginOutUrl) {
+        layer.confirm('请选择退出模式', {
+            icon: 3, title: '提示', btn: ['直接退出', '切换平台', '取消'],
+            btn3: function (index, layero) {
+                layer.close(index);
+            }
+        }, function (index) {
+            //do something
+            window.location.href = inidata.LoginOutUrl
+            layer.close(index);
+        }, function () {
+            window.location.href = inidata.LoginOutUrl + '?Token=' + sessionStorage.getItem('token')
+            layer.close(index);
+        });
+    } else {
+        window.location.href = "/Res/Account/NewLogout"
+    }
+    //window.location.href = inidata.LoginOutUrl ? inidata.LoginOutUrl + '?Token=' + sessionStorage.getItem('token') : "/Res/Account/NewLogout";
 }
 
 
