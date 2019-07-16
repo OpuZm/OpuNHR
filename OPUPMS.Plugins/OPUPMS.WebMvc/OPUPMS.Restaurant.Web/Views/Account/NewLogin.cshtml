@@ -236,6 +236,7 @@
                     success: function (data, textStatus) {
                         layer.close(layindex);
                         if (data.Successed && data.Data && data.Data.length > 0) {
+                            sessionStorage.setItem('token', token);
                             restaurantChoose(data.Data)
                         } else if (!data.Data || data.Data.length == 0){
                             layer.msg('没有餐厅权限,请联系管理员')
