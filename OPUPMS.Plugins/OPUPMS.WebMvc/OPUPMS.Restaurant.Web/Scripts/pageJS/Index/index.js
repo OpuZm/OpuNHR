@@ -1,4 +1,4 @@
-
+﻿
 var winW = $(window).width();
 var winH = $(window).height();
 
@@ -913,12 +913,9 @@ function LoginOut() {
                 layer.close(index);
             }
         }, function (index) {
-            //do something
             window.location.href = inidata.LoginOutUrl
-            layer.close(index);
         }, function () {
             window.location.href = inidata.LoginOutUrl + '?Token=' + sessionStorage.getItem('token')
-            layer.close(index);
         });
     } else {
         window.location.href = "/Res/Account/NewLogout"
