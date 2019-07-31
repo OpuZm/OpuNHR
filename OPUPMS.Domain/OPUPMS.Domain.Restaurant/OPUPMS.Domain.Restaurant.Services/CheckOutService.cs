@@ -802,7 +802,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                         IsReverseCheckout=false
                                     };
                                     var jsonStr = Json.ToJson(memberEntry);
-                                    apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                    apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/updateamount?", jsonStr, Encoding.UTF8, true, "application/json", null, 10000);
                                     var jsonObject = Json.ToObject<MemberApiResult>(apiStr);
                                     if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                     {
@@ -863,7 +863,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                     //Code = string.IsNullOrEmpty(item.SourceCode) ? "D000002" : item.SourceCode
                                 };
                                 var jsonStr = Json.ToJson(protocolEntry);
-                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/enterbill?", jsonStr, Encoding.UTF8, true, "application/json", null, 10000);
                                 var jsonObject = Json.ToObject<ApiResult>(apiStr);
                                 if (!jsonObject.Result.Equals("success",StringComparison.OrdinalIgnoreCase))
                                 {
@@ -916,7 +916,7 @@ namespace OPUPMS.Domain.Restaurant.Services
                                     Total = item.PayAmount
                                 };
                                 var jsonStr = Json.ToJson(roomEntry);
-                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/charge?", jsonStr, Encoding.UTF8, true, "application/json", null, 5000);
+                                apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/charge?", jsonStr, Encoding.UTF8, true, "application/json", null, 10000);
                                 var jsonObject = Json.ToObject<ApiResult>(apiStr);
                                 if (!jsonObject.Result.Equals("success", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -2289,7 +2289,7 @@ namespace OPUPMS.Domain.Restaurant.Services
         {
             List<TypeCodeInfo> result = new List<TypeCodeInfo>();
             var str = Json.ObjToGetStr(req);
-            string apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/protocolcustomer?{str}", "", Encoding.UTF8, false, "application/x-www-form-urlencoded", null, 5000);
+            string apiStr = WebHelper.HttpWebRequest($"{ApiConnection}/common/abuse/protocolcustomer?{str}", "", Encoding.UTF8, false, "application/x-www-form-urlencoded", null, 10000);
             var jsonObject = Json.ToObject<dynamic>(apiStr);
             if (jsonObject.TotalCount > 0 && jsonObject.ListDto!=null)
             {

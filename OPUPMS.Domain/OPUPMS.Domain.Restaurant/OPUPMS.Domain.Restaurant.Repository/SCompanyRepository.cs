@@ -22,6 +22,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                 {
                     sql.Where(p => p.ParentId == groupId);
                 }
+                sql.Where(p => p.IsDelete == false);
                 var res = sql.Select<SCompanyDTO>(p => new SCompanyDTO
                 {
                     Name=p.Name,

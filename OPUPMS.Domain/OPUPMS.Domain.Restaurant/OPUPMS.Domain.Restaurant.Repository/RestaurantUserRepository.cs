@@ -163,6 +163,31 @@ VALUES  ( @Name , -- Name - nvarchar(200)
                 {
                     if (userinfo.IsTechnicalAssistance)
                     {
+                        var needInit = session.ExecuteScalar(IsHaveRestaurant, new
+                        {
+                            CompanyId = companyId
+                        }).ObjToInt();
+                        if (userinfo.Permission <= 0)
+                        {
+                            var permissionList = EnumToList.ConvertEnumToList(typeof(Permission));
+                            var permissionSum = permissionList.Sum(p => p.Key);
+                            userinfo.Permission = permissionSum;
+                        }
+                        if (needInit <= 0)
+                        {
+                            var restaurantId = (session.ExecuteScalar(InsertRestaurantInit, new R_Restaurant()
+                            {
+                                Name = "初始化餐厅",
+                                R_Company_Id = companyId
+                            })).ObjToInt();
+                            var marketId = session.Execute(InsertMarket, new R_Market()
+                            {
+                                Name = "早市",
+                                R_Restaurant_Id = restaurantId,
+                                StartTime = "06:00",
+                                EndTime = "12:00"
+                            });
+                        }
                         userRestaurants = session.Query<UserRestaurant>(GetAllRestaurant, new
                         {
                             R_Company_Id = companyId

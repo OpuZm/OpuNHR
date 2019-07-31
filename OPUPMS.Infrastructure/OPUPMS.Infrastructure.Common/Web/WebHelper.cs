@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -21,6 +22,8 @@ namespace OPUPMS.Infrastructure.Common.Web
     /// </summary>
     public class WebHelper
     {
+        private static string CerLocation = ConfigurationManager.AppSettings["CerLocation"].ToString();
+
         #region ResolveUrl(解析相对Url)
         /// <summary>
         /// 解析相对Url
@@ -368,10 +371,16 @@ namespace OPUPMS.Infrastructure.Common.Web
                     stream.Write(postData, 0, postData.Length);
                 }
             }
+            if (!string.IsNullOrEmpty(CerLocation))
+            {
+                var cer = System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromCertFile(CerLocation);
+                request.ClientCertificates.Add(cer);
+            }
             if (!string.IsNullOrEmpty(header))
             {
                 request.Headers.Add("Authorization", header);
             }
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidate;
             var response = (HttpWebResponse)request.GetResponse();
             string result;
             using (Stream stream = response.GetResponseStream())
@@ -387,6 +396,11 @@ namespace OPUPMS.Infrastructure.Common.Web
         }
 
         #endregion
+
+        private static bool RemoteCertificateValidate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
+        {
+            return true;
+        }
 
         #region 去除HTML标记
         /// <summary>

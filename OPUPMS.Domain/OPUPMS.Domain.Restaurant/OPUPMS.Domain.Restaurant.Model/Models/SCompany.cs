@@ -153,6 +153,8 @@ namespace OPUPMS.Domain.Restaurant.Model
             set { _createdtime = value; }
             get { return _createdtime; }
         }
+
+        public bool IsDelete { get; set; }
         #endregion Model
     }
 }
