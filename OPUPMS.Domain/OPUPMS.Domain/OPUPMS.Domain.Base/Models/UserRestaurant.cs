@@ -12,5 +12,6 @@ namespace OPUPMS.Domain.Base.Models
     {
         public int UserId { get; set; }
         public int RestaurantId { get; set; }
+        public int CompanyId { get; set; }
     }
 }

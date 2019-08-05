@@ -66,8 +66,10 @@ namespace OPUPMS.Restaurant.Web.Controllers
         [HttpPost]
         public ActionResult UpdateUserManagerRestaurant(UserDto user, List<int> restaurantIds)
         {
+            var currentUser = OperatorProvider.Provider.GetCurrent();
             restaurantIds = restaurantIds == null ? new List<int>() : restaurantIds;
             var res = new Response() { Data = null, Successed = false };
+            user.RoleId = currentUser.CompanyId;
             if (ModelState.IsValid)
             {
                 try
@@ -91,7 +93,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
         public ActionResult GetCompanyUseById(int id)
         {
             var currentUser = OperatorProvider.Provider.GetCurrent();
-            var userInfo = companyUserRepository.GetCompanyUseById(id);
+            var userInfo = companyUserRepository.GetCompanyUseById(id,currentUser.CompanyId.ToInt());
             var enumList = EnumHelper.GetEnumDic<Permission>(typeof(Permission));
             var restaurantList = restaurantRepository.GetList(currentUser.CompanyId.ToInt());
             return NewtonSoftJson(new { user = userInfo,permissions=enumList,restaurantList=restaurantList }, JsonRequestBehavior.AllowGet);

@@ -15,7 +15,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
 {
     public class CompanyUserRepository : SqlSugarService, ICompanyUserRepository
     {
-        public UserDto GetCompanyUseById(int userId)
+        public UserDto GetCompanyUseById(int userId,int companyId)
         {
             using (var db=new SqlSugarClient(Connection))
             {
@@ -25,7 +25,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
                     .SelectToList<UserDto>("s1.*,Id as UserId,Discount as MinDiscountValue").First();
                 if (data != null)
                 {
-                    var list = db.Queryable<UserRestaurant>().Where(p => p.UserId == userId).ToList();
+                    var list = db.Queryable<UserRestaurant>().Where(p => p.UserId == userId && p.CompanyId==companyId).ToList();
                     data.ManagerRestaurantList = list.Select(p => p.RestaurantId).ToList();
                 }
                 return data;
@@ -95,15 +95,17 @@ namespace OPUPMS.Domain.Restaurant.Repository
             {
                 try
                 {
+                    int companyId = Convert.ToInt32(user.RoleId);
                     db.BeginTran();
-                    db.Delete<UserRestaurant>(p => p.UserId == user.UserId);
+                    db.Delete<UserRestaurant>(p => p.UserId == user.UserId && p.CompanyId==companyId);
                     List<UserRestaurant> list = new List<UserRestaurant>();
                     restaurantIds.ForEach(p =>
                     {
                         list.Add(new UserRestaurant()
                         {
                             UserId = user.UserId,
-                            RestaurantId = p
+                            RestaurantId = p,
+                            CompanyId = companyId
                         });
                     });
                     db.InsertRange(list);

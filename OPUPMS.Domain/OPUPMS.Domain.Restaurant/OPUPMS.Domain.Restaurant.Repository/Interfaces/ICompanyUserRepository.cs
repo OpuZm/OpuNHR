@@ -8,7 +8,7 @@ namespace OPUPMS.Domain.Restaurant.Repository
     public interface ICompanyUserRepository
     {
         List<UserDto> GetCompanyUsers(out int total, CompanyUserSearchDTO req);
-        UserDto GetCompanyUseById(int userId);
+        UserDto GetCompanyUseById(int userId,int companyId);
         bool UpdateUserManagerRestaurant(UserDto user, List<int> restaurantIds);
         bool UpdateUserRestaurantPermission(UserDto user);
     }
