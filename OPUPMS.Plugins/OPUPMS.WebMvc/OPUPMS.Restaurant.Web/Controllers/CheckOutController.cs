@@ -801,6 +801,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
                         UserCode=currentUser.UserCode
                 };
                     res.Data = _checkOutService.ReverseOrder(req);
+                    if (res.Data != null)
+                    {
+                        var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -290,8 +290,6 @@
     @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
     @ScriptsEx.Render(Plugin.Instance.Name, "MPublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "MobiscrollJS")
-    @*@ScriptsEx.Render(Plugin.Instance.Name, "ReserveJs")*@
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
     <script src="~/signalr/hubs">
     </script>
 
@@ -453,10 +451,6 @@
                     return false;
                 }
                 
-                var chat = $.connection.systemHub;
-                chat.hubName = 'systemHub';
-                chat.connection.start();
-
                 var para = { req: formdata, TableIds: tabIds };
                 //提交数据
                 $.ajax({
@@ -476,14 +470,9 @@
                         var res = data.Data;
 
                         if (res != null && res.Id > 0) {
-                            $.connection.hub.start().done(function () {//通知刷新工作台界面
-                                chat.server.notifyResServiceRefersh(true);
-                                layer.alert('编辑预定成功！', function () {
-	                                location.reload();
-	                            });
-                            });
-
-
+                            layer.alert('编辑预定成功！', function () {
+	                            location.reload();
+	                        });
                         } else {
                             layer.alert(data["Message"]);
                         }

@@ -66,7 +66,6 @@
     @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
 	@ScriptsEx.Render(Plugin.Instance.Name, "isScrollconfigJS")
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
     <script src="~/signalr/hubs"></script>
     <script>
         var inidata;
@@ -87,12 +86,6 @@
             restaurantId = getUrlParam('restaurantId');//餐厅ID
             orderTableId = getUrlParam('orderTableId');//订单ID
             
-			console.log(TableId)
-			
-            chat = $.connection.systemHub;
-            chat.hubName = 'systemHub';
-            chat.connection.start();
-
             var AreaListTpl = AreaList_tpml.innerHTML,
                 AreaList_view = document.getElementById('AreaList_view'),
                 TableListTpl = TableList_tpml.innerHTML,
@@ -240,11 +233,6 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     if (data.Successed == true) {
-                    	
-                        $.connection.hub.start().done(function () {
-                            chat.server.notifyResServiceRefersh(true);
-                        });
-                        
                         layer.confirm('是否跳转到新桌台？', {
                         	closeBtn  : 0,
                         	shadeClose : false,
@@ -258,13 +246,7 @@
 						        async: false,
 						        success: function (res, textStatus) {
 						            if (res.Data == true) {
-						                var chat = $.connection.systemHub;
-										chat.hubName = 'systemHub';
-										chat.connection.start();
-										$.connection.hub.start().done(function() {
-											chat.server.notifyResServiceRefersh(true);
-											parent.location.href = "/Res/Home/NewBatchChoseProject?OrderTableIds=" + data.Data.join(',');
-										});
+										parent.location.href = "/Res/Home/NewBatchChoseProject?OrderTableIds=" + data.Data.join(',');
 						            } else {
 						                layer.alert(res.Message);
 						                layer.close(layindex)

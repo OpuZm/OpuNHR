@@ -1825,9 +1825,6 @@ function CheckOut() {
         return;
 
     req.IsReCheckout = true;//反结操作
-    //var chat = $.connection.systemHub;
-    //chat.hubName = 'systemHub';
-    //chat.connection.start();
 	
     $.ajax({
         type: "POST",
@@ -1844,11 +1841,6 @@ function CheckOut() {
         },
         success: function (data, textStatus) {
             if (data.Result == true) {
-                ////通知刷新
-                //$.connection.hub.start().done(function () {//通知刷新工作台界面
-                //    chat.server.notifyResServiceRefersh(true);
-                //});
-
                 layer.alert("反结成功！", function () {
                     parent.RefreshOrdeInfo_index(inidata.Id);
                 });

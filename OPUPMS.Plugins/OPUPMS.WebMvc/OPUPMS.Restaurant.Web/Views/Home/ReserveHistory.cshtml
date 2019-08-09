@@ -11,8 +11,6 @@
 </div>
 
 @section FooterScripts{
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR");
-    <script src="~/signalr/hubs"></script>
     <script>
         $(function () {
             var pageJs = editJs.Create();
@@ -27,10 +25,6 @@
             Create: function () {
                 var editor = {};
                 var layindex;
-
-                var chat = $.connection.systemHub;
-                chat.hubName = 'systemHub';
-                chat.connection.start();
 
                 var bindAction = function () {
                     var height = $(document).height() - 100;
@@ -146,9 +140,6 @@
                             success: function (data, textStatus) {
                                 var res = data.Data;
                                 if (res == true) {
-                                    $.connection.hub.start().done(function () {
-                                        chat.server.notifyResServiceRefersh(true);
-                                    });
                                     layer.alert("取消预订订单成功!");
                                     Refresh();
                                 } else {
@@ -198,9 +189,6 @@
                             success: function (data, textStatus) {
                                 var res = data.Data;
                                 if (res != null && res.OrderId > 0) {
-                                    $.connection.hub.start().done(function () {
-                                        chat.server.notifyResServiceRefersh(true);
-                                    });
                                     layer.confirm("开台成功", {
                                         btn: ['进行点餐操作', '取消'] //按钮
                                     }, function () {

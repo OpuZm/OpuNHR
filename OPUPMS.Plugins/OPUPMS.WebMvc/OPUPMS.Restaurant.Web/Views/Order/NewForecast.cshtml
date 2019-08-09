@@ -111,16 +111,10 @@
 
 
 
- @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
-    @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
-    @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
-    @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-
-    <script src="~/signalr/hubs"></script>
-
-
-	
+@ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
+@ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
+@ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
+@ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
 <script>
 	var table;
     layui.use(['form', 'layedit', 'laydate','table','laytpl'], function () {

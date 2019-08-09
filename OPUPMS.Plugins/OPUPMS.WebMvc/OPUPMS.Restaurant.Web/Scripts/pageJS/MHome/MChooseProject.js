@@ -59,11 +59,6 @@ layui.use(['element', 'form', 'laytpl'], function () {
     OrderTableIdString = getUrlParam('OrderTableIds');
     OrderTableIds = OrderTableIdString.split(',');
     
-	
-	chat = $.connection.systemHub;
-	chat.hubName = 'systemHub';
-	chat.connection.start();
-	
     //获取参数
     $.ajax({
         url: "/Res/Project/InitFormInfo",
@@ -174,17 +169,11 @@ layui.use(['element', 'form', 'laytpl'], function () {
             	return false;
             })
 
-            //监听搜索
-            //			$('#KeyWord').bind('input propertychange', function(e) {
-            //				var value = $(this).val().toUpperCase();
-            //				KeyWord(value);
-            //			})
 
             search_input('#KeyWord', KeyWord, 64);
 
             //初始化数据加入 提交数组
             for (var i = 0; i < data.OrderTableProjects.length; i++) {
-                //if(data.OrderTableProjects[i].CyddMxStatus==1){
                 var OrderTableProjectsitem = data.OrderTableProjects[i];
                 var OrderTableProjectsitemExtend = [];
                 if (data.OrderTableProjects[i].Extend) {
@@ -234,9 +223,7 @@ layui.use(['element', 'form', 'laytpl'], function () {
                     IsRecommend: OrderTableProjectsitem.IsRecommend
                 });
             }
-            // }
 
-//          $('.CategoryListTab').width(winW - 470);
             element.init();
             AddProject();
             //更新订单/统计金额
@@ -250,36 +237,29 @@ layui.use(['element', 'form', 'laytpl'], function () {
             	var index = $(this).index();
             	var newsArr = [];
             	$(this).addClass('layui-this').siblings().removeClass('layui-this');
-            	
-//              if (index == 0) { //全部
-//                  newsArr = inidata.ProjectAndDetails;
-//              } else {
-                    var CategoryList = inidata.CategoryList[index];
-                    if (CategoryList.ChildList.length > 0) { //有子分类
-                        for (var i = 0; i < CategoryList.ChildList.length; i++) {
-                            classid = CategoryList.ChildList[i].Id;
-                            for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                                var item = inidata.ProjectAndDetails[j];
-                                if (classid == item.Category) { //成立
-                                    newsArr.push(item);
-                                }
-                            }
-                        }
-                    } else { //没有子分类的
+                var CategoryList = inidata.CategoryList[index];
+                if (CategoryList.ChildList.length > 0) { //有子分类
+                    for (var i = 0; i < CategoryList.ChildList.length; i++) {
+                        classid = CategoryList.ChildList[i].Id;
                         for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
                             var item = inidata.ProjectAndDetails[j];
-                            if (CategoryList.Id == item.Category) { //成立
+                            if (classid == item.Category) { //成立
                                 newsArr.push(item);
                             }
                         }
                     }
-//              }
+                } else { //没有子分类的
+                    for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
+                        var item = inidata.ProjectAndDetails[j];
+                        if (CategoryList.Id == item.Category) { //成立
+                            newsArr.push(item);
+                        }
+                    }
+                }
                 var getTpl = ProjectAndDetails_tpml.innerHTML,
                     view = document.getElementById('ProjectAndDetails_view');
                 laytpl(getTpl).render(newsArr, function (html) {
                     view.innerHTML = html;
-//                  setTimeout(projectAndDetailsAuto, 500);//菜品父元素自适应
-//                  T_list_auto(false, true);//菜品宽度自适应
                 });
                 
                 //2级分类显示
@@ -291,7 +271,6 @@ layui.use(['element', 'form', 'laytpl'], function () {
             //监听  套餐  菜品分类一 点击
             $(document).on('click','#TC_CategoryListTab .tabList li',function(){
             	$(this).addClass('layui-this').siblings().removeClass('layui-this');
-//          	if($(this).hasClass('layui-this'))return false;
 				var index = $(this).index();
 				var newsArr = [];
                 var CategoryList = inidata.CategoryList[index];
@@ -327,34 +306,28 @@ layui.use(['element', 'form', 'laytpl'], function () {
 
             //监听二级分类点击
             $('#CategoryList_view .class-group').delegate('a.layui-btn', 'click', function (event) {
-                //var Projectlists=$('#ProjectAndDetails_view li');
                 var classno = $(this).parent('.class-group').parent('.layui-tab-item').index();
                 $(this).addClass('layui-this').siblings('a').removeClass('layui-this');
                 var newsArr = [];
-//              if (classno == 0) { //全部--全部
-//                  newsArr = inidata.ProjectAndDetails;
-//              } else {
-                    var btnno = $(this).index();
-                    if (btnno == 0) { //分类下的全部
-                        $('#CategoryList_view .tabList .layui-this').click();
-                        return false;
-                    } else {
-                        var classdata = inidata.CategoryList[classno];
-                        var classid = classdata.ChildList[btnno-1].Id;
-                        for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                            var item = inidata.ProjectAndDetails[j];
-                            if (classid == item.Category) { //成立
-                                newsArr.push(item);
-                            }
+                var btnno = $(this).index();
+                if (btnno == 0) { //分类下的全部
+                    $('#CategoryList_view .tabList .layui-this').click();
+                    return false;
+                } else {
+                    var classdata = inidata.CategoryList[classno];
+                    var classid = classdata.ChildList[btnno-1].Id;
+                    for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
+                        var item = inidata.ProjectAndDetails[j];
+                        if (classid == item.Category) { //成立
+                            newsArr.push(item);
                         }
-                        var getTpl = ProjectAndDetails_tpml.innerHTML,
-                            view = document.getElementById('ProjectAndDetails_view');
-                        laytpl(getTpl).render(newsArr, function (html) {
-                            view.innerHTML = html;
-                        });
-//                      T_list_auto(false, true);
                     }
-//              }
+                    var getTpl = ProjectAndDetails_tpml.innerHTML,
+                        view = document.getElementById('ProjectAndDetails_view');
+                    laytpl(getTpl).render(newsArr, function (html) {
+                        view.innerHTML = html;
+                    });
+                }
             })
             
 			//点菜菜品窗体  自适应
@@ -378,15 +351,7 @@ layui.use(['element', 'form', 'laytpl'], function () {
 			        data: {ordertableIds: OrderTableIds,isControl: true},
 			        success: function (data, textStatus) {
 			            if (data.Data == true) {
-			                var chat = $.connection.systemHub;
-							chat.hubName = 'systemHub';
-							chat.connection.start();
-							$.connection.hub.start().done(function() {
-								chat.server.notifyResServiceRefersh(true);
-			                	//初始化动作全部完成时
-        						$('#loading').remove();
-							});
-//							$('#loading').remove();
+        					$('#loading').remove();
 			            } else {
 			                layer.alert(data.Message);
 			            }
@@ -399,79 +364,7 @@ layui.use(['element', 'form', 'laytpl'], function () {
         }
     });
 
-    //提交
-//  form.on('submit(AddOrder)', function (data) {
-//      var chat = $.connection.systemHub;
-//      chat.hubName = 'systemHub';
-//      chat.connection.start();
-//      var name = data.elem.name;
-//      if (name == 'Print') { //落单打厨
-//          print = 2;
-//      } else if (name == 'NoPrint') { //落单不打厨
-//          print = 1;
-//      } else if (name == 'Keep') { //保存
-//          print = 0;
-//      }
-//
-//      for (var i = 0; i < OrderTableProjectsdata.length; i++) {
-//          if (OrderTableProjectsdata[i].Id == 0) {
-//              OrderTableProjectsdata[i].CyddMxStatus = print;
-//          }
-//      }
-//      //判断套餐是否为空
-//      for(var i = 0; i < OrderTableProjectsdata.length; i++){
-//      	if(OrderTableProjectsdata[i].CyddMxType == 2 && OrderTableProjectsdata[i].PackageDetailList.length < 1){
-//      		layer.msg('套餐 （ ' + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品");
-//      		return false;
-//      	}
-//      }
-//      
-//
-//      var para = {
-//          req: OrderTableProjectsdata,
-//          orderTableIds: OrderTableIds,
-//          status: print
-//      };
-//      $.ajax({
-//          type: "post",
-//          url: "/Res/Home/OrderDetailCreate",
-//          data: JSON.stringify(para),
-//          contentType: "application/json; charset=utf-8",
-//          dataType: "json",
-//          beforeSend: function (xhr) {
-//	            layindex = layer.open({type: 3});
-//	        },
-//	        complete: function (XMLHttpRequest, textStatus) {
-//	            layer.close(layindex);
-//	        },
-//          success: function (data, textStatus) {
-//              if (data.Data == true) {
-//                  $.connection.hub.start().done(function () {
-//                      chat.server.notifyResServiceRefersh(true);
-//                  });
-//                  if (OrderTableIds.length > 1) {
-//                      layer.confirm('提交完成', {
-//                          btn: ['确定'] //按钮
-//                      }, function () {
-//                          parent.layer.closeAll();
-//                      });
-//                  } else {
-//                      layer.confirm('提交完成', {
-//                          btn: ['继续操作', '退出'] //按钮
-//                      }, function () {
-//                      	layer.open({type: 3,shadeClose: false});
-//                          location.reload();
-//                      }, function () {
-//                          history.go(-1);
-//                      });
-//                  }
-//              } else {
-//                  layer.alert(data["Message"]);
-//              }
-//          }
-//      })
-//      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-//  });
+    
 });
 
 //落单打厨	提交之前
@@ -623,13 +516,6 @@ function AddOrderSubmit(para){
         },
 		success: function(data, textStatus) {
 			if(data.Data == true) {
-				//var chat = $.connection.systemHub;
-				//chat.hubName = 'systemHub';
-				//chat.connection.start();
-				
-				//$.connection.hub.start().done(function() {
-				//	chat.server.notifyResServiceRefersh(true);
-				//});
 				if(OrderTableIds.length > 1) {
 					layer.confirm('提交完成', {
 						btn: ['确定'] //按钮
@@ -2773,7 +2659,6 @@ function revokeTab(thisdom) {
 			data: {
 				orderTableId: OrderTableIds[0]
 			},
-			async: false,
 			beforeSend: function (xhr) {
 	            layindex = layer.open({type: 3});
 	        },
@@ -2782,11 +2667,7 @@ function revokeTab(thisdom) {
 	        },
 			success: function(data, textStatus) {
 				if (data["Data"] == true) {
-					$.connection.hub.start().done(function () {
-                        chat.server.notifyResServiceRefersh(true);
-                        location.replace("/Res/MHome/Index");
-                    });
-                    //parent.Refresh();
+                    location.replace("/Res/MHome/Index");
                 } else {
                 	layer.close(layindex);
                     layer.alert(data["Message"]);
@@ -3658,14 +3539,7 @@ function cancelOut(){
 	        },
 	        success: function (data, textStatus) {
 	            if (data.Data == true) {
-	            	var chat = $.connection.systemHub;
-					chat.hubName = 'systemHub';
-					chat.connection.start();
-					$.connection.hub.start().done(function() {
-						chat.server.notifyResServiceRefersh(true);
-	                	//初始化动作全部完成时
-						history.go(-1);
-					});
+					history.go(-1);
 	            } else {
 	                layer.alert(data.Message);
 	            }

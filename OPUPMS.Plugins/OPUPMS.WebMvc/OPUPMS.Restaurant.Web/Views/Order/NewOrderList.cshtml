@@ -72,9 +72,6 @@
     <div class="container" style="background: #fff;padding-right: 20px;">
         <table id="table" lay-filter="table"></table>
     </div>
-    <footer class="footer-copyright">
-        <img src="@Url.Content(Plugin.Instance.GetContentPath("Images/logo-footer.png"))" alt="">
-    </footer>
 </body>
 </html>
 
@@ -96,9 +93,6 @@
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
 @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
 @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-<script src="~/signalr/hubs"></script>
 <script type="text/javascript">
     layui.use(['element', 'table', 'layer', 'laydate'], function () {
         var element = layui.element,
@@ -247,10 +241,6 @@
                 success: function (data, textStatus) {
                     var res = data.Data;
                     if (res == true) {
-                        $.connection.hub.start().done(function () {
-                            chat.server.notifyResServiceRefersh(true);
-                        });
-
                         layer.alert("取消订单成功", function () {
                             Refresh();
                             layer.closeAll();

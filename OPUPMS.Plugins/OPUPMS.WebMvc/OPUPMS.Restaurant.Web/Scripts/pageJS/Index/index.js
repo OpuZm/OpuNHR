@@ -648,20 +648,12 @@ function OpenOrder(OrderTableIds) {
                     },
                     success: function (data, textStatus) {
                         if (data.Data == true) {
-                            //$.connection.hub.start().done(function() {
-                            //	chat.server.notifyResServiceRefersh(true);
-                            //                         layer.closeAll();
-                            //                     });
                             layer.closeAll();
                         } else {
                             layer.alert(data.Message);
                         }
                     }
                 });
-            } else {
-                //$.connection.hub.start().done(function () {
-                //            	chat.server.notifyResServiceRefersh(true);
-                //});
             }
         }
     });

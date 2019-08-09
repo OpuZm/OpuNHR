@@ -106,9 +106,6 @@
     </form>
 </div>
 @section FooterScripts{
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR");
-    @*@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalRhubs");*@
-    <script src="~/signalr/hubs"></script>
     <script>
     var tabIds = [];
     tabIds.push('@Table.Id');
@@ -122,10 +119,6 @@
         Create: function () {
             var editor = {};
             var layindex;
-
-            var chat = $.connection.systemHub;
-            chat.hubName = 'systemHub';
-            chat.connection.start();
 
             var bindAction = function () {
                 var height = $(document).height() - 100;
@@ -207,9 +200,6 @@
                         success: function (data, textStatus) {
                             var res = data.Data;
                             if (res.OrderId > 0) {
-                                $.connection.hub.start().done(function () {
-                                    chat.server.notifyResServiceRefersh(true);
-                                });
                                 layer.confirm("提交完成", {
                                     btn: ['进行点餐操作', '取消'] //按钮
                                 }, function () {

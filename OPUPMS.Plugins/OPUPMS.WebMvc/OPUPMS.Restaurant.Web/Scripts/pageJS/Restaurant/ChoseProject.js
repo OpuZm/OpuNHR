@@ -651,13 +651,6 @@ layui.use(['element', 'form', 'laytpl', 'table'], function() {
           },
           success: function(data, textStatus) {
             if(data.Data == true) {
-              //            var chat = $.connection.systemHub;
-              //chat.hubName = 'systemHub';
-              //chat.connection.start();
-              //$.connection.hub.start().done(function() {
-              //	chat.server.notifyResServiceRefersh(true);
-              //            	layer.closeAll();
-              //                     });
               layer.closeAll();
             } else {
               layer.alert(data.Message);
@@ -865,14 +858,6 @@ function AddOrderSubmit(para) {
     },
     success: function(data, textStatus) {
       if(data.Data == true) {
-        //var chat = $.connection.systemHub;
-        //chat.hubName = 'systemHub';
-        //chat.connection.start();
-
-        //$.connection.hub.start().done(function() {
-        //	chat.server.notifyResServiceRefersh(true);
-        //});
-
         if(inidata.AutoListPrint && para.status != 0) $('#PrintLXD').click();
 
         if(OrderTableIds.length > 1) {

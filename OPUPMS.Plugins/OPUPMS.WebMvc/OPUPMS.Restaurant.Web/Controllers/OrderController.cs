@@ -881,9 +881,9 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     var operatorUser = OperatorProvider.Provider.GetCurrent();
                     if (result)
                     {
+                        var currentUser = OperatorProvider.Provider.GetCurrent();
                         var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                        //hub.Clients.All.callResServiceRefersh(true);
-                        hub.Clients.Group(operatorUser.DepartmentId,new string[0]).callResServiceRefersh(true);
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     }
                     res.Data = result;
                 }

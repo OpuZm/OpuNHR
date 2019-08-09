@@ -308,10 +308,6 @@ function TableClick(data) {
 
 //弹出空置操作
 function SetTableEmpty(tableIds) {
-    var chat = $.connection.systemHub;
-    chat.hubName = 'systemHub';
-    chat.connection.start();
-
     var para = { tableIds: tableIds};
     $.ajax({
         type: "post",
@@ -328,9 +324,6 @@ function SetTableEmpty(tableIds) {
         },
         success: function (data, textStatus) {
             if (data.Successed == true) {
-                $.connection.hub.start().done(function () {
-                    chat.server.notifyResServiceRefersh(true);
-                });
                 parent.layer.msg("操作成功");
                 layer.closeAll();
             } else {

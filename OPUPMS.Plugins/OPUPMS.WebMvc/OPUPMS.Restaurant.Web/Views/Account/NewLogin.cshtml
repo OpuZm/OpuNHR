@@ -34,8 +34,6 @@
     @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
     @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
     @ScriptsEx.Render(Plugin.Instance.Name, "JqueryValidateJs")
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    <script src="~/signalr/hubs"></script>
     <style>
         .layui-layer-loading .layui-layer-content {
             height: 60px !important;
@@ -331,18 +329,10 @@
                 },
                 success: function (data, textStatus) {
                     if (data.Data == true) {
-                        /*
-                        var chat = $.connection.systemHub;
-                        chat.hubName = 'systemHub';
-                        chat.connection.start(function () {
-                            chat.server.userLogin(id);
-                        });
-                        */
                         $("#btnLogin").find('span').html("登录成功，正在跳转...");
                         window.setTimeout(function () {
                             window.location.href = "/Res/Home/NewIndex";
                         }, 200);
-
                     } else {
                         layer.alert(data.Message);
                     }
@@ -353,10 +343,8 @@
             });
         }
 
-    </script>
 
 
-    <script type="text/javascript">
         var data;
         var keycache = '';
         var thisfontArr = [];

@@ -85,10 +85,10 @@
 						</div>
 					</div>
 					<div class="layer-btns-bottom layui-form">
-							<div style="float: left;"><input type="checkbox" name="allcheck" id="allcheck" lay-filter="allcheck" title="全选"></div>
-	                    	<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="form1">立即提交</button>
-	                        <button type="reset" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消</button>
-	                   </div>
+						<div style="float: left;"><input type="checkbox" name="allcheck" id="allcheck" lay-filter="allcheck" title="全选"></div>
+	                    <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="form1">立即提交</button>
+	                    <button type="reset" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消</button>
+	                </div>
             </div>
            
         </div>
@@ -99,9 +99,6 @@
 @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
 @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
-@ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
 <script type="text/javascript">
 	var inidata,
 	    ProjectsArr,

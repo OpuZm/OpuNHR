@@ -289,9 +289,6 @@
                 </div>
 
 
-                <footer class="footer-copyright">
-                    <img src="@Url.Content(Plugin.Instance.GetContentPath("/images/logo-footer.png"))" alt="">
-                </footer>
             </div>
             <!-- ▲预订表单 -->
             <!-- ▼右侧 添加餐台 -->
@@ -364,13 +361,9 @@
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
     @ScriptsEx.Render(Plugin.Instance.Name, "chinese_pynsimpl")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard_en")
-	@*@ScriptsEx.Render(Plugin.Instance.Name, "ReserveJs")*@
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    <script src="~/signalr/hubs">
     </script>
 
     <script type="text/javascript">
-//      console.log('@ViewBag.restaurantId');
         var RestaurantId =@ViewBag.restaurantId;
         var $R_Market_Id = $(R_Market_Id)
         layui.use(['element', 'form', 'layer', 'layedit', 'laydate'], function () {
@@ -387,7 +380,6 @@
 			RestaurantIdChange(true);
             $('input[name="PersonNum"]').focus();
             var mintime=gettime();
-            console.log(mintime);
 
             //执行一个laydate实例
             laydate.render({
@@ -459,23 +451,6 @@
                     tablelist.show();
                 }
             })
-//          $('#TableAreas').delegate('a', 'click', function (event) {
-//              var id = $(this).attr('data-id');
-//				$(this).addClass('layui-this').siblings().removeClass('layui-this');
-//              var tablelist = $('#CanUseTableList li');
-//              if (id != 0) {
-//                  for (var i = 0; i < tablelist.length; i++) {
-//                      var table = tablelist.eq(i);
-//                      if (table.attr('data-areaId') == id) {
-//                          table.show();
-//                      } else {
-//                          table.hide();
-//                      }
-//                  }
-//              } else {
-//                  tablelist.show();
-//              }
-//          })
 
             //预定菜品
             form.on('submit(Booking)', function (data) {
@@ -514,9 +489,6 @@
                 if (!formdata.DepositAmount)
                     formdata.DepositAmount = 0;
 
-                //var chat = $.connection.systemHub;
-                //chat.hubName = 'systemHub';
-                //chat.connection.start();
 
                 var para = { req: formdata, TableIds: tabIds };
                 //提交数据
@@ -537,10 +509,6 @@
                         var res = data.Data;
 
                         if (res != null && res.Id > 0) {
-                            //$.connection.hub.start().done(function () {//通知刷新工作台界面
-                            //    chat.server.notifyResServiceRefersh(true);
-                            //});
-
                             layer.alert('编辑预定成功！', function () {
                                 if (name == 'order') { //预订点餐
                                     layer.open({ type: 3 });

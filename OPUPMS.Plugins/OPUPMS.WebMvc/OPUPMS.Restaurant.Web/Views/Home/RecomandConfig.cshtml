@@ -81,9 +81,7 @@
             <form class="layui-form" action="">
                 <div class="ClassTab-head">
                     <div id="CategoryList_view" class="layui-tab layui-tab-brief CategoryListTab" lay-filter="ClassTab" style="width: calc(100vw - 480px);overflow: hidden;">
-                       
-                       
-                        
+
                     </div>
                     <script id="CategoryList_tpml" type="text/html">
                         <ul class="layui-tab-title">
@@ -111,7 +109,7 @@
                     </script>
                 </div>
                 <!-- ▼菜品列表 -->
-                <div class="MealTable-lists flex-item" style="margin-right: 0;">
+                <div class="MealTable-lists flex-item" style="margin-right: 0;overflow: auto;">
                     <ul id="ProjectAndDetails_view"></ul>
                     <script id="ProjectAndDetails_tpml" type="text/html">
                         {{#  layui.each(d, function(index, item){ }}
@@ -160,11 +158,6 @@
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
     @ScriptsEx.Render(Plugin.Instance.Name, "chinese_pynsimpl")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard_en")
-    
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    @ScriptsEx.Render(Plugin.Instance.Name, "Report")
 	@ScriptsEx.Render(Plugin.Instance.Name, "RecomandConfigJs")
-
-    <script src="~/signalr/hubs"></script>
 </body>
 </html>

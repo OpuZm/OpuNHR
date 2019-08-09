@@ -72,9 +72,6 @@
 @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
 @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
-@ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
 <script type="text/javascript">
     layui.use(['element', 'form', 'layer', 'layedit'], function () {
         var element = layui.element,
@@ -107,12 +104,12 @@
         //餐厅选择 更新区域select
         form.on('select(Restaurant)', function (data) {
             RestaurantAreaSelect(RestaurantArea, data.value, '', form);
-            BoxSelect(BoxDate, data.value, $('#RestaurantArea').val(), form);
+            //BoxSelect(BoxDate, data.value, $('#RestaurantArea').val(), form);
         });
         //区域选择 更新包厢select
-        form.on('select(RestaurantArea)', function (data) {
-            BoxSelect(BoxDate, $('#RestaurantId').val(), data.value, form);
-        });
+        //form.on('select(RestaurantArea)', function (data) {
+        //    BoxSelect(BoxDate, $('#RestaurantId').val(), data.value, form);
+        //});
         //区域Select绑数
         function RestaurantAreaSelect(RestaurantArea, id, areaID, form) {
             RestaurantAreaStr = '';
