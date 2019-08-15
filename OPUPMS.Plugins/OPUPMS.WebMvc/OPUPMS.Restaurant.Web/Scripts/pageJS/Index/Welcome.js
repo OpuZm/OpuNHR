@@ -17,18 +17,6 @@ var editJs = {
         var width = $(window).width();
         var height = $(window).height();
 
-        /* 餐饮实时状态更新 --start */
-        var chat = $.connection.systemHub;
-        chat.hubName = 'systemHub';
-        chat.connection.start();
-
-        chat.client.callResServiceRefersh = function (result) {
-            if (result == true) {
-                Refresh();
-            }
-        }
-    /* 餐饮实时状态更新 --end */
-
 
         //var bindAction = function () {
         var vmControl = new Vue({
@@ -624,9 +612,6 @@ var editJs = {
                     success: function (data, textStatus) {
                         var res = data.Data;
                         if (res == true) {
-                            $.connection.hub.start().done(function () {
-                                chat.server.notifyResServiceRefersh(true);
-                            });
                             layer.alert("更新成功");
                         } else {
                             layer.alert(data["Message"]);
@@ -664,9 +649,6 @@ var editJs = {
                     success: function (data, textStatus) {
                         var res = data.Data;
                         if (res == true) {
-                            $.connection.hub.start().done(function () {
-                                chat.server.notifyResServiceRefersh(true);
-                            });
                             layer.alert("取消订单成功");
                             layer.closeAll();
                         } else {

@@ -306,9 +306,6 @@
             Create: function () {
                 var editor = {};
                 var layindex;
-                var chat = $.connection.systemHub;
-                chat.hubName = 'systemHub';
-                chat.connection.start();
 
                 var bindAction = function () {
                     var width = $(window).width();
@@ -419,9 +416,6 @@
                                         },
                                         success: function (data, textStatus) {
                                             if (data.Data == true) {
-                                                $.connection.hub.start().done(function () {
-                                                    chat.server.notifyResServiceRefersh(true);
-                                                })
                                                 layer.alert("提交成功", function () {
                                                     location.reload();
                                                 })
@@ -511,9 +505,6 @@
                                     },
                                     success: function (data, textStatus) {
                                         if (data.Data == true) {
-                                            $.connection.hub.start().done(function () {
-                                                chat.server.notifyResServiceRefersh(true);
-                                            })
                                             layer.alert("提交成功", function () {
                                                 location.reload()
                                             })
@@ -848,9 +839,6 @@
                             },
                             success: function (data, textStatus) {
                                 if (data.Data == true) {
-                                    $.connection.hub.start().done(function () {
-                                        chat.server.notifyResServiceRefersh(true);
-                                    });
                                     layer.alert("提交完成", function () {
                                         parent.layer.closeAll();
                                     })

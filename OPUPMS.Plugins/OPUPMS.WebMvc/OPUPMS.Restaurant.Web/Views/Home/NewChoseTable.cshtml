@@ -102,15 +102,9 @@
     @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
     @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    <script src="~/signalr/hubs"></script>
     <script>
         var inidata;
         var thisOrderTableId = '';
-        var chat = $.connection.systemHub;
-        chat.hubName = 'systemHub';
-        chat.connection.start();
         
         layui.use(['element', 'form', 'laytpl'], function () {
             var element = layui.element,
@@ -286,14 +280,11 @@
                 },
                 success: function (data, textStatus) {
                     if (data.Data == true) {
-                        $.connection.hub.start().done(function () {
-                            chat.server.notifyResServiceRefersh(true);
-                            layer.alert("提交成功", function () {
-                        		layindex = layer.open({type: 3});
-	                            parent.layer.close(parent.layer.getFrameIndex(window.name));
-	                            parent.location.reload();
-	                        })
-                        })
+                        layer.alert("提交成功", function () {
+                        	layindex = layer.open({type: 3});
+	                        parent.layer.close(parent.layer.getFrameIndex(window.name));
+	                        parent.location.reload();
+	                    })
                     }
                     else {
                         layer.alert(data.Message);

@@ -13,6 +13,22 @@ var userInfo; //登陆用户信息
 var enter_type = 1;
 var allStatus = 1;
 
+var orderData = {
+    length: 0,
+    data: [],
+    rowNumber: 10,
+    index: 0,
+    cIndex: 0,
+    offset: 100,
+    cChildIndex: 0,
+    value: '',
+};
+
+//菜品数据dom
+var orderView = $('#ProjectAndDetails_view')
+//每行菜品数
+var lineSum = 4;
+
 var btnOption = {
 	26:{Name:'保存',Click:"AddOrderBefore('Keep');",IsLock:true},
 	27:{Name:'全送',Click:"AddOrderBefore('Print');",IsLock:true,CyddStatus:1},
@@ -59,11 +75,6 @@ layui.use(['element', 'form', 'laytpl'], function () {
     OrderTableIdString = getUrlParam('OrderTableIds');
     OrderTableIds = OrderTableIdString.split(',');
     
-	
-	chat = $.connection.systemHub;
-	chat.hubName = 'systemHub';
-	chat.connection.start();
-	
     //获取参数
     $.ajax({
         url: "/Res/Project/InitFormInfo",
@@ -110,56 +121,27 @@ layui.use(['element', 'form', 'laytpl'], function () {
 						break;
 				}
 			}
-			//渲染 底部操作按钮
-			var getTpl = actionsbtn_tpml.innerHTML,
-				view = document.getElementById('actionsbtn_view');
-			laytpl(getTpl).render(data, function(html) {
-				view.innerHTML = html;
-			});
-			//渲染 更多操作按钮
-			var getTpl = moreBtnGroup_tpml.innerHTML,
-				view = document.getElementById('more-btn-group');
-			laytpl(getTpl).render(data, function(html) {
-				view.innerHTML = html;
-			});
-            
-            
+            //渲染 底部操作按钮
+            var getTpl = actionsbtn_tpml.innerHTML,
+                view = document.getElementById('actionsbtn_view');
+            laytpl(getTpl).render(data, function (html) {
+                view.innerHTML = html;
+            });
+            //渲染 更多操作按钮
+            var getTpl = moreBtnGroup_tpml.innerHTML,
+                view = document.getElementById('more-btn-group');
+            laytpl(getTpl).render(data, function (html) {
+                view.innerHTML = html;
+            });
+
             //渲染 菜品分类
             var getTpl = CategoryList_tpml.innerHTML,
                 view = document.getElementById('CategoryList_view');
             laytpl(getTpl).render(data.CategoryList, function (html) {
                 view.innerHTML = html;
+                projectAndDetailsAuto();
+                orderLoad();
             });
-			
-			//渲染菜品  默认展开  第一个标签内的所有数据
-			var defaultDetailsArr = [];
-			var defaultCategoryList = inidata.CategoryList[0];
-			if (inidata.CategoryList[0].ChildList.length > 0) { //有子分类
-                for (var i = 0; i < defaultCategoryList.ChildList.length; i++) {
-                    classid = defaultCategoryList.ChildList[i].Id;
-                    for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                        var item = inidata.ProjectAndDetails[j];
-                        if (classid == item.Category) { //成立
-                            defaultDetailsArr.push(item);
-                        }
-                    }
-                }
-            } else { //没有子分类的
-                for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                    var item = inidata.ProjectAndDetails[j];
-                    if (defaultCategoryList.Id == item.Category) { //成立
-                        defaultDetailsArr.push(item);
-                    }
-                }
-            }
-            
-            //渲染 菜品
-            var getTpl = ProjectAndDetails_tpml.innerHTML,
-                view = document.getElementById('ProjectAndDetails_view');
-            laytpl(getTpl).render(defaultDetailsArr, function (html) {
-                view.innerHTML = html;
-            });
-
 
             //渲染 订单头部信息
             var getTpl = OrderAndTables_tpml.innerHTML,
@@ -167,24 +149,18 @@ layui.use(['element', 'form', 'laytpl'], function () {
             laytpl(getTpl).render(data.OrderAndTables, function (html) {
                 view.innerHTML = html;
             });
-            
+
             //键盘回车  失去input焦点
-            $(document).on('submit','.search-form',function(){
-            	$(this).find('input').blur();
-            	return false;
+            $(document).on('submit', '.search-form', function () {
+                $(this).find('input').blur();
+                return false;
             })
 
-            //监听搜索
-            //			$('#KeyWord').bind('input propertychange', function(e) {
-            //				var value = $(this).val().toUpperCase();
-            //				KeyWord(value);
-            //			})
 
             search_input('#KeyWord', KeyWord, 64);
 
             //初始化数据加入 提交数组
             for (var i = 0; i < data.OrderTableProjects.length; i++) {
-                //if(data.OrderTableProjects[i].CyddMxStatus==1){
                 var OrderTableProjectsitem = data.OrderTableProjects[i];
                 var OrderTableProjectsitemExtend = [];
                 if (data.OrderTableProjects[i].Extend) {
@@ -234,9 +210,7 @@ layui.use(['element', 'form', 'laytpl'], function () {
                     IsRecommend: OrderTableProjectsitem.IsRecommend
                 });
             }
-            // }
 
-//          $('.CategoryListTab').width(winW - 470);
             element.init();
             AddProject();
             //更新订单/统计金额
@@ -246,54 +220,38 @@ layui.use(['element', 'form', 'laytpl'], function () {
 
             //监听菜品分类一 点击
             $(document).on('click','.ClassTab-head .CategoryListTab .tabList li',function(){
-//          	if($(this).hasClass('layui-this'))return false;
-            	var index = $(this).index();
-            	var newsArr = [];
-            	$(this).addClass('layui-this').siblings().removeClass('layui-this');
-            	
-//              if (index == 0) { //全部
-//                  newsArr = inidata.ProjectAndDetails;
-//              } else {
-                    var CategoryList = inidata.CategoryList[index];
-                    if (CategoryList.ChildList.length > 0) { //有子分类
-                        for (var i = 0; i < CategoryList.ChildList.length; i++) {
-                            classid = CategoryList.ChildList[i].Id;
-                            for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                                var item = inidata.ProjectAndDetails[j];
-                                if (classid == item.Category) { //成立
-                                    newsArr.push(item);
-                                }
-                            }
-                        }
-                    } else { //没有子分类的
-                        for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                            var item = inidata.ProjectAndDetails[j];
-                            if (CategoryList.Id == item.Category) { //成立
-                                newsArr.push(item);
-                            }
-                        }
-                    }
-//              }
-                var getTpl = ProjectAndDetails_tpml.innerHTML,
-                    view = document.getElementById('ProjectAndDetails_view');
-                laytpl(getTpl).render(newsArr, function (html) {
-                    view.innerHTML = html;
-//                  setTimeout(projectAndDetailsAuto, 500);//菜品父元素自适应
-//                  T_list_auto(false, true);//菜品宽度自适应
-                });
-                
+                var index = $(this).index();
+                $(this).addClass('layui-this').siblings().removeClass('layui-this');
                 //2级分类显示
                 var item = $(this).closest('.CategoryListTab').find('.layui-tab-content .layui-tab-item').eq(index);
                 item.addClass('layui-show').siblings('.layui-tab-item').removeClass('layui-show');
                 item.find('a').eq(0).addClass('layui-this').siblings().removeClass('layui-this');
+
+                $('#KeyWord').val('');
+                orderData.value = '';
+                orderData.index = 0;
+                orderData.cIndex = index;
+                orderData.cChildIndex = 0;
+                orderLoad()
             })
             
+            //监听二级分类点击
+            $(document).on('click', '#CategoryList_view .class-group a.layui-btn', function () {
+                var classno = $(this).parent('.class-group').parent('.layui-tab-item').index();
+                $(this).addClass('layui-this').siblings('a').removeClass('layui-this');
+                $('#KeyWord').val('');
+                orderData.value = '';
+                orderData.index = 0;
+                orderData.cIndex = classno;
+                orderData.cChildIndex = $(this).index();
+                orderLoad()
+            })
+
             //监听  套餐  菜品分类一 点击
-            $(document).on('click','#TC_CategoryListTab .tabList li',function(){
-            	$(this).addClass('layui-this').siblings().removeClass('layui-this');
-//          	if($(this).hasClass('layui-this'))return false;
-				var index = $(this).index();
-				var newsArr = [];
+            $(document).on('click', '#TC_CategoryListTab .tabList li', function () {
+                $(this).addClass('layui-this').siblings().removeClass('layui-this');
+                var index = $(this).index();
+                var newsArr = [];
                 var CategoryList = inidata.CategoryList[index];
                 if (CategoryList.ChildList.length > 0) { //有子分类
                     for (var i = 0; i < CategoryList.ChildList.length; i++) {
@@ -316,45 +274,11 @@ layui.use(['element', 'form', 'laytpl'], function () {
                 }
                 var ProjectsHtml = getProjectsHtml(newsArr);
                 $('#Tc_ProjectsLists ul').html(ProjectsHtml);
-                
+
                 //2级分类显示
                 var item = $(this).closest('#TC_CategoryListTab').find('.layui-tab-content .layui-tab-item').eq(index);
                 item.addClass('layui-show').siblings('.layui-tab-item').removeClass('layui-show');
                 item.find('a').eq(0).addClass('layui-this').siblings().removeClass('layui-this');
-            })
-            
-            
-
-            //监听二级分类点击
-            $('#CategoryList_view .class-group').delegate('a.layui-btn', 'click', function (event) {
-                //var Projectlists=$('#ProjectAndDetails_view li');
-                var classno = $(this).parent('.class-group').parent('.layui-tab-item').index();
-                $(this).addClass('layui-this').siblings('a').removeClass('layui-this');
-                var newsArr = [];
-//              if (classno == 0) { //全部--全部
-//                  newsArr = inidata.ProjectAndDetails;
-//              } else {
-                    var btnno = $(this).index();
-                    if (btnno == 0) { //分类下的全部
-                        $('#CategoryList_view .tabList .layui-this').click();
-                        return false;
-                    } else {
-                        var classdata = inidata.CategoryList[classno];
-                        var classid = classdata.ChildList[btnno-1].Id;
-                        for (var j = 0; j < inidata.ProjectAndDetails.length; j++) {
-                            var item = inidata.ProjectAndDetails[j];
-                            if (classid == item.Category) { //成立
-                                newsArr.push(item);
-                            }
-                        }
-                        var getTpl = ProjectAndDetails_tpml.innerHTML,
-                            view = document.getElementById('ProjectAndDetails_view');
-                        laytpl(getTpl).render(newsArr, function (html) {
-                            view.innerHTML = html;
-                        });
-//                      T_list_auto(false, true);
-                    }
-//              }
             })
             
 			//点菜菜品窗体  自适应
@@ -378,15 +302,7 @@ layui.use(['element', 'form', 'laytpl'], function () {
 			        data: {ordertableIds: OrderTableIds,isControl: true},
 			        success: function (data, textStatus) {
 			            if (data.Data == true) {
-			                var chat = $.connection.systemHub;
-							chat.hubName = 'systemHub';
-							chat.connection.start();
-							$.connection.hub.start().done(function() {
-								chat.server.notifyResServiceRefersh(true);
-			                	//初始化动作全部完成时
-        						$('#loading').remove();
-							});
-//							$('#loading').remove();
+        					$('#loading').remove();
 			            } else {
 			                layer.alert(data.Message);
 			            }
@@ -399,210 +315,143 @@ layui.use(['element', 'form', 'laytpl'], function () {
         }
     });
 
-    //提交
-//  form.on('submit(AddOrder)', function (data) {
-//      var chat = $.connection.systemHub;
-//      chat.hubName = 'systemHub';
-//      chat.connection.start();
-//      var name = data.elem.name;
-//      if (name == 'Print') { //落单打厨
-//          print = 2;
-//      } else if (name == 'NoPrint') { //落单不打厨
-//          print = 1;
-//      } else if (name == 'Keep') { //保存
-//          print = 0;
-//      }
-//
-//      for (var i = 0; i < OrderTableProjectsdata.length; i++) {
-//          if (OrderTableProjectsdata[i].Id == 0) {
-//              OrderTableProjectsdata[i].CyddMxStatus = print;
-//          }
-//      }
-//      //判断套餐是否为空
-//      for(var i = 0; i < OrderTableProjectsdata.length; i++){
-//      	if(OrderTableProjectsdata[i].CyddMxType == 2 && OrderTableProjectsdata[i].PackageDetailList.length < 1){
-//      		layer.msg('套餐 （ ' + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品");
-//      		return false;
-//      	}
-//      }
-//      
-//
-//      var para = {
-//          req: OrderTableProjectsdata,
-//          orderTableIds: OrderTableIds,
-//          status: print
-//      };
-//      $.ajax({
-//          type: "post",
-//          url: "/Res/Home/OrderDetailCreate",
-//          data: JSON.stringify(para),
-//          contentType: "application/json; charset=utf-8",
-//          dataType: "json",
-//          beforeSend: function (xhr) {
-//	            layindex = layer.open({type: 3});
-//	        },
-//	        complete: function (XMLHttpRequest, textStatus) {
-//	            layer.close(layindex);
-//	        },
-//          success: function (data, textStatus) {
-//              if (data.Data == true) {
-//                  $.connection.hub.start().done(function () {
-//                      chat.server.notifyResServiceRefersh(true);
-//                  });
-//                  if (OrderTableIds.length > 1) {
-//                      layer.confirm('提交完成', {
-//                          btn: ['确定'] //按钮
-//                      }, function () {
-//                          parent.layer.closeAll();
-//                      });
-//                  } else {
-//                      layer.confirm('提交完成', {
-//                          btn: ['继续操作', '退出'] //按钮
-//                      }, function () {
-//                      	layer.open({type: 3,shadeClose: false});
-//                          location.reload();
-//                      }, function () {
-//                          history.go(-1);
-//                      });
-//                  }
-//              } else {
-//                  layer.alert(data["Message"]);
-//              }
-//          }
-//      })
-//      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-//  });
+    
 });
 
 //落单打厨	提交之前
-function AddOrderBefore(name){
-	if(name == 'Print') { //落单打厨
-		print = 2;
-	} else if(name == 'NoPrint') { //落单不打厨
-		print = 1;
-	} else if(name == 'Keep') { //保存
-		print = 0;
-	}
-
-	for(var i = 0; i < OrderTableProjectsdata.length; i++) {
-		if(OrderTableProjectsdata[i].Id == 0) {
-			OrderTableProjectsdata[i].CyddMxStatus = print;
-		}
-	}
-	
-	//判断套餐是否为空
-    for(var i = 0; i < OrderTableProjectsdata.length; i++){
-    	if(OrderTableProjectsdata[i].CyddMxType == 2 && OrderTableProjectsdata[i].PackageDetailList.length < 1){
-    		layer.msg('套餐 （ ' + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品");
-    		return false;
-    	}
+function AddOrderBefore(name) {
+    //阻止多次提交
+    if (inidata.isAddOrder) return;
+    inidata.isAddOrder = true;
+    layindex = layer.open({ type: 3 });
+    if (name == 'Print') { //落单打厨
+        print = 2;
+    } else if (name == 'NoPrint') { //落单不打厨
+        print = 1;
+    } else if (name == 'Keep') { //保存
+        print = 0;
     }
-    
+
+    for (var i = 0; i < OrderTableProjectsdata.length; i++) {
+        if (OrderTableProjectsdata[i].Id == 0) {
+            OrderTableProjectsdata[i].CyddMxStatus = print;
+        }
+    }
+
+    //判断套餐是否为空
+    for (var i = 0; i < OrderTableProjectsdata.length; i++) {
+        if (OrderTableProjectsdata[i].CyddMxType == 2 && OrderTableProjectsdata[i].PackageDetailList.length < 1) {
+            layer.msg('套餐 （ ' + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品");
+            return false;
+        }
+    }
+
     var para = {
-		req: OrderTableProjectsdata,
-		orderTableIds: OrderTableIds,
-		status: print
-	};
-	
-	
-	if(name == 'Print' && inidata.OrderDetailTest){
-		layindex = layer.open({type: 3});
-		$.ajax({
-			type: "post",
-			url: "/Res/Project/OrderDetailPrintTesting",
-			data: JSON.stringify(para),
-			contentType: "application/json; charset=utf-8",
-			dataType: "json",
-            beforeSend: function (xhr) {
-                layindex = layer.open({ type: 3 });
-	        },
-	        async:false,
-	        complete: function (XMLHttpRequest, textStatus) {
-	            layer.close(layindex);
-	        },
-			success: function(data, textStatus) {
-				if(data.Data.length > 0) {
-					var $tr = '';
-					for(var i=0;i<data.Data.length;i++){
-						$tr += '<tr>' +
-								'<td>' + data.Data[i].Name + '</td>' +
-								'<td width="13%"><div class="tc">' + data.Data[i].StallName + '</div></td>' +
-								'<td width="20%"><div class="tc">' + data.Data[i].IpAddress + '</div></td>' +
-								'<td width="20%"><div class="tc">' + data.Data[i].Remark + '</div></td>' +
-							'</tr>';
-					}
-					var str = '<div style="padding:10px;position:relative;overflow:hidden;">'+
-						'<table class="layui-table layui-table-header table-head" lay-skin="line" style="margin: 0;">'+
-			                '<thead>'+
-			                    '<tr>'+
-			                        '<th width="">打印机</th>'+
-			                        '<th width="13%"><div class="tc">档口名称</div></th>'+
-			                        '<th width="20%"><div class="tc">IP地址</div></th>'+
-			                        '<th width="20%"><div class="tc">状态</div></th>'+
-			                    '</tr>'+
-			                '</thead>'+
-			            '</table>'+
-			            '<div class="orderScrollBtn" style="top:10px;">'+
-			            	'<div class="layui-btn layui-btn-normal scrollTopBtn"><i class="layui-icon">&#xe619;</i></div>'+
-			            	'<div class="layui-btn layui-btn-normal scrollBottomBtn"><i class="layui-icon">&#xe61a;</i></div>'+
-			            '</div>'+
-			            '<div class="order-content sm-scroll-hidden" style="max-height:330px;position: initial;">'+
-			                '<table class="layui-table" lay-skin="line" style="margin:0;">'+
-			                    '<tbody id="InitCookOrder_lists">' + $tr + '</tbody>'+
-			                '</table>'+
-			            '</div>'+
-			        '</div>';
-			        layer.open({
-						type: 1,
-						title: '打印机状态',
-						shadeClose: true,
-						skin: 'layer-header layer-form-group',
-						shade: 0,
-						area: ['600px', '500px'],
-						content: str,
-						btn: ['确定', '取消'],
-						yes: function(index, layero) {
-							AddOrderBeforeType(para)
-						},
-						btn2: function(index, layero) {}
-					});
-				}else{
-					AddOrderBeforeType(para)
-				}
-			}
-		})
-	}else{
-		AddOrderBeforeType(para)
-	}
+        req: OrderTableProjectsdata,
+        orderTableIds: OrderTableIds,
+        status: print
+    };
+
+    if (name == 'Print' && inidata.OrderDetailTest) {
+        $.ajax({
+            type: "post",
+            url: "/Res/Project/OrderDetailPrintTesting",
+            data: JSON.stringify(para),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            beforeSend: function (xhr) { },
+            complete: function (XMLHttpRequest, textStatus) { },
+            success: function (data, textStatus) {
+                if (data.Data.length > 0) {
+                    layer.close(layindex);
+                    var $tr = '';
+                    for (var i = 0; i < data.Data.length; i++) {
+                        $tr += '<tr>' +
+                            '<td>' + data.Data[i].Name + '</td>' +
+                            '<td width="13%"><div class="tc">' + data.Data[i].StallName + '</div></td>' +
+                            '<td width="20%"><div class="tc">' + data.Data[i].IpAddress + '</div></td>' +
+                            '<td width="20%"><div class="tc">' + data.Data[i].Remark + '</div></td>' +
+                            '</tr>';
+                    }
+                    var str = '<div style="padding:10px;position:relative;overflow:hidden;">' +
+                        '<table class="layui-table layui-table-header table-head" lay-skin="line" style="margin: 0;">' +
+                        '<thead>' +
+                        '<tr>' +
+                        '<th width="">打印机</th>' +
+                        '<th width="13%"><div class="tc">档口名称</div></th>' +
+                        '<th width="20%"><div class="tc">IP地址</div></th>' +
+                        '<th width="20%"><div class="tc">状态</div></th>' +
+                        '</tr>' +
+                        '</thead>' +
+                        '</table>' +
+                        '<div class="order-content sm-scroll-hidden" style="max-height:330px;position: initial;">' +
+                        '<table class="layui-table" lay-skin="line" style="margin:0;">' +
+                        '<tbody id="InitCookOrder_lists">' + $tr + '</tbody>' +
+                        '</table>' +
+                        '</div>' +
+                        '</div>';
+                    layer.open({
+                        type: 1,
+                        title: '打印机状态',
+                        closeBtn: 0,
+                        skin: 'layer-header layer-form-group',
+                        shade: 0,
+                        area: ['80%', '500px'],
+                        content: str,
+                        btn: ['确定', '取消'],
+                        yes: function (index, layero) {
+                            layer.close(index)
+                            layindex = layer.open({ type: 3 });
+                            AddOrderBeforeType(para)
+                        },
+                        btn2: function (index, layero) {
+                            inidata.isAddOrder = false;
+                        }
+                    });
+                } else {
+                    AddOrderBeforeType(para)
+                }
+            },
+            error: function (error) {
+                layer.msg('网络异常,该页面即将刷新', { time: 99999 });
+                setTimeout(function () {
+                    location.reload()
+                }, 2000)
+            }
+        })
+    } else {
+        AddOrderBeforeType(para)
+    }
 }
 
 //落单打厨	||  落单不打厨	|| 保存	提交前判断即起叫起
-function AddOrderBeforeType(para){
-	if(inidata.DefaultPromptly || para.status != 2){
-		AddOrderSubmit(para)
-	}else{
-		layer.open({
-			type: 1,
-			title: false,
-			shadeClose: true,
-			closeBtn: 0,
-			skin: 'layer-header layer-form-group',
-			area: ['220px', '85px'],
-			content: '<div style="padding:20px"><a href="javascript:;" class="layui-btn layui-btn-normal layui-btn-lg" data-type="1">即起</a><a href="javascript:;" class="layui-btn layui-btn-lg" data-type="2">叫起</a></div>',
-			success: function(layero,index){
-				$(layero).find('a').on('click',function(){
-					var DishesStatus = $(this).attr('data-type');
-					for(var i=0;i<para.req.length;i++){
-						if(para.req[i].Id == 0){
-							para.req[i].DishesStatus = DishesStatus
-						}
-					}
-					layer.close(index)
-					AddOrderSubmit(para)
-				})
-			}
-		});
-	}
+function AddOrderBeforeType(para) {
+    if (inidata.DefaultPromptly || para.status != 2) {
+        AddOrderSubmit(para)
+    } else {
+        layer.close(layindex);
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            skin: 'layer-header layer-form-group',
+            area: ['220px', '85px'],
+            content: '<div style="padding:20px"><a href="javascript:;" class="layui-btn layui-btn-normal layui-btn-lg" data-type="1">即起</a><a href="javascript:;" class="layui-btn layui-btn-lg" data-type="2">叫起</a></div>',
+            success: function (layero, index) {
+                $(layero).find('a').on('click', function () {
+                    var DishesStatus = $(this).attr('data-type');
+                    for (var i = 0; i < para.req.length; i++) {
+                        if (para.req[i].Id == 0) {
+                            para.req[i].DishesStatus = DishesStatus
+                        }
+                    }
+                    layer.close(index)
+                    layindex = layer.open({ type: 3 });
+                    AddOrderSubmit(para)
+                })
+            }
+        });
+    }
 }
 
 //落单打厨	||  落单不打厨	|| 保存	提交
@@ -623,13 +472,6 @@ function AddOrderSubmit(para){
         },
 		success: function(data, textStatus) {
 			if(data.Data == true) {
-				//var chat = $.connection.systemHub;
-				//chat.hubName = 'systemHub';
-				//chat.connection.start();
-				
-				//$.connection.hub.start().done(function() {
-				//	chat.server.notifyResServiceRefersh(true);
-				//});
 				if(OrderTableIds.length > 1) {
 					layer.confirm('提交完成', {
 						btn: ['确定'] //按钮
@@ -647,41 +489,26 @@ function AddOrderSubmit(para){
 						cancelOut()
 					});
 				}
-			} else {
+            } else {
+                inidata.isAddOrder = false;
+                layer.close(layindex);
 				layer.alert(data["Message"]);
 			}
-		}
+        },
+        error: function (error) {
+            layer.msg('网络异常,该页面即将刷新', { time: 99999 });
+            setTimeout(function () {
+                location.reload()
+            }, 2000)
+        }
 	})
 }
 
 //搜索检索
 function KeyWord(value) {
-    var newsArr = [];
-    if (!value) {
-        newsArr = inidata.ProjectAndDetails;
-    } else {
-        for (var i = 0; i < inidata.ProjectAndDetails.length; i++) {
-            var item = inidata.ProjectAndDetails[i];
-            if(item.Name.indexOf(value) >= 0){
-				newsArr.push(item);
-			}else if(item.CharsetCodeList) { //存在 code   
-				//拼接 所有code
-				var code = '';
-				for(var j = 0; j < item.CharsetCodeList.length; j++) {
-					code += item.CharsetCodeList[j].Code.toUpperCase();
-				}
-				if(code.indexOf(value) >= 0) { //成立
-					newsArr.push(item);
-				}
-			}
-        }
-    }
-    var getTpl = ProjectAndDetails_tpml.innerHTML,
-        view = document.getElementById('ProjectAndDetails_view');
-    laytpl(getTpl).render(newsArr, function (html) {
-        view.innerHTML = html;
-    });
-    T_list_auto(false, true);
+    orderData.value = value;
+    orderData.index = 0;
+    orderLoad()
 }
 
 //搜索套餐检索
@@ -724,8 +551,6 @@ function search_input(ele, callback, marginBottom) {
 
 //套餐 检索input 事件
 function tcSearch_input(ele, callback, obj) {
-//  var headHeight = $('#TC_CategoryListTab').outerHeight();
-    //ele 监听对象  callback 回调  obj 滚动对象
     $(ele).on('focus', function () {
         $(this).off('input propertychange');
         $(this).on('input propertychange', function (e) {
@@ -733,8 +558,6 @@ function tcSearch_input(ele, callback, obj) {
             callback && callback(value)
         })
     })
-
-//  $(ele).focus();
 }
 
 //套餐筛选
@@ -875,7 +698,6 @@ function AddSelect(pro) {
 }
 
 //点击做法/要求/配菜/单位
-
 function ProjectClick() {
     $('.practice-box .practice-lists').delegate('li', 'click', function (event) {
         var type = $(this).attr('data-type');
@@ -926,7 +748,6 @@ function ProjectClick() {
 }
 
 //已选菜品选中
-
 $('#ProjectLists_view').delegate('tr', 'click', function (event) {
     if (inidata.OrderAndTables.IsLock == true) { //锁定
         return false;
@@ -2773,7 +2594,6 @@ function revokeTab(thisdom) {
 			data: {
 				orderTableId: OrderTableIds[0]
 			},
-			async: false,
 			beforeSend: function (xhr) {
 	            layindex = layer.open({type: 3});
 	        },
@@ -2782,11 +2602,7 @@ function revokeTab(thisdom) {
 	        },
 			success: function(data, textStatus) {
 				if (data["Data"] == true) {
-					$.connection.hub.start().done(function () {
-                        chat.server.notifyResServiceRefersh(true);
-                        location.replace("/Res/MHome/Index");
-                    });
-                    //parent.Refresh();
+                    location.replace("/Res/MHome/Index");
                 } else {
                 	layer.close(layindex);
                     layer.alert(data["Message"]);
@@ -3600,6 +3416,136 @@ function goCheckout(urlkey, orderTableInfos) {
 }
 
 
+//监听菜品滚动
+orderView.parent().on('scroll', function (e) {
+    var h = e.target.clientHeight
+    var distanceBottom = e.target.scrollHeight - e.target.scrollTop - h
+    if (distanceBottom < orderData.offset) {
+        orderLoad();
+    }
+})
+
+
+
+//加载菜品
+function orderLoad(isScrollTop) {
+    if (orderData.index == 0 || isScrollTop) {
+        orderView.empty().scrollTop(0);
+    }
+    var dataLen = inidata.ProjectAndDetails.length;
+    if (orderData.index == dataLen) return false;
+
+    var newArr = [];
+    var classno = inidata.OrderingInculdeAll ? orderData.cIndex : orderData.cIndex + 1;
+
+    if ((!inidata.OrderingInculdeAll || classno == 0) && orderData.value != '') {
+        for (var i = orderData.index; i < dataLen; i++) {
+            var item = inidata.ProjectAndDetails[i];
+            if (item.Name.indexOf(orderData.value) >= 0) {
+                newArr.push(item);
+            } else if (item.CharsetCodeList) {
+                var code = '';
+                for (var j = 0; j < item.CharsetCodeList.length; j++) {
+                    code += item.CharsetCodeList[j].Code.toUpperCase();
+                }
+                if (code.indexOf(orderData.value.toUpperCase()) >= 0) {
+                    newArr.push(item);
+                }
+            }
+            if (newArr.length == orderData.rowNumber * lineSum || i == dataLen - 1) {
+                orderData.index = i + 1;
+                break;
+            }
+        }
+    } else if (classno == 0) {
+        var count = dataLen - orderData.index
+        count = count <= orderData.rowNumber * lineSum ? count : orderData.rowNumber * lineSum;
+        newArr = inidata.ProjectAndDetails.slice(orderData.index, orderData.index + count);
+        orderData.index += count
+    } else {
+        var classdata = inidata.CategoryList[classno - 1];
+        if (classdata.ChildList.length > 0) {
+            if (orderData.cChildIndex == 0) {
+                for (var i = orderData.index; i < dataLen; i++) {
+                    var item = inidata.ProjectAndDetails[i];
+                    for (var j = 0; j < classdata.ChildList.length; j++) {
+                        classid = classdata.ChildList[j].Id;
+                        if (classid == item.Category) {
+                            if (orderData.value != '') {
+                                if (item.Name.indexOf(orderData.value) >= 0) {
+                                    newArr.push(item);
+                                } else if (item.CharsetCodeList) {
+                                    var code = '';
+                                    for (var k = 0; k < item.CharsetCodeList.length; k++) {
+                                        code += item.CharsetCodeList[k].Code.toUpperCase();
+                                    }
+                                    if (code.indexOf(orderData.value.toUpperCase()) >= 0) {
+                                        newArr.push(item);
+                                    }
+                                }
+                            } else {
+                                newArr.push(item);
+                            }
+                            break;
+                        }
+                    }
+                    if (newArr.length == orderData.rowNumber * lineSum || i == dataLen - 1) {
+                        orderData.index = i + 1;
+                        break;
+                    }
+                }
+            } else {
+                var classdata = inidata.CategoryList[classno - 1];
+                var classid = classdata.ChildList[orderData.cChildIndex - 1].Id;
+                for (var i = orderData.index; i < inidata.ProjectAndDetails.length; i++) {
+                    var item = inidata.ProjectAndDetails[i];
+                    if (classid == item.Category) {
+                        if (orderData.value != '') {
+                            if (item.Name.indexOf(orderData.value) >= 0) {
+                                newArr.push(item);
+                            } else if (item.CharsetCodeList) {
+                                var code = '';
+                                for (var k = 0; k < item.CharsetCodeList.length; k++) {
+                                    code += item.CharsetCodeList[k].Code.toUpperCase();
+                                }
+                                if (code.indexOf(orderData.value.toUpperCase()) >= 0) {
+                                    newArr.push(item);
+                                }
+                            }
+                        } else {
+                            newArr.push(item);
+                        }
+                    }
+                    if (newArr.length == orderData.rowNumber * lineSum || i == dataLen - 1) {
+                        orderData.index = i + 1;
+                        break;
+                    }
+                }
+            }
+        } else {
+            for (var i = orderData.index; i < dataLen; i++) {
+                var item = inidata.ProjectAndDetails[i];
+                var classdata = inidata.CategoryList[classno - 1];
+                if (classdata.Id == item.Category) {
+                    newArr.push(item);
+                }
+                if (newArr.length == orderData.rowNumber * lineSum || i == dataLen - 1) {
+                    orderData.index = i + 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    var getTpl = ProjectAndDetails_tpml.innerHTML;
+    laytpl(getTpl).render(newArr, function (html) {
+        orderView.get(0).insertAdjacentHTML('beforeEnd', html)
+        if (orderView[0].scrollHeight < orderView[0].parentNode.clientHeight + orderData.offset) {
+            orderLoad();
+        }
+    });
+}
+
 
 //验证是否存在新增，未保存的菜品
 function isNewProject() {
@@ -3658,14 +3604,7 @@ function cancelOut(){
 	        },
 	        success: function (data, textStatus) {
 	            if (data.Data == true) {
-	            	var chat = $.connection.systemHub;
-					chat.hubName = 'systemHub';
-					chat.connection.start();
-					$.connection.hub.start().done(function() {
-						chat.server.notifyResServiceRefersh(true);
-	                	//初始化动作全部完成时
-						history.go(-1);
-					});
+					history.go(-1);
 	            } else {
 	                layer.alert(data.Message);
 	            }

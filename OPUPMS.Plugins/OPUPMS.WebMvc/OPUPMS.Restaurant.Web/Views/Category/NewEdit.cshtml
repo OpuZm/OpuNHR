@@ -86,10 +86,6 @@
 @ScriptsEx.Render(FrameworkInfo.Name, "CommonJs")
 @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
 @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
-@ScriptsEx.Render(Plugin.Instance.Name, "OpenTableJs")
-@ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
 <script type="text/javascript">
     layui.use(['element', 'form', 'layer', 'layedit'], function () {
         var element = layui.element,
@@ -97,16 +93,6 @@
             layedit = layui.layedit,
             form = layui.form;
         var textarea = layedit.build('Description', {tool: ['strong','italic','underline','del','|','left','center','right','link','unlink','face'], height: 150 });
-
-//      form.on('switch(IsDiscount)', function (data) {
-//          if (data.elem.checked == true) {
-//              $('#DiscountRate').show();
-//          } else {
-//              $('#DiscountRate').hide();
-//          }
-//      });
-        
-        
 
         //基本要求提交
         form.on('submit(form1)', function (data) {

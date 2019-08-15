@@ -251,9 +251,6 @@
 @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
 @ScriptsEx.Render(Plugin.Instance.Name, "chinese_pynsimpl")
 @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard_en")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-<script src="~/signalr/hubs"></script>
 <script>
 
 //获取参数
@@ -287,9 +284,6 @@ layui.use(['element', 'form'], function () {
             return false;
         }
 
-        var chat = $.connection.systemHub;
-        chat.hubName = 'systemHub';
-        chat.connection.start();
         var para = { req: formdata, TableIds: tableIds };
         
         layindex = layer.open({type: 3});
@@ -301,7 +295,12 @@ layui.use(['element', 'form'], function () {
             type: "post",
             dataType: "json",
             contentType: "application/json; charset=utf-8",
-            async: true,
+            beforeSend: function (xhr) {
+                layindex = layer.open({ type: 3 });
+            },
+            complete: function (XMLHttpRequest, textStatus) {
+                layer.close(layindex);
+            },
             success: function (data, textStatus) {
                 var res = data.Data;
                 if(data.Data){
@@ -313,23 +312,22 @@ layui.use(['element', 'form'], function () {
 					        url: "/Res/Order/UpdateOrderTableIsControl",
 					        dataType: "json",
 					        data: {ordertableIds: parent.OrderTableIds,isControl: false},
-					        async: false,
+                            beforeSend: function (xhr) {
+                                layindex = layer.open({ type: 3 });
+                            },
+                            complete: function (XMLHttpRequest, textStatus) {
+                                layer.close(layindex);
+                            },
 					        success: function (data, textStatus) {
 					            if (data.Data == true) {
-									$.connection.hub.start().done(function() {
-										chat.server.notifyResServiceRefersh(true);
-					                	parent.location.href = "/Res/Home/NewBatchChoseProject?OrderTableIds=" + res.OrderTableIds[0];
-									});
+					                parent.location.href = "/Res/Home/NewBatchChoseProject?OrderTableIds=" + res.OrderTableIds[0];
 					            } else {
 					                layer.alert(data.Message);
 					            }
 					        }
 					    });
 					}, function(index){
-						$.connection.hub.start().done(function () {//通知刷新工作台界面
-		                    chat.server.notifyResServiceRefersh(true);
-		                    parent.layer.closeAll();
-		                });
+		                parent.layer.closeAll();
 					});
 					
                 }

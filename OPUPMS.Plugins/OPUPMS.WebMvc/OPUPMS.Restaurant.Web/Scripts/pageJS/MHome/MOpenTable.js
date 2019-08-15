@@ -93,9 +93,6 @@ layui.use(['element', 'form'], function () {
             return false;
         }
 
-        var chat = $.connection.systemHub;
-        chat.hubName = 'systemHub';
-        chat.connection.start();
 
         var para = { req: formdata, TableIds: tabIds };
         //提交数据
@@ -116,9 +113,6 @@ layui.use(['element', 'form'], function () {
                 var res = data.Data;
                 if(data.Data){
                 	if (res.OrderId > 0) {
-		                $.connection.hub.start().done(function () {//通知刷新工作台界面
-		                      chat.server.notifyResServiceRefersh(true);
-		                });
 						layer.open({type: 3,shadeClose: false});
 	                    layer.msg('开台成功！');
 	                    

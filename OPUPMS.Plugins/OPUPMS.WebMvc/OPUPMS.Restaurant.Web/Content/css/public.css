@@ -177,9 +177,7 @@ input[type=number]::-webkit-outer-spin-button {
 .Panel-side.left {top: 0px;width: 400px;right: initial;left: 0;overflow-x:auto ;}
 .Panel-form.right{margin-left: 400px;}
 div.layui-input{line-height: 32px;}
-/*footer*/
-.footer-copyright{text-align: center;margin:20px 20px 0 20px;}
-.footer-copyright img{width: 200px;}
+
 
 .full{width: 100%!important;}
 .MealTable-box{padding:10px;border-top: 1px solid #ddd;}

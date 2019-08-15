@@ -72,8 +72,6 @@
     @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
 	@ScriptsEx.Render(Plugin.Instance.Name, "isScrollconfigJS")
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    <script src="~/signalr/hubs"></script>
     <script>
         var inidata;
         var thisOrderTableId = '';
@@ -94,10 +92,6 @@
             orderTableId = getUrlParam('orderTableId');//订单ID
             
 			
-            chat = $.connection.systemHub;
-            chat.hubName = 'systemHub';
-            chat.connection.start();
-
             var AreaListTpl = AreaList_tpml.innerHTML,
                 AreaList_view = document.getElementById('AreaList_view'),
                 TableListTpl = TableList_tpml.innerHTML,
@@ -294,11 +288,8 @@
                 success: function (data) {
                 	
                     if(data.Successed){
-                    	$.connection.hub.start().done(function () {
-                            chat.server.notifyResServiceRefersh(true);
-                            parent.parent.layer.close(parent.parent.layer.getFrameIndex(parent.window.name));
-                        	parent.parent.layer.msg('并台成功')
-                        });
+                        parent.parent.layer.close(parent.parent.layer.getFrameIndex(parent.window.name));
+                        parent.parent.layer.msg('并台成功')
                     }else{
                     	layer.alert(data.Message);
                     }

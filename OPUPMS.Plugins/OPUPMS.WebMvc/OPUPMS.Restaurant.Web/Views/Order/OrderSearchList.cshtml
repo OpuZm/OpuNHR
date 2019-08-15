@@ -795,10 +795,6 @@
     @ScriptsEx.Render(Plugin.Instance.Name, "PublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
     @ScriptsEx.Render(Plugin.Instance.Name, "Report")
-
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-    <script src="~/signalr/hubs"></script>
-
     <script>
     	
     	
@@ -1406,9 +1402,6 @@
 
 		//反结
         function openReturnCheckout(id, res) {
-            var chat = $.connection.systemHub;
-            chat.hubName = 'systemHub';
-            chat.connection.start();
             var para = { mainPayId: res.Id }
         	$.ajax({
                 type: "post",
@@ -1424,10 +1417,6 @@
 	            },
                 success: function (data, textStatus) {
                     if (data.Data!=null) {
-                        $.connection.hub.start().done(function () {//通知刷新工作台界面
-                            chat.server.notifyResServiceRefersh(true);
-                        });
-
                         table.reload('tableReload', {
 			                where: SerachTablePara
 			                ,page: {
@@ -1441,7 +1430,6 @@
                             btn: ['继续查单', '返回控制台'],
                             closeBtn: 0
                         }, function (index, layero) {
-
                             layer.closeAll();
                         }, function (index) {
                             parent.layer.closeAll();
@@ -1500,10 +1488,6 @@
             layer.confirm("确定取消订单吗？", { title: '取消提示', btn: ['确认取消', '返回'] }, function () {
                 var para = { orderId: id };
 
-                var chat = $.connection.systemHub;
-                chat.hubName = 'systemHub';
-                chat.connection.start();
-
                 $.ajax({
                     type: "post",
                     url: "/Res/Home/CancelOrder",
@@ -1520,10 +1504,6 @@
                     success: function (data, textStatus) {
                         var res = data.Data;
                         if (res == true) {
-                            $.connection.hub.start().done(function () {
-                                chat.server.notifyResServiceRefersh(true);
-                            });
-
                             layer.alert("取消订单成功", function () {
                                 Refresh();
                                 layer.closeAll();

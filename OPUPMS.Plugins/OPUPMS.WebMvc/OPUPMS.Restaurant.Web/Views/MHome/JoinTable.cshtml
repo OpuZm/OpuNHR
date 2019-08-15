@@ -85,8 +85,6 @@
     @ScriptsEx.Render(FrameworkInfo.Name, "LayUIJs2x")
     @ScriptsEx.Render(Plugin.Instance.Name, "MPublicJs")
     @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
-
-    @ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
     <script src="~/signalr/hubs"></script>
     <script>
         var inidata;
@@ -104,11 +102,6 @@
             restaurantId = getUrlParam('restaurantId');//餐厅ID
             orderId = getUrlParam('orderId');//订单ID
             orderTableId = getUrlParam('orderTableId');//订单ID
-
-
-            chat = $.connection.systemHub;
-            chat.hubName = 'systemHub';
-            chat.connection.start();
 
             var AreaListTpl = AreaList_tpml.innerHTML,
                 AreaList_view = document.getElementById('AreaList_view'),
@@ -278,17 +271,11 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     if(data.Successed){
-                    	$.connection.hub.start().done(function () {
-                            chat.server.notifyResServiceRefersh(true);
-                            parent.layer.msg('并台成功');
-                            parent.location.replace("/Res/MHome/Index");
-                        });
-//                      parent.parent.layer.close(parent.parent.layer.getFrameIndex(parent.window.name));
+                        parent.layer.msg('并台成功');
+                        parent.location.replace("/Res/MHome/Index");
                     }else{
                     	layer.alert(data.Message);
-
                     }
-
                 }, error: function (msg) {
                     console.log(msg.responseText);
                 },

@@ -245,9 +245,6 @@
 @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard")
 @ScriptsEx.Render(Plugin.Instance.Name, "chinese_pynsimpl")
 @ScriptsEx.Render(Plugin.Instance.Name, "Keyboard_en")
-
-@ScriptsEx.Render(FrameworkInfo.Name, "JqSignalR")
-<script src="~/signalr/hubs"></script>
 <script>
 
 //获取参数
@@ -280,9 +277,6 @@ layui.use(['element', 'form'], function () {
             return false;
         }
 
-        var chat = $.connection.systemHub;
-        chat.hubName = 'systemHub';
-        chat.connection.start();
         var para = { req: formdata, TableIds: tableIds };
         
         layindex = layer.open({type: 3});
@@ -309,20 +303,14 @@ layui.use(['element', 'form'], function () {
 					        async: false,
 					        success: function (data, textStatus) {
 					            if (data.Data == true) {
-									$.connection.hub.start().done(function() {
-										chat.server.notifyResServiceRefersh(true);
-										parent.location.replace("/Res/MHome/BatchChoseProject?OrderTableIds=" + res.OrderTableIds[0]);
-									});
+									parent.location.replace("/Res/MHome/BatchChoseProject?OrderTableIds=" + res.OrderTableIds[0]);
 					            } else {
 					                layer.alert(data.Message);
 					            }
 					        }
 					    });
 					}, function(index){
-						$.connection.hub.start().done(function () {//通知刷新工作台界面
-		                    chat.server.notifyResServiceRefersh(true);
-		                    parent.layer.closeAll();
-		                });
+		                parent.layer.closeAll();
 					});
 					
                 }

@@ -141,11 +141,11 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
-                    req.CreateUser = operatorUser.UserId;
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    req.CreateUser = currentUser.UserId;
                     req.TableNum = TableIds.Count;
-                    req.CurrentMarketId = operatorUser.LoginMarketId;
-                    req.CurrentRestaurantId = operatorUser.DepartmentId.ToInt();
+                    req.CurrentMarketId = currentUser.LoginMarketId;
+                    req.CurrentRestaurantId = currentUser.DepartmentId.ToInt();
                     if (req.Id == 0)
                     {
                         req.OrderNo = DateTime.Now.ToString("yyyyMMddHHmmssfff");
@@ -153,7 +153,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                         req.CyddStatus = CyddStatus.预定;
                     }
                     //取餐饮账务日期 TypeId=10003
-                    var dateItem = _extendItemRepository.GetModelList(operatorUser.CompanyId.ToInt(), 10003).FirstOrDefault();
+                    var dateItem = _extendItemRepository.GetModelList(currentUser.CompanyId.ToInt(), 10003).FirstOrDefault();
 
                     if (dateItem == null)
                         throw new Exception("餐饮账务日期尚未初始化，请联系管理员");
@@ -169,7 +169,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     if (model != null)
                     {
                         var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                        await hub.Clients.All.callResServiceRefersh(true);
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                         res.Data = model;
                     }
                     res.Message = msg;
@@ -234,22 +234,21 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var operatorUser = OperatorProvider.Provider.GetCurrent();
-                req.CreateUser = operatorUser.UserId;
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                req.CreateUser = currentUser.UserId;
                 req.OrderNo = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                 req.CreateDate = DateTime.Now;
                 req.CyddStatus = CyddStatus.开台;
-                req.CurrentMarketId = operatorUser.LoginMarketId;
-                req.CompanyId = operatorUser.CompanyId.ToInt();
+                req.CurrentMarketId = currentUser.LoginMarketId;
+                req.CompanyId = currentUser.CompanyId.ToInt();
                 req.UserType = CyddCzjlUserType.员工;
                 var model = _tableHandlerSers.OpenTableHandle(req, TableIds, out msg);
 
                 if (model != null)
                 {
                     res.Data = model;
-
                     var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                    hub.Clients.Group(operatorUser.DepartmentId, new string[0]).callResServiceRefersh(true);
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                 }
                 res.Message = msg;
             }
@@ -350,7 +349,7 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var userInfo = OperatorProvider.Provider.GetCurrent();
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
                     bool result = false;
                     if (req == null && status == CyddMxStatus.保存)
                     {
@@ -358,14 +357,14 @@ namespace OPUPMS.Restaurant.Web.Controllers
                     }
                     else
                     {
-                        result = _orderRepository.OrderDetailCreate(req, orderTableIds, status, userInfo, out msg);
+                        result = _orderRepository.OrderDetailCreate(req, orderTableIds, status, currentUser, out msg);
                     }
                     res.Data = result;
                     res.Message = msg;
                     if (result)
                     {
                         var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
-                        hub.Clients.Group(userInfo.DepartmentId).callResServiceRefersh(true);
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     }
                 }
                 catch (Exception ex)
@@ -415,13 +414,18 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
-                    req.CreateUser = operatorUser.UserId;
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    req.CreateUser = currentUser.UserId;
                     //res.Data = OrderRepository.ChangeTableSubmit(req);
                     res.Data = _tableHandlerSers.ChangeTableHandle(req);
                     if (Convert.ToBoolean(res.Data) == false)
                     {
                         res.Message = "操作失败";
+                    }
+                    else
+                    {
+                        var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     }
                 }
                 catch (Exception ex)
@@ -471,13 +475,15 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
-                    req.UserId = operatorUser.UserId;
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    req.UserId = currentUser.UserId;
                     var result = _tableHandlerSers.JoinTableHandle(req);
                     if (result)
                     {
                         res.Data = true;
                         res.Successed = true;
+                        var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     }
                     else
                     {
@@ -538,19 +544,21 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var operatorUser = OperatorProvider.Provider.GetCurrent();
-                req.CreateUser = operatorUser.UserId;
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                req.CreateUser = currentUser.UserId;
                 req.OrderNo = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                 req.CreateDate = DateTime.Now;
                 req.CyddStatus = CyddStatus.开台;
                 req.TableNum = tableIds.Length;
-                req.R_Market_Id = operatorUser.LoginMarketId;
-                req.CompanyId = operatorUser.CompanyId.ToInt();
+                req.R_Market_Id = currentUser.LoginMarketId;
+                req.CompanyId = currentUser.CompanyId.ToInt();
 
                 var model = _tableHandlerSers.OpenTableHandle(req, tableIds.ToList(), out msg, true);
                 if (model != null)
                 {
                     res.Data = model;
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                 }
                 res.Message = msg;
             }
@@ -574,15 +582,17 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
                     ReserveCreateDTO req = _orderRepository.GetOrderDTO(orderId);
-                    req.CurrentMarketId = operatorUser.LoginMarketId;
+                    req.CurrentMarketId = currentUser.LoginMarketId;
 
                     var tableList = _checkOutRepository.GetOrderTableListBy(orderId);
                     var model = _tableHandlerSers.OpenTableHandle(req, tableList.Select(x => x.R_Table_Id).ToList(), out msg, false);
                     if (model != null)
                     {
                         res.Data = model;
+                        var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                        hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     }
                     res.Message = msg;
                 }
@@ -620,18 +630,24 @@ namespace OPUPMS.Restaurant.Web.Controllers
 
             try
             {
-                var operatorUser = OperatorProvider.Provider.GetCurrent();
+                var currentUser = OperatorProvider.Provider.GetCurrent();
                 CancelOrderOperateDTO info = new CancelOrderOperateDTO();
-                info.CompanyId = operatorUser.CompanyId.ToInt();
-                info.OperateUserId = operatorUser.UserId;
+                info.CompanyId = currentUser.CompanyId.ToInt();
+                info.OperateUserId = currentUser.UserId;
                 info.OrderId = orderId;
 
                 var result = _orderHandlerSers.CancelOrderHandle(info);
 
                 if (result)
+                {
                     res.Data = true;
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
+                }
                 else
+                {
                     res.Message = "取消订单操作失败";
+                }
 
             }
             catch (Exception ex)
@@ -658,9 +674,16 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 var result = _tableHandlerSers.UpdateTablesStatus(tableIds, CythStatus.空置);
 
                 if (result)
+                {
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                     res.Successed = true;
+                }
                 else
+                {
                     res.Message = "更新餐台状态-空置操作失败";
+                }
 
             }
             catch (Exception ex)
@@ -694,11 +717,16 @@ namespace OPUPMS.Restaurant.Web.Controllers
                 return Json(res);
             }
             string msg = string.Empty;
-            var userInfo = OperatorProvider.Provider.GetCurrent();
-            res.Data = _orderRepository.ChangeProjectToTable(req, orderTableId, userInfo, out msg);
+            var currentUser = OperatorProvider.Provider.GetCurrent();
+            res.Data = _orderRepository.ChangeProjectToTable(req, orderTableId, currentUser, out msg);
             if (Convert.ToBoolean(res.Data) == false)
             {
                 res.Message = msg;
+            }
+            else
+            {
+                var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
             }
             return Json(res);
         }
@@ -732,6 +760,12 @@ namespace OPUPMS.Restaurant.Web.Controllers
             if (Convert.ToBoolean(res.Data) == false)
             {
                 res.Message = msg;
+            }
+            else
+            {
+                var currentUser = OperatorProvider.Provider.GetCurrent();
+                var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
             }
             return Json(res);
         }
@@ -1272,12 +1306,14 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
-                    req.CreateUser = operatorUser.UserId;
-                    req.CurrentMarketId = operatorUser.LoginMarketId;
-                    req.CompanyId = Convert.ToInt32(operatorUser.CompanyId);
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    req.CreateUser = currentUser.UserId;
+                    req.CurrentMarketId = currentUser.LoginMarketId;
+                    req.CompanyId = Convert.ToInt32(currentUser.CompanyId);
                     res.Data = _tableHandlerSers.AddTableHandle(req);
                     res.Successed = true;
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                 }
                 catch (Exception ex)
                 {
@@ -1312,10 +1348,12 @@ namespace OPUPMS.Restaurant.Web.Controllers
             {
                 try
                 {
-                    var operatorUser = OperatorProvider.Provider.GetCurrent();
-                    req.CreateUser = operatorUser.UserId;
+                    var currentUser = OperatorProvider.Provider.GetCurrent();
+                    req.CreateUser = currentUser.UserId;
                     res.Data = _tableHandlerSers.CancelOrderTable(req);
                     res.Successed = true;
+                    var hub = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+                    hub.Clients.Group(currentUser.DepartmentId).callResServiceRefersh(true);
                 }
                 catch (Exception ex)
                 {
