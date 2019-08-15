@@ -381,22 +381,24 @@
         <div class="paymentCon" style="top:0">
             <div class="payment-method" id="PayTypeList_view">
               <script id="PayTypeList_tpml" type="text/html">
+                  @*
                 {{# if(top.inidata.IsMemberPrice){ }}
                 <div class="checkedBtn">
                   <button class="layui-btn layui-btn-primary" id="memberPaySwitch" onclick="memberPay();"><span>会员价</span><i class="layui-icon layui-icon-ok"></i></button>
                 </div>
                 {{# } }}
+                  *@
                 <h3>付款方式</h3>
-                <ul class="layui-clear">
-                  {{#  if(d.length > 0){  }}
+                <ul class="layui-clear scroll-hidden" style="max-height: calc(100vh - 420px);overflow-y:auto;">
+                    {{#  if(d.length > 0){  }}
                     {{#  layui.each(d, function(index, item){  }}
-                    	{{# if(item.Pid === 0){ }}
-                    		<li data-default-key="{{ item.Id }}" data-key="{{ item.Pid }}" {{#  if(index == 0){  }} class="active" {{#  } }}>
-                    			<p>{{ item.Name }}</p>
-                    		</li>
-                    	{{# } }}
+                    {{# if(item.Pid === 0){ }}
+                    <li data-default-key="{{ item.Id }}" data-key="{{ item.Pid }}" {{#  if(index == 0){  }} class="active" {{#  } }}>
+                        <p>{{ item.Name }}</p>
+                    </li>
+                    {{# } }}
                     {{#  }); }}
-                  {{#  } }}
+                    {{#  } }}
                 </ul>
               </script>
             </div>
@@ -404,7 +406,6 @@
         <!--▲付款-->
         <!--▼金额输入-->
         <div class="AmountEnter">
-            <div class="GiveChange-text"></div>
             <div class="keyboard-number keyboard number-input" style="padding-top: 0;">
                 <div class="Keyboard-input-group" style="padding: 6px 0px 6px 6px;">
                     <input type="text" id="AmountOfMoney" class="layui-input" value="" autocomplete="off">
@@ -425,7 +426,7 @@
                     <li data-val=".">.</li>
                     <li data-val="-">-</li>
                 </ul>
-                <div class="Keyboard-btn" style="right: 10px; top: 139px;">
+                <div class="Keyboard-btn" style="right: 10px; top: 72px;">
                     <a href="javascript:void(0);" data-val="get" style="background-color: #8bc34a;">付款</a>
                     <a href="javascript:void(0);" data-val="success">结账</a>
                 </div>
@@ -441,8 +442,8 @@
                 <div class="layui-input-inline">
                     <select id="AuthUserId" lay-verify="">
                         @{
-                        if (UserList != null)
-                        {
+                            if (UserList != null)
+                            {
                             <option value="0">请选择</option>
                         foreach (var item in UserList)
                         {
