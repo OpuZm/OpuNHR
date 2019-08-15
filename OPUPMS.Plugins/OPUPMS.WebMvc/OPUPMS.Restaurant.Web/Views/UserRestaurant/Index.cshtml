@@ -110,7 +110,7 @@
                 		var row = data.rows[i]
                 		td.each(function(){
                 			var field = $(this).attr('data-field');
-                			if(row.ManagerRestaurantList.indexOf(field) > -1){
+                			if(row.ManagerRestaurantList.indexOf(Number(field)) > -1){
                 				$(this).children().append('<i class="layui-icon" style="color:#5FB878">&#xe618;</i>')
                 			}
                 		})
