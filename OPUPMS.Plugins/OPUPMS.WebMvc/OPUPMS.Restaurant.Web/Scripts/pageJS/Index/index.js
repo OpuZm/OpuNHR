@@ -55,14 +55,7 @@ var classdata = [{
         "Icon": "&#xe73d;",
         "Url": "/Res/Project/ProjectRecommend",
         "Lists": []
-    },
-    {
-        "Id": "Nocturnal_Audit",
-        "Name": "夜审",
-        "Icon": "&#xe665;",
-        "Url": "",
-        "Lists": []
-        }
+    }
     ]
 },
 {

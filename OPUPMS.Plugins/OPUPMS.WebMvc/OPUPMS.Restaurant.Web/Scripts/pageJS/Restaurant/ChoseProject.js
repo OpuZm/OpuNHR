@@ -728,7 +728,8 @@ function AddOrderBefore(name) {
   //判断套餐是否为空
   for(var i = 0; i < OrderTableProjectsdata.length; i++) {
     if(OrderTableProjectsdata[i].CyddMxType == 2 && OrderTableProjectsdata[i].PackageDetailList.length < 1) {
-      layer.msg("套餐 (" + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品")
+        layer.msg("套餐 (" + OrderTableProjectsdata[i].CyddMxName + " ） 中必须选择至少一个菜品");
+        return false;
     }
   }
 
