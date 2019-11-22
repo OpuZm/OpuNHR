@@ -111,9 +111,9 @@ namespace OPUPMS.Domain.Restaurant.Repository
             using (var db = new SqlSugarClient(Connection))
             {
                 var model = db.SqlQuery<OrderPayRecordDTO>($@" SELECT P.*, P.R_Market_Id AS MarketId, 
-                        ISNULL(C.czdmmc00, '') AS CreateUserName 
+                        ISNULL(C.UserName, '') AS CreateUserName 
                         FROM R_OrderPayRecord P 
-                        LEFT JOIN dbo.czdm C ON C.Id = P.CreateUser 
+                        LEFT JOIN dbo.SUsers C ON C.Id = P.CreateUser 
                         WHERE P.Id = " + id).FirstOrDefault();
                 
                 return model;

@@ -169,7 +169,7 @@
                                     @{
                                         if (Sales != null)
                                         {
-                                            <!--<option value="">请选择</option>-->
+                                            <option value="0">请选择</option>
                                             foreach (var item in Sales)
                                             {
                                                 <option value="@item.UserId" @((OrderInfo != null && OrderInfo.BillingUser == item.UserId) ? "selected='selected'" : "")>@item.UserName</option>
