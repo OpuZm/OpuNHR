@@ -132,7 +132,7 @@
             $('#txtAccount').focus();
             ShowKeyboard('txtAccount')
 
-            
+
 
             form.on('submit(login)', function (data) {
                 //              var username = $("#txtAccount").val().trim();
@@ -169,14 +169,14 @@
                             if (data.Successed && data.Data != null) {
                                 var list = data.Data;
                                 if (data.Message && data.Message != "") {
-                                    restaurantChoose(list,true)
+                                    restaurantChoose(list, true)
 
                                     //$(window).one('keypress', function (e) {
                                     //    if (e.keyCode == 13) {
                                     //        $('.layui-layer').find('.layui-layer-btn0').click();
                                     //    }
                                     //})
-                                }else if (list.length > 0){
+                                } else if (list.length > 0) {
                                     restaurantChoose(list, true)
                                 }
                             } else {
@@ -222,7 +222,7 @@
                 $.ajax({
                     type: "get",
                     url: "/Res/Account/TokenLogin",
-                    data: { token: token},
+                    data: { token: token },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     beforeSend: function (xhr) {
@@ -236,7 +236,7 @@
                         if (data.Successed && data.Data && data.Data.length > 0) {
                             sessionStorage.setItem('token', token);
                             restaurantChoose(data.Data)
-                        } else if (!data.Data || data.Data.length == 0){
+                        } else if (!data.Data || data.Data.length == 0) {
                             layer.msg('没有餐厅权限,请联系管理员')
                         }
                     },
@@ -276,7 +276,7 @@
                         content: '<ul class="choice-shop layui-form">' + shoplist + '</ul>',
                         maxmin: false,
                         closeBtn: isCloseBtn ? 1 : 0,
-			            shade: [1, '#cccccc'],
+                        shade: [1, '#cccccc'],
                         success: function (layero, index) {
                             $(layero).find('.layui-layer-content').css('overflow', 'visible');
 

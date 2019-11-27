@@ -8,6 +8,7 @@ using OPUPMS.Domain.Restaurant.Model.Dtos;
 using OPUPMS.Domain.Restaurant.Repository.IocManagerMoudles;
 using SqlSugar;
 using AutoMapper;
+using OPUPMS.Domain.Restaurant.Model.Models;
 
 namespace OPUPMS.Domain.Restaurant.Repository
 {
