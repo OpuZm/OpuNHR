@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OPUPMS.Domain.Restaurant.Model.Models
+namespace OPUPMS.Domain.Restaurant.Model
 {
     public class SCompany
     {
